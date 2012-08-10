@@ -4,6 +4,7 @@ import cims.CimsMaxIO;
 import cims.capturers.CaptureMidi;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
+import cims.generators.GenerateMidi_NoteMirror;
 import cims.generators.GenerateMidi_SegmentRepeat;
 import cims.datatypes.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
 
 public class SupervisorMidi implements Supervisor {
 	
-	//public static MidiMessage sMidiMessage;
+	public static MidiMessage sLastMidiMessage;
 	public static ArrayList<MidiMessage> sMidiMessageList;
 	public static long sMidiStartTime;
 	public static List<MidiMessage> sMidiSegment;
@@ -23,10 +24,12 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Silence analyser_silence;
 	private AnalyseMidi_Controls analyser_controls;
 	private GenerateMidi_SegmentRepeat generator_segment;
+	private GenerateMidi_NoteMirror generator_note;
 	//private PlayMidi player;
 	
 	public SupervisorMidi(CimsMaxIO ioObj) {
 		this.io = ioObj;
+		SupervisorMidi.sLastMidiMessage = new MidiMessage();
 		SupervisorMidi.sMidiMessageList = new ArrayList<MidiMessage>();
 		SupervisorMidi.sMidiStartTime=0;
 	
@@ -35,6 +38,7 @@ public class SupervisorMidi implements Supervisor {
 		analyser_silence = new AnalyseMidi_Silence(this);
 		analyser_controls = new AnalyseMidi_Controls(this);
 		generator_segment = new GenerateMidi_SegmentRepeat(this);
+		generator_note = new GenerateMidi_NoteMirror(this);
 		//player = new PlayMidi(this);
 		
 	}
@@ -58,6 +62,7 @@ public class SupervisorMidi implements Supervisor {
 	public void addMidiMessage(MidiMessage newMessage) {
 		MidiMessage newMidiMessage = new MidiMessage();
 		newMidiMessage.copy(newMessage);
+		SupervisorMidi.sLastMidiMessage = newMidiMessage;
 		SupervisorMidi.sMidiMessageList.add(newMidiMessage);
 		//this.txtMsg("AMM: "+newMessage.messageNum+"/"+MidiMessage.messagesCount+","+newMessage.timeMillis+","+newMessage.status+","+newMessage.pitch+","+newMessage.velocity+","+newMessage.noteOnOff+","+newMessage.channel+" |");
 		if (SupervisorMidi.sMidiStartTime==0) SupervisorMidi.sMidiStartTime = System.currentTimeMillis();
@@ -67,6 +72,7 @@ public class SupervisorMidi implements Supervisor {
 			// Note messages
 			//this.txtMsg("Calling Analyser - Note");
 			if(analyser_silence.newMidi()) analyser_silence.analyse();
+			generator_note.generate();
 		} else {
 			// Controller messages - call appropriate analyser
 			//this.txtMsg("Calling Analyser - Controller");
@@ -91,6 +97,12 @@ public class SupervisorMidi implements Supervisor {
 	public synchronized List<MidiMessage> getLastMidiSegment() {
 		List<MidiMessage> lastMidiSegment = new CopyOnWriteArrayList<MidiMessage>(SupervisorMidi.sMidiSegment);
 		return lastMidiSegment;
+	}
+	
+	public synchronized MidiMessage getLastMidiMessage() {
+		MidiMessage lastMidiMessage = new MidiMessage();
+		lastMidiMessage.copy(SupervisorMidi.sLastMidiMessage);
+		return lastMidiMessage;
 	}
 	
 }

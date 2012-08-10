@@ -1,6 +1,6 @@
-package cims.supers;
+package cims.supervisors;
 
-public class SupervisorAudio implements Supervisor {
+public class SupervisorAudio  {
 
 	public SupervisorAudio() {
 		// TODO Auto-generated constructor stub

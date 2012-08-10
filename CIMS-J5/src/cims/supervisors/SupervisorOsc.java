@@ -1,6 +1,6 @@
-package cims.supers;
+package cims.supervisors;
 
-public class SupervisorOsc implements Supervisor {
+public class SupervisorOsc  {
 
 	public SupervisorOsc() {
 		// TODO Auto-generated constructor stub
