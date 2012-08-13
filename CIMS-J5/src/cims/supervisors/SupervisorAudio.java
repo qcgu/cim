@@ -6,7 +6,7 @@ public class SupervisorAudio  {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void dataIn(int data) {
+	public void dataIn() {
 		
 	}
 	

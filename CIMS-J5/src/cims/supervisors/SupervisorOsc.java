@@ -6,7 +6,7 @@ public class SupervisorOsc  {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void dataIn(int data) {
+	public void dataIn() {
 		
 	}
 	

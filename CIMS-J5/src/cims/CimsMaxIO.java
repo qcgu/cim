@@ -1,3 +1,8 @@
+/*
+ * Main IO Class that is embedded in Max as an MXJ Object
+ * 		All other objects talk to Max through CimsMaxIO
+ */
+
 package cims;
 
 import cims.supervisors.*;
