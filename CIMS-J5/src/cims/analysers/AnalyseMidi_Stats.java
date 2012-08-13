@@ -25,18 +25,18 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 
 	public AnalyseMidi_Stats(SupervisorMidi supervisor) {
 		super(supervisor);
-		
-		current_pitch = current_message.pitch;
-		current_velocity = current_message.velocity;
-		
 		midiStats = new SynchronizedDescriptiveStatistics();
 	}
 
 	@Override
 	public void analyse() {
+		current_pitch = current_message.pitch;
+		current_velocity = current_message.velocity;
 		//Update the mean pitch, velocity and duration - save in supervisor
 		midiStats.addValue(current_pitch);
 		pitchMean = (int) midiStats.getMean();
+		
+		this.supervisor.txtMsg("P_CUR: " +current_pitch);
 		this.supervisor.txtMsg("P_MEAN: "+pitchMean);
 		//Calculate the standard deviation for current pitch, velocity and duration - save in last MidiMessage
 		

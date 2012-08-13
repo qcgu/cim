@@ -27,7 +27,7 @@ public class GenerateMidi_NoteMirror extends GenerateMidi {
 	public void generate() {
 		this.currentMessage = this.supervisor.getLastMidiMessage();
 		this.supervisor.txtMsg("MIRROR: "+this.currentMessage.pitch);
-		this.transform(PITCH_SHIFT,4);
+		this.transform(PITCH_SHIFT,-4);
 		this.output(this.currentMessage);
 	}
 	
@@ -41,7 +41,8 @@ public class GenerateMidi_NoteMirror extends GenerateMidi {
 		case PITCH_SHIFT:
 			int pitch = this.currentMessage.pitch;
 			pitch = pitch+transformValue;
-			if (pitch>127) pitch = 0;
+			if (pitch>127) pitch = 127; 
+			if (pitch<0) pitch = 0;
 			this.currentMessage.pitch = pitch;
 			break;
 		default:
