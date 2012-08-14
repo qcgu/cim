@@ -35,9 +35,10 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 		//Update the mean pitch, velocity and duration - save in supervisor
 		midiStats.addValue(current_pitch);
 		pitchMean = (int) midiStats.getMean();
-		
+		pitchDeviation = (int) midiStats.getStandardDeviation();
 		this.supervisor.txtMsg("P_CUR: " +current_pitch);
 		this.supervisor.txtMsg("P_MEAN: "+pitchMean);
+		this.supervisor.txtMsg("P_SD: "+pitchDeviation);
 		//Calculate the standard deviation for current pitch, velocity and duration - save in last MidiMessage
 		
 	}

@@ -11,7 +11,7 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	private int segmentStart;
 	private int segmentEnd;
 	private int notesCount;
-	private boolean segmentStarted;
+	public boolean segmentStarted;
 	private SilenceTimer silenceTimer;
 	
 	public AnalyseMidi_Silence(SupervisorMidi supervisor) {
@@ -23,6 +23,7 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	
 	public void analyse() {
 		notesCount = MidiMessage.sTotalNotesOn;
+		
 		//supervisor.txtMsg("Analysing Silence - NotesOnCount:"+notesCount);
 			if(this.current_message.noteOnOff==1) {
 				// Event is note on

@@ -19,17 +19,19 @@ public class SilenceTimer {
 	 */
 	public SilenceTimer(AnalyseMidi_Silence newAnalyser) {
 		analyser = newAnalyser;
+		this.silenceTimer = new Timer(); // initial timer
 	}
 		
 	public void start(int delay) {
-		
-			this.delay = delay;
+			this.cancel();
 			this.silenceTimer = new Timer();
+			this.delay = delay;		
 			this.silenceTimer.schedule(new Timeout(this.analyser), this.delay);
 	}
-	
 	public void cancel() {
-		
+		if(silenceTimer!=null) {
+			this.silenceTimer.cancel();
+		}
 	}
 		
 	private class Timeout extends TimerTask {
@@ -41,6 +43,7 @@ public class SilenceTimer {
 
 		@Override
 		public void run() {
+			//if(this.am.segmentStarted) {
 			am.silent();
 		}
 		
