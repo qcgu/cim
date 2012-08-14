@@ -6,7 +6,7 @@ import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
 import cims.generators.GenerateMidi_NoteMirror;
-import cims.generators.GenerateMidi_SegmentRepeat;
+import cims.generators.GenerateMidi_Segment;
 import cims.datatypes.*;
 
 import java.util.concurrent.*;
@@ -25,7 +25,7 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Silence analyser_silence;
 	private AnalyseMidi_Controls analyser_controls;
 	private AnalyseMidi_Stats analyser_stats;
-	private GenerateMidi_SegmentRepeat generator_segment;
+	private GenerateMidi_Segment generator_segment;
 	private GenerateMidi_NoteMirror generator_note;
 	//private PlayMidi player;
 	
@@ -40,7 +40,7 @@ public class SupervisorMidi implements Supervisor {
 		analyser_silence = new AnalyseMidi_Silence(this);
 		analyser_controls = new AnalyseMidi_Controls(this);
 		analyser_stats = new AnalyseMidi_Stats(this);
-		generator_segment = new GenerateMidi_SegmentRepeat(this);
+		generator_segment = new GenerateMidi_Segment(this);
 		generator_note = new GenerateMidi_NoteMirror(this);
 		//player = new PlayMidi(this);
 		

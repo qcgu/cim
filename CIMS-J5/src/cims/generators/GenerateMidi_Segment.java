@@ -16,12 +16,12 @@ import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.OutputQueue;
 
-public class GenerateMidi_SegmentRepeat extends GenerateMidi {
+public class GenerateMidi_Segment extends GenerateMidi {
 
 	private volatile List<MidiMessage> midiSegment;
 	private volatile OutputQueue midiQueue;
 	
-	public GenerateMidi_SegmentRepeat(SupervisorMidi supervisor) {
+	public GenerateMidi_Segment(SupervisorMidi supervisor) {
 		super(supervisor);
 		midiQueue = new OutputQueue(this);
 	}
@@ -36,10 +36,20 @@ public class GenerateMidi_SegmentRepeat extends GenerateMidi {
 	}
 	
 	public synchronized void makeSegment() {
-					// Play back the last segment
-					midiSegment = supervisor.getLastMidiSegment();
-					midiQueue.addSegment(midiSegment);
-					midiQueue.play();
+		makeLastSegment();
+		makeNewSegment();
+					
+	}
+	
+	public synchronized void makeLastSegment () {
+		// Play back the last segment
+		midiSegment = supervisor.getLastMidiSegment();
+		midiQueue.addSegment(midiSegment);
+		midiQueue.play();
+	}
+	
+	public synchronized void makeNewSegment() {
+		
 	}
 	
 	

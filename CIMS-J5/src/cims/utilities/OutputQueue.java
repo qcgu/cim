@@ -13,13 +13,13 @@ import cims.generators.*;
  *
  */
 public class OutputQueue {
-	private GenerateMidi_SegmentRepeat midiGen;
+	private GenerateMidi_Segment midiGen;
 	private volatile List<MidiMessage> segmentToPlay;
 	private Timer segmentTimer;
 	/**
 	 * 
 	 */
-	public OutputQueue(GenerateMidi_SegmentRepeat newMidiGen) {
+	public OutputQueue(GenerateMidi_Segment newMidiGen) {
 		midiGen = newMidiGen;
 	}
 	
@@ -49,9 +49,9 @@ public class OutputQueue {
 	}
 	
 	private class Player extends TimerTask {
-		private GenerateMidi_SegmentRepeat gm;
+		private GenerateMidi_Segment gm;
 		private MidiMessage outputMessage;
-		public Player(GenerateMidi_SegmentRepeat gm, MidiMessage midimessage) {
+		public Player(GenerateMidi_Segment gm, MidiMessage midimessage) {
 			this.gm = gm;
 			this.outputMessage = midimessage;
 		}
