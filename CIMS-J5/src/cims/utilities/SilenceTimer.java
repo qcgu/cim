@@ -1,5 +1,5 @@
 /**
- * SilenceTimer
+ * SilenceTimer - A Gibson
  */
 package cims.utilities;
 import java.util.*;
