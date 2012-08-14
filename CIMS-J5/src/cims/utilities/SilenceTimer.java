@@ -1,5 +1,5 @@
 /**
- * 
+ * SilenceTimer
  */
 package cims.utilities;
 import java.util.*;
