@@ -43,6 +43,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public synchronized void makeNewSegment(int duration) {
+		//Test Comment
 		midiSegment = new ArrayList<MidiMessage>();
 		MidiMessage noteOn = new MidiMessage();
 		int[] onMessage = {MidiMessage.NOTE_ON,64,100};
