@@ -5,6 +5,7 @@ import cims.capturers.CaptureMidi;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
+import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_NoteMirror;
 import cims.generators.GenerateMidi_Segment;
 import cims.datatypes.*;
@@ -19,6 +20,7 @@ public class SupervisorMidi implements Supervisor {
 	public static long sMidiStartTime;
 	public static List<MidiMessage> sMidiSegment;
 	public static int sSilenceDelay;
+	public static MidiStatistics sMidiStats;
 	
 	private CimsMaxIO io;
 	private CaptureMidi capturer;
@@ -27,6 +29,7 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Stats analyser_stats;
 	private GenerateMidi_Segment generator_segment;
 	private GenerateMidi_NoteMirror generator_note;
+	private GenerateMidi_Loop generator_loop;
 	//private PlayMidi player;
 	
 	public SupervisorMidi(CimsMaxIO ioObj) {
@@ -42,6 +45,7 @@ public class SupervisorMidi implements Supervisor {
 		analyser_stats = new AnalyseMidi_Stats(this);
 		generator_segment = new GenerateMidi_Segment(this);
 		generator_note = new GenerateMidi_NoteMirror(this);
+		generator_loop = new GenerateMidi_Loop(generator_segment);
 		//player = new PlayMidi(this);
 		
 	}
@@ -90,7 +94,12 @@ public class SupervisorMidi implements Supervisor {
 		List<MidiMessage> safeList = new CopyOnWriteArrayList<MidiMessage>(SupervisorMidi.sMidiMessageList);
 		SupervisorMidi.sMidiSegment = safeList.subList(segmentStart-1, segmentEnd);
 		//this.txtMsg("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
-		generator_segment.generate();
+		generator_segment.makeLastSegment();
+		//generator_segment.generate();
+		//generator_segment.makeNewSegment(1000);
+		generator_loop.setInterval(2000);
+		generator_loop.start();
+		
 		/* Print out segment pitches
 		Iterator<MidiMessage> segmentIterator = SupervisorMidi.sMidiSegment.iterator();
 		while (segmentIterator.hasNext()) {

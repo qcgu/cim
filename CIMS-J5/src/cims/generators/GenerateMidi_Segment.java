@@ -27,29 +27,31 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public void generate() {
-		this.makeSegment();
+		midiQueue.addSegment(this.midiSegment);
+		midiQueue.play();
 	}
 	
 	public void output(MidiMessage midimessage) {
 		int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
 		this.supervisor.dataOut(message);
 	}
-	
-	public synchronized void makeSegment() {
-		makeLastSegment();
-		makeNewSegment();
-					
-	}
-	
+		
 	public synchronized void makeLastSegment () {
 		// Play back the last segment
-		midiSegment = supervisor.getLastMidiSegment();
-		midiQueue.addSegment(midiSegment);
-		midiQueue.play();
+		this.midiSegment = supervisor.getLastMidiSegment();	
 	}
 	
-	public synchronized void makeNewSegment() {
-		
+	public synchronized void makeNewSegment(int duration) {
+		MidiMessage noteOn = new MidiMessage();
+		int[] onMessage = {MidiMessage.NOTE_ON,64,100};
+		noteOn.set(onMessage);
+		noteOn.timeMillis = 0;
+		MidiMessage noteOff = new MidiMessage();
+		int[] offMessage = {MidiMessage.NOTE_OFF,64,0};
+		noteOff.set(offMessage);
+		noteOff.timeMillis = duration;
+		this.midiSegment.add(noteOn);
+		this.midiSegment.add(noteOff);
 	}
 	
 	
