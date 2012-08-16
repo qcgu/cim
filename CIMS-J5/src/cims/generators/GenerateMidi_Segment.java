@@ -10,6 +10,7 @@
 
 package cims.generators;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cims.datatypes.MidiMessage;
@@ -42,6 +43,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public synchronized void makeNewSegment(int duration) {
+		midiSegment = new ArrayList<MidiMessage>();
 		MidiMessage noteOn = new MidiMessage();
 		int[] onMessage = {MidiMessage.NOTE_ON,64,100};
 		noteOn.set(onMessage);
