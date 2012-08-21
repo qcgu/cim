@@ -20,6 +20,7 @@ public class SupervisorMidi implements Supervisor {
 	public static MidiSegment sMidiSegment;
 	public static int sSilenceDelay;
 	public static MidiStatistics sMidiStats;
+	public boolean mirroring = false;
 	
 	private CimsMaxIO io;
 	private CaptureMidi capturer;

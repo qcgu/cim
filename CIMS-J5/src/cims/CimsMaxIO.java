@@ -24,7 +24,7 @@ public class CimsMaxIO extends MaxObject {
 	public CimsMaxIO() {
 		//declareIO(4,4);
 		declareInlets(new int[]{ DataTypes.ALL, DataTypes.ALL,DataTypes.ALL, DataTypes.ALL});
-        declareOutlets(new int[]{ DataTypes.ALL, DataTypes.ALL,DataTypes.ALL});
+        declareOutlets(new int[]{ DataTypes.ALL, DataTypes.ALL,DataTypes.ALL, DataTypes.ALL});
         
 		createInfoOutlet(false); // Right most outlet not required	
 		superMidi = new SupervisorMidi(this);
