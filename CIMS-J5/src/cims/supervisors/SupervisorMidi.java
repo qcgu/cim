@@ -83,30 +83,51 @@ public class SupervisorMidi implements Supervisor {
 			//this.txtMsg("Calling Analyser - Note");
 			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			if(analyser_stats.newMidi()) analyser_stats.analyse();
-			generator_note.generate();
+			if (mirroring) generator_note.generate();
 		} else {
 			// Controller messages - call appropriate analyser
 			//this.txtMsg("Calling Analyser - Controller");
 			if(analyser_controls.newMidi()) analyser_controls.analyse();
-		}
-		
-			
+		}		
 	}
 	
 	public synchronized void addMidiSegment(int segmentStart, int segmentEnd) {
 		SupervisorMidi.sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
 		//this.txtMsg("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
-		generator_segment.makeLastSegment();
-		//generator_segment.generate();
-		//generator_segment.makeNewSegment(1000);
-		generator_loop.setInterval(2000);
-		generator_loop.start();
-		
-		/* Print out segment pitches
-		Iterator<MidiMessage> segmentIterator = SupervisorMidi.sMidiSegment.iterator();
-		while (segmentIterator.hasNext()) {
-			SupervisorMidi.sDebug = SupervisorMidi.sDebug + "P: "+ segmentIterator.next().pitch +"\n";
-		} */
+		chooseNextAction();
+	}
+	
+	private void chooseNextAction() {
+		generator_loop.stop();
+		int chooseAction = (int)(Math.random() * 4);
+		switch (chooseAction) {
+			case 0: // repeat
+				this.txtMsg("Choosing to REPEAT");
+				mirroring = false;
+				generator_segment.makeLastSegment();
+				generator_segment.generate(); // repeat last segment?
+				break;
+			case 1: // initiate
+				this.txtMsg("Choosing to INITIATE");
+				mirroring = false;
+				generator_segment.makeInitiateSegment(250);
+				generator_loop = new GenerateMidi_Loop(generator_segment);
+				generator_loop.setInterval(2000);
+				generator_loop.start();
+				break;
+			case 2: // support
+				this.txtMsg("Choosing to SUPPORT");
+				mirroring = false;
+				generator_segment.makeSupportSegment(250);
+				generator_loop = new GenerateMidi_Loop(generator_segment);
+				generator_loop.setInterval(250);
+				generator_loop.start();
+				break;
+			case 3: // mirror
+				this.txtMsg("Choosing to MIRROR");
+				mirroring = true;
+				break;
+		}
 	}
 	
 	public synchronized MidiSegment getLastMidiSegment() {

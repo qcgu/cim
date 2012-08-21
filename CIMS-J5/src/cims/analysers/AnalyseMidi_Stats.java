@@ -18,9 +18,9 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 	public void analyse() {
 		midiStats.addPitch(current_message.pitch);
 
-		this.supervisor.txtMsg("P_CUR: " + midiStats.current_pitch);
-		this.supervisor.txtMsg("P_MEAN: "+ midiStats.meanPitch);
-		this.supervisor.txtMsg("P_SD: "+ midiStats.deviationPitch);
+		//this.supervisor.txtMsg("P_CUR: " + midiStats.current_pitch);
+		//this.supervisor.txtMsg("P_MEAN: "+ midiStats.meanPitch);
+		//this.supervisor.txtMsg("P_SD: "+ midiStats.deviationPitch);
 		
 		//Update static version of midiStats
 		SupervisorMidi.sMidiStats = midiStats;
