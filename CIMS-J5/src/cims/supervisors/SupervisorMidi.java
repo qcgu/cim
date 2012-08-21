@@ -10,7 +10,6 @@ import cims.generators.GenerateMidi_NoteMirror;
 import cims.generators.GenerateMidi_Segment;
 import cims.datatypes.*;
 
-import java.util.concurrent.*;
 import java.util.*;
 
 public class SupervisorMidi implements Supervisor {
@@ -54,6 +53,10 @@ public class SupervisorMidi implements Supervisor {
 		int midiData = this.io.inMidi();
 		//this.txtMsg("DataIN: "+midiData);
 		capturer.in(midiData);
+	}
+	
+	public void controlIn() {
+		//this.txtMsg("Super Key: "+this.io.key()+" Super Value: "+this.io.value());
 	}
 	
 	public void dataOut(int[] message) {

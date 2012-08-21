@@ -14,18 +14,30 @@ public class CimsMaxIO extends MaxObject {
 	private SupervisorOsc superOsc;
 	private SupervisorAudio superAudio;
 	
-	private int midiData;
-	private int	oscData;
-	private int audioData;
+	private int midiData = 0;
+	private int	oscData = 0;
+	private int audioData = 0;
+	
+	private String controlKey = "";
+	private int controlValue = 0;
 
 	public CimsMaxIO() {
-		declareIO(4,4);
+		//declareIO(4,4);
+		declareInlets(new int[]{ DataTypes.ALL, DataTypes.ALL,DataTypes.ALL, DataTypes.ALL});
+        declareOutlets(new int[]{ DataTypes.ALL, DataTypes.ALL,DataTypes.ALL});
+        
 		createInfoOutlet(false); // Right most outlet not required	
 		superMidi = new SupervisorMidi(this);
 	}
 	
-	public void inlet(int arg) {
-		
+	public void controlParams(Atom[] args) {
+		controlKey=args[0].toString();
+		controlValue=args[1].toInt();
+		//this.textOut("K: "+controlKey+" V: "+controlValue);
+		superMidi.controlIn();
+	}
+	
+	public void inlet(int arg) {	     
 		int current_inlet = getInlet();
 		switch(current_inlet) {
 		case 0:
@@ -41,8 +53,9 @@ public class CimsMaxIO extends MaxObject {
 			superAudio.dataIn();
 			break;
 		case 3:
-			SupervisorMidi.sSilenceDelay = arg;
+			//this.textOut(">>CONTROL");
 		}
+		
 	}
 	
 	public int inMidi() {
@@ -63,6 +76,14 @@ public class CimsMaxIO extends MaxObject {
 	}
 	public void outAudio(int audio) {
 		outlet(2,audio);
+	}
+	
+	public String key() {
+		return this.controlKey;
+	}
+	
+	public int value() {
+		return this.controlValue;
 	}
 	
 	public void textOut(String text) {
