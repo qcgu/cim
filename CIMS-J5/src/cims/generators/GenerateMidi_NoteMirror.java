@@ -26,8 +26,8 @@ public class GenerateMidi_NoteMirror extends GenerateMidi {
 	
 	public void generate() {
 		this.currentMessage = this.supervisor.getLastMidiMessage();
-		this.supervisor.txtMsg("MIRROR: "+this.currentMessage.pitch);
-		this.transform(PITCH_SHIFT,-4);
+		//this.supervisor.txtMsg("MIRROR: "+ this.currentMessage.pitch);
+		this.transform(PITCH_SHIFT, 7);
 		this.output(this.currentMessage);
 	}
 	
