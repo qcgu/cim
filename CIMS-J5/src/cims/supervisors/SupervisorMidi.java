@@ -21,6 +21,7 @@ public class SupervisorMidi implements Supervisor {
 	public static int sSilenceDelay;
 	public static MidiStatistics sMidiStats;
 	
+	private boolean mirroring = false;
 	private CimsMaxIO io;
 	private CaptureMidi capturer;
 	private AnalyseMidi_Silence analyser_silence;
