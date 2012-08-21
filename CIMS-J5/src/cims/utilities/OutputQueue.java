@@ -3,7 +3,6 @@
  */
 package cims.utilities;
 import java.util.*;
-import java.util.concurrent.*;
 
 import cims.datatypes.*;
 import cims.generators.*;
@@ -14,7 +13,7 @@ import cims.generators.*;
  */
 public class OutputQueue {
 	private GenerateMidi_Segment midiGen;
-	private volatile List<MidiMessage> segmentToPlay;
+	private volatile MidiSegment segmentToPlay;
 	private Timer segmentTimer;
 	/**
 	 * 
@@ -23,15 +22,13 @@ public class OutputQueue {
 		midiGen = newMidiGen;
 	}
 	
-	public synchronized void addSegment(List<MidiMessage> segment) {
-		//Create local copy of this segment
-		this.segmentToPlay = new CopyOnWriteArrayList<MidiMessage>(segment);
-		//Collections.copy(this.segmentToPlay,segment);
+	public synchronized void addSegment(MidiSegment segment) {
+		this.segmentToPlay = segment;
 	}
 	
 	public void play() {
 		//Iterate segment and play
-		Iterator<MidiMessage> segmentIterator = segmentToPlay.iterator();
+		Iterator<MidiMessage> segmentIterator = segmentToPlay.asList().iterator();
 		boolean firstEvent = true;
 		long startTime = 0;
 		long delay = 0;

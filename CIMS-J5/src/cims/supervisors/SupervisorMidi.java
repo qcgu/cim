@@ -18,7 +18,7 @@ public class SupervisorMidi implements Supervisor {
 	public static MidiMessage sLastMidiMessage;
 	public static ArrayList<MidiMessage> sMidiMessageList;
 	public static long sMidiStartTime;
-	public static List<MidiMessage> sMidiSegment;
+	public static MidiSegment sMidiSegment;
 	public static int sSilenceDelay;
 	public static MidiStatistics sMidiStats;
 	
@@ -91,8 +91,7 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public synchronized void addMidiSegment(int segmentStart, int segmentEnd) {
-		List<MidiMessage> safeList = new CopyOnWriteArrayList<MidiMessage>(SupervisorMidi.sMidiMessageList);
-		SupervisorMidi.sMidiSegment = safeList.subList(segmentStart-1, segmentEnd);
+		SupervisorMidi.sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
 		//this.txtMsg("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
 		generator_segment.makeLastSegment();
 		//generator_segment.generate();
@@ -107,9 +106,8 @@ public class SupervisorMidi implements Supervisor {
 		} */
 	}
 	
-	public synchronized List<MidiMessage> getLastMidiSegment() {
-		List<MidiMessage> lastMidiSegment = new CopyOnWriteArrayList<MidiMessage>(SupervisorMidi.sMidiSegment);
-		return lastMidiSegment;
+	public synchronized MidiSegment getLastMidiSegment() {
+		return SupervisorMidi.sMidiSegment;
 	}
 	
 	public synchronized MidiMessage getLastMidiMessage() {
