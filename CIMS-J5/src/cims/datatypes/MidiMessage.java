@@ -133,6 +133,63 @@ public class MidiMessage {
 		this.notesOnCount = MidiMessage.sTotalNotesOn;
 	}
 	
+	public void set(int[] message, boolean externalMidiMesssage) {
+		this.messageNum = MidiMessage.sMessagesCount;
+
+		this.status = message[0];
+		switch(detectMessageType(this.status)) {
+		case NOTE_ON:
+			this.channel = this.status-NOTE_ON-1;
+			this.pitch = message[1];
+			this.velocity = message[2];
+			if(this.velocity>0) {
+				this.noteOnOff = 1;
+				MidiMessage.sTotalNotesOn++; 
+			} else {
+				//Note off status in the form of zero velocity
+				this.noteOnOff = 0;
+				this.messageType = NOTE_OFF;
+				MidiMessage.sTotalNotesOn--;
+			}
+			break;
+		case NOTE_OFF:
+			this.channel = this.status-NOTE_OFF-1;
+			this.pitch = message[1];
+			this.velocity = 0;
+			this.noteOnOff = 0;
+			MidiMessage.sTotalNotesOn--;
+			break;
+		case POLY_AFTERTOUCH:
+			this.channel = this.status-POLY_AFTERTOUCH-1;
+			this.pitch = message[1];
+			this.pressure = message[2];
+			break;
+		case CONTROL_CHANGE:
+			this.channel = this.status-CONTROL_CHANGE-1;
+			this.controller = message[1];
+			this.controlData = message[2];
+			break;
+		case PROGRAM_CHANGE:
+			this.channel = this.status-PROGRAM_CHANGE-1;
+			this.otherData1 = message[1];
+			break;
+		case CHANNEL_AFTERTOUCH:
+			this.channel = this.status-CHANNEL_AFTERTOUCH-1;
+			this.pressure = message[1];
+			break;
+		case PITCH_WHEEL:
+			this.channel = this.status-PITCH_WHEEL-1;
+			this.otherData1 = message[1];
+			this.otherData2 = message[2];
+			break;
+			
+		default:
+			// Other status messages not implemented
+			break;
+		}
+		this.notesOnCount = MidiMessage.sTotalNotesOn;
+	}
+	
 	public int detectMessageType(int statusByte) {
 		if(inTheRange(statusByte, NOTE_OFF, NOTE_OFF+CHANNEL_16)) this.messageType = NOTE_OFF;
 		if(inTheRange(statusByte, NOTE_ON ,NOTE_ON+CHANNEL_16)) this.messageType = NOTE_ON;
