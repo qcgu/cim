@@ -41,16 +41,16 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public synchronized void makeInitiateSegment(int duration) {
-		this.midiSegment = new ArrayList<MidiMessage>();
+		this.midiSegment = new MidiSegment();
 		int[] pitches = {72, 74, 76, 79, 81, 84};
-		addNote(i*duration, pitches[0], (int)(Math.random() * 30) + 80, duration);
-		for(int i=0; i<7; i++) {
+		addNote(0, pitches[0], (int)(Math.random() * 30) + 80, duration);
+		for(int i=1; i<8; i++) {
 			addNote(i*duration, pitches[(int)(Math.random() * pitches.length)], (int)(Math.random() * 30) + 80, duration);
 		}
 	}
 	
 	public synchronized void makeSupportSegment(int duration) {
-		this.midiSegment = new ArrayList<MidiMessage>();
+		this.midiSegment = new MidiSegment();
 		addNote(0, 48, (int)(Math.random() * 30) + 80, duration);
 	}
 	
