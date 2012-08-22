@@ -1,5 +1,6 @@
 package cims.generators;
 
+import cims.supervisors.SupervisorMidi;
 import cims.utilities.RepeatTimer;
 
 public class GenerateMidi_Loop {
@@ -10,7 +11,7 @@ public class GenerateMidi_Loop {
 		// TODO Auto-generated constructor stub
 		this.repeatTimer = new RepeatTimer(this);
 		this.gm_segment = segment;
-		interval = 0;
+		this.interval = SupervisorMidi.sRepeatInterval;
 	}
 	
 	public void setInterval(int interval) {

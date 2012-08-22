@@ -18,8 +18,12 @@ public class SupervisorMidi implements Supervisor {
 	public static ArrayList<MidiMessage> sMidiMessageList;
 	public static long sMidiStartTime;
 	public static MidiSegment sMidiSegment;
-	public static int sSilenceDelay;
+	
 	public static MidiStatistics sMidiStats;
+	
+	// Static properties set by external control
+	public static int sSilenceDelay;
+	public static int sRepeatInterval;
 	
 	private boolean mirroring = false; //Flag used by addMidiMessage()
 	private CimsMaxIO io;
@@ -37,6 +41,9 @@ public class SupervisorMidi implements Supervisor {
 		SupervisorMidi.sLastMidiMessage = new MidiMessage();
 		SupervisorMidi.sMidiMessageList = new ArrayList<MidiMessage>();
 		SupervisorMidi.sMidiStartTime=0;
+		
+		SupervisorMidi.sSilenceDelay = 250;
+		SupervisorMidi.sRepeatInterval = 0;
 	
 		//Create all necessary instances for complete signal path
 		capturer = new CaptureMidi(this);
@@ -58,6 +65,14 @@ public class SupervisorMidi implements Supervisor {
 	
 	public void controlIn() {
 		//this.txtMsg("Super Key: "+this.io.key()+" Super Value: "+this.io.value());
+		if(this.io.key().equals("silenceCue")) {
+			SupervisorMidi.sSilenceDelay = this.io.value();
+			this.txtMsg("Silence detect time set: "+SupervisorMidi.sSilenceDelay+"ms");
+		}
+		if(this.io.key().equals("repeatCue")) {
+			SupervisorMidi.sRepeatInterval = this.io.value();
+			this.txtMsg("Repeat interval set: "+SupervisorMidi.sRepeatInterval+"ms");
+		}
 	}
 	
 	public void dataOut(int[] message) {
