@@ -71,6 +71,8 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void addMidiMessage(MidiMessage newMessage) {
+		// stop generator if in mirror mode
+		if (mirroring) generator_loop.stop();
 		MidiMessage newMidiMessage = new MidiMessage();
 		newMidiMessage.copy(newMessage);
 		SupervisorMidi.sLastMidiMessage = newMidiMessage;
@@ -98,19 +100,20 @@ public class SupervisorMidi implements Supervisor {
 		chooseNextAction();
 	}
 	
-	private void chooseNextAction() {
-		generator_loop.stop();
+	private void chooseNextAction() {	
 		int chooseAction = (int)(Math.random() * 4);
 		switch (chooseAction) {
 			case 0: // repeat
 				this.txtMsg("Choosing to REPEAT");
 				mirroring = false;
+				generator_loop.stop();
 				generator_segment.makeLastSegment();
 				generator_segment.generate(); // repeat last segment?
 				break;
 			case 1: // initiate
 				this.txtMsg("Choosing to INITIATE");
 				mirroring = false;
+				generator_loop.stop();
 				generator_segment.makeInitiateSegment(250);
 				generator_loop = new GenerateMidi_Loop(generator_segment);
 				generator_loop.setInterval(2000);
@@ -119,6 +122,7 @@ public class SupervisorMidi implements Supervisor {
 			case 2: // support
 				this.txtMsg("Choosing to SUPPORT");
 				mirroring = false;
+				generator_loop.stop();
 				generator_segment.makeSupportSegment(250);
 				generator_loop = new GenerateMidi_Loop(generator_segment);
 				generator_loop.setInterval(250);
