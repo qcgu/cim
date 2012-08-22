@@ -24,6 +24,7 @@ public class SupervisorMidi implements Supervisor {
 	// Static properties set by external control
 	public static int sSilenceDelay;
 	public static int sRepeatInterval;
+	private int currentAction = -1;
 	
 	private boolean mirroring = false; //Flag used by addMidiMessage()
 	private CimsMaxIO io;
@@ -86,6 +87,15 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void addMidiMessage(MidiMessage newMessage) {
+		// start with supporting role
+		if (currentAction == -1) {
+			this.txtMsg("Choosing to SUPPORT");
+			generator_segment.makeSupportSegment(250);
+			generator_loop = new GenerateMidi_Loop(generator_segment);
+			generator_loop.setInterval(250);
+			generator_loop.start();
+			currentAction = 2;
+		}
 		// stop generator if in mirror mode
 		if (mirroring) generator_loop.stop();
 		MidiMessage newMidiMessage = new MidiMessage();
@@ -111,13 +121,13 @@ public class SupervisorMidi implements Supervisor {
 	
 	public synchronized void addMidiSegment(int segmentStart, int segmentEnd) {
 		SupervisorMidi.sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
-		//this.txtMsg("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
+		this.txtMsg("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
 		chooseNextAction();
 	}
 	
 	private void chooseNextAction() {	
-		int chooseAction = (int)(Math.random() * 4);
-		switch (chooseAction) {
+		currentAction = (int)(Math.random() * 4);
+		switch (currentAction) {
 			case 0: // repeat
 				this.txtMsg("Choosing to REPEAT");
 				mirroring = false;
@@ -131,7 +141,7 @@ public class SupervisorMidi implements Supervisor {
 				generator_loop.stop();
 				generator_segment.makeInitiateSegment(250);
 				generator_loop = new GenerateMidi_Loop(generator_segment);
-				generator_loop.setInterval(2000);
+				generator_loop.setInterval(4000);
 				generator_loop.start();
 				break;
 			case 2: // support
