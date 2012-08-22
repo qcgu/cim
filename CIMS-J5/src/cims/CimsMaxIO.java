@@ -69,9 +69,11 @@ public class CimsMaxIO extends MaxObject {
 	public void outMidi(int[] midi) {
 		outlet(0,midi);
 	}
+	
 	public void outOsc(int osc) {
 		outlet(2,osc);
 	}
+	
 	public void outAudio(int audio) {
 		outlet(2,audio);
 	}

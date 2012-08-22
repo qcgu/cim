@@ -2,6 +2,7 @@ package cims.supervisors;
 
 import cims.CimsMaxIO;
 import cims.capturers.CaptureMidi;
+import cims.capturers.CaptureOutput;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
@@ -36,6 +37,7 @@ public class SupervisorMidi implements Supervisor {
 	private GenerateMidi_NoteMirror generator_note;
 	private GenerateMidi_Loop generator_loop;
 	//private PlayMidi player;
+	private CaptureOutput outputTracker;
 	
 	public SupervisorMidi(CimsMaxIO ioObj) {
 		this.io = ioObj;
@@ -48,6 +50,7 @@ public class SupervisorMidi implements Supervisor {
 	
 		//Create all necessary instances for complete signal path
 		capturer = new CaptureMidi(this);
+		outputTracker = new CaptureOutput(this);
 		analyser_silence = new AnalyseMidi_Silence(this);
 		analyser_controls = new AnalyseMidi_Controls(this);
 		analyser_stats = new AnalyseMidi_Stats(this);
@@ -79,7 +82,8 @@ public class SupervisorMidi implements Supervisor {
 	public void dataOut(int[] message) {
 		//this.txtMsg("dataOut: "+message[0]+"|"+message[1]+"|"+message[2]);
 		this.io.outMidi(message);
-		
+		// output capture to stop stuck notes
+		outputTracker.in(message);
 	}
 	
 	public void txtMsg(String msg) {
@@ -90,14 +94,18 @@ public class SupervisorMidi implements Supervisor {
 		// start with supporting role
 		if (currentAction == -1) {
 			this.txtMsg("Choosing to SUPPORT");
+			currentAction = 2;
 			generator_segment.makeSupportSegment(250);
 			generator_loop = new GenerateMidi_Loop(generator_segment);
 			generator_loop.setInterval(250);
 			generator_loop.start();
-			currentAction = 2;
 		}
 		// stop generator if in mirror mode
-		if (mirroring) generator_loop.stop();
+		if (mirroring) {
+			generator_loop.stop();
+			generator_segment.stop();
+			turnOffAgentNotes(); // these two calls need to go together to avoid stuck notes
+		}
 		MidiMessage newMidiMessage = new MidiMessage();
 		newMidiMessage.copy(newMessage);
 		SupervisorMidi.sLastMidiMessage = newMidiMessage;
@@ -170,4 +178,10 @@ public class SupervisorMidi implements Supervisor {
 		return lastMidiMessage;
 	}
 	
+	private void turnOffAgentNotes() {
+		MidiMessage[] messages = outputTracker.getOnNotes();
+		for(int i=0; i<messages.length; i++) {
+			dataOut(new int[] {messages[i].messageType, messages[i].pitch, messages[i].velocity});
+		}
+	}
 }
