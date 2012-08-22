@@ -40,11 +40,6 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		midiSegment = supervisor.getLastMidiSegment();	
 	}
 	
-	public synchronized void makeNewSegment(int duration) {
-		//Test Comment
-		midiSegment = new MidiSegment();
-	}
-	
 	public synchronized void makeInitiateSegment(int duration) {
 		this.midiSegment = new MidiSegment();
 		int[] pitches = {72, 74, 76, 79, 81, 84};
@@ -64,7 +59,6 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		int[] onMessage = {MidiMessage.NOTE_ON,pitch,velocity};
 		noteOn.set(onMessage, false);
 		noteOn.timeMillis = startTime;
-
 		MidiMessage noteOff = new MidiMessage();
 		int[] offMessage = {MidiMessage.NOTE_OFF,pitch,0};
 		noteOff.set(offMessage, false);
@@ -72,5 +66,6 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		this.midiSegment.add(noteOn);
 		this.midiSegment.add(noteOff);
 	}
+	
 }
 	
