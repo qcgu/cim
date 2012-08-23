@@ -8,6 +8,7 @@ import cims.analysers.AnalyseMidi_Stats;
 import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_NoteMirror;
 import cims.generators.GenerateMidi_Segment;
+import cims.utilities.Test;
 import cims.datatypes.*;
 
 import java.util.*;
@@ -22,8 +23,11 @@ public class SupervisorMidi implements Supervisor {
 	public static MidiStatistics sMidiStats;
 	
 	// Static properties set by external control
-	public static int sSilenceDelay;
-	public static int sRepeatInterval;
+	public static int sSilenceDelay = 250;
+	public static int sRepeatInterval = 0;
+	public static int sCurrentBeat = 0;
+	public static long[] sBeatList={4,0,0,0,0};
+	public static int sTimeBetweenBeats = 0;
 	
 	private boolean mirroring = false; //Flag used by addMidiMessage()
 	private CimsMaxIO io;
@@ -34,6 +38,8 @@ public class SupervisorMidi implements Supervisor {
 	private GenerateMidi_Segment generator_segment;
 	private GenerateMidi_NoteMirror generator_note;
 	private GenerateMidi_Loop generator_loop;
+	private Test tester;
+	
 	//private PlayMidi player;
 	
 	public SupervisorMidi(CimsMaxIO ioObj) {
@@ -42,9 +48,6 @@ public class SupervisorMidi implements Supervisor {
 		SupervisorMidi.sMidiMessageList = new ArrayList<MidiMessage>();
 		SupervisorMidi.sMidiStartTime=0;
 		
-		SupervisorMidi.sSilenceDelay = 250;
-		SupervisorMidi.sRepeatInterval = 0;
-	
 		//Create all necessary instances for complete signal path
 		capturer = new CaptureMidi(this);
 		analyser_silence = new AnalyseMidi_Silence(this);
@@ -53,6 +56,7 @@ public class SupervisorMidi implements Supervisor {
 		generator_segment = new GenerateMidi_Segment(this);
 		generator_note = new GenerateMidi_NoteMirror(this);
 		generator_loop = new GenerateMidi_Loop(generator_segment);
+		tester = new Test(this);
 		//player = new PlayMidi(this);
 		
 	}
@@ -72,6 +76,24 @@ public class SupervisorMidi implements Supervisor {
 		if(this.io.key().equals("repeatCue")) {
 			SupervisorMidi.sRepeatInterval = this.io.value();
 			this.txtMsg("Repeat interval set: "+SupervisorMidi.sRepeatInterval+"ms");
+		}
+		if(this.io.key().equals("beat")) {
+			int beat = this.io.value();
+			SupervisorMidi.sCurrentBeat = beat;
+			SupervisorMidi.sBeatList[beat] = System.currentTimeMillis();
+			int prevBeat = beat-1;
+			if (prevBeat<1) prevBeat = (int) SupervisorMidi.sBeatList[0];
+			Long timeBetween = (SupervisorMidi.sBeatList[beat] - SupervisorMidi.sBeatList[prevBeat]);
+			if (timeBetween>4000) timeBetween = (long) 500; // default 120BPM
+			SupervisorMidi.sTimeBetweenBeats = timeBetween.intValue();
+			if (SupervisorMidi.sTimeBetweenBeats<1) SupervisorMidi.sTimeBetweenBeats = 0;
+			this.txtMsg("Time between beats: "+SupervisorMidi.sTimeBetweenBeats);
+		}
+		if(this.io.key().equals("test")) {
+			if(this.io.value()==1) {
+			this.txtMsg("RUNNING TESTS");
+			this.runTests();
+			}
 		}
 	}
 	
@@ -156,4 +178,9 @@ public class SupervisorMidi implements Supervisor {
 		return lastMidiMessage;
 	}
 	
+	public void runTests() {
+		GenerateMidi_Loop gm_loop = tester.generateMidi_Loop();
+		gm_loop.startOnBeat(0);
+		
+	}
 }

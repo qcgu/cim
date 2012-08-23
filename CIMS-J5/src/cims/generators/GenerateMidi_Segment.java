@@ -25,6 +25,12 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		midiQueue = new OutputQueue(this);
 	}
 	
+	public GenerateMidi_Segment(SupervisorMidi supervisor, MidiSegment segment) {
+		super(supervisor);
+		midiQueue = new OutputQueue(this);
+		this.midiSegment = segment;
+	}
+	
 	public void generate() {
 		midiQueue.addSegment(midiSegment);
 		midiQueue.play();

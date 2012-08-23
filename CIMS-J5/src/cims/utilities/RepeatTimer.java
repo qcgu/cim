@@ -24,10 +24,10 @@ public class RepeatTimer {
 	}
 		
 	public void start(int interval) {
-			this.repTimer = new Timer();
-			this.interval = interval;
-			this.startDelay = interval;
-			this.repTimer.scheduleAtFixedRate(new Repeater(this.loop), this.startDelay,this.interval);
+		this.repTimer = new Timer();
+		this.interval = interval;
+		this.startDelay = interval;
+		this.repTimer.scheduleAtFixedRate(new Repeater(this.loop), this.startDelay,this.interval);
 	}
 	
 	public void cancel() {
