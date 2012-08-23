@@ -62,6 +62,12 @@ public class OutputQueue {
 			segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
 		}
 	}
+		
+	public void cancel() {
+		if(segmentTimer!=null) {
+			this.segmentTimer.cancel();
+		}
+	}
 	
 	private class Player extends TimerTask {
 		private GenerateMidi_Segment gm;

@@ -2,6 +2,7 @@ package cims.supervisors;
 
 import cims.CimsMaxIO;
 import cims.capturers.CaptureMidi;
+import cims.capturers.CaptureOutput;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
@@ -31,7 +32,9 @@ public class SupervisorMidi implements Supervisor {
 	public static int sTimeBetweenBeats = 0;
 	public static int sNextPlay = 0;
 	
+	private int currentAction = -1;
 	private boolean mirroring = false; //Flag used by addMidiMessage()
+	private boolean initiating = false;
 	private CimsMaxIO io;
 	private CaptureMidi capturer;
 	private AnalyseMidi_Silence analyser_silence;
@@ -43,6 +46,7 @@ public class SupervisorMidi implements Supervisor {
 	private Test tester;
 	
 	//private PlayMidi player;
+	private CaptureOutput outputTracker;
 	
 	public SupervisorMidi(CimsMaxIO ioObj) {
 		this.io = ioObj;
@@ -52,6 +56,7 @@ public class SupervisorMidi implements Supervisor {
 		
 		//Create all necessary instances for complete signal path
 		capturer = new CaptureMidi(this);
+		outputTracker = new CaptureOutput(this);
 		analyser_silence = new AnalyseMidi_Silence(this);
 		analyser_controls = new AnalyseMidi_Controls(this);
 		analyser_stats = new AnalyseMidi_Stats(this);
@@ -112,7 +117,8 @@ public class SupervisorMidi implements Supervisor {
 	public void dataOut(int[] message) {
 		//this.txtMsg("dataOut: "+message[0]+"|"+message[1]+"|"+message[2]);
 		this.io.outMidi(message);
-		
+		// output capture to stop stuck notes
+		outputTracker.in(message);
 	}
 	
 	public void txtMsg(String msg) {
@@ -120,6 +126,26 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void addMidiMessage(MidiMessage newMessage) {
+		// start with supporting role
+		if (currentAction == -1) {
+			this.txtMsg("Choosing to SUPPORT");
+			currentAction = 2;
+			generator_segment.makeSupportSegment(250);
+			generator_loop = new GenerateMidi_Loop(generator_segment);
+			generator_loop.setInterval(250);
+			generator_loop.start();
+		}
+		// stop generator if in mirror mode
+		if (mirroring) {
+			generator_loop.stop();
+			generator_segment.stop();
+			this.txtMsg("Turning off notes");
+			turnOffAgentNotes(); // these two calls need to go together to avoid stuck notes
+			//mirroring = false;
+			//initiating = false;
+			// play mirrored note
+			this.io.outMidi(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity});
+		}
 		MidiMessage newMidiMessage = new MidiMessage();
 		newMidiMessage.copy(newMessage);
 		SupervisorMidi.sLastMidiMessage = newMidiMessage;
@@ -147,27 +173,34 @@ public class SupervisorMidi implements Supervisor {
 		chooseNextAction();
 	}
 	
-	private void chooseNextAction() {
-		generator_loop.stop();
-		int chooseAction = (int)(Math.random() * 4);
-		switch (chooseAction) {
+	private void chooseNextAction() {	
+		currentAction = (int)(Math.random() * 4);
+		switch (currentAction) {
 			case 0: // repeat
 				this.txtMsg("Choosing to REPEAT");
 				mirroring = false;
+				//initiating = false;
+				generator_loop.stop();
 				generator_segment.makeLastSegment();
 				generator_segment.generate(); // repeat last segment?
 				break;
 			case 1: // initiate
 				this.txtMsg("Choosing to INITIATE");
 				mirroring = false;
+				//initiating = true;
+				generator_loop.stop(); // stop support
+				generator_segment.stop(); // stop prev initiate
+				turnOffAgentNotes();
 				generator_segment.makeInitiateSegment(250);
 				generator_loop = new GenerateMidi_Loop(generator_segment);
-				generator_loop.setInterval(2000);
+				generator_loop.setInterval(4000);
 				generator_loop.start();
 				break;
 			case 2: // support
 				this.txtMsg("Choosing to SUPPORT");
 				mirroring = false;
+				//initiating = false;
+				generator_loop.stop();
 				generator_segment.makeSupportSegment(250);
 				generator_loop = new GenerateMidi_Loop(generator_segment);
 				generator_loop.setInterval(250);
@@ -189,7 +222,12 @@ public class SupervisorMidi implements Supervisor {
 		lastMidiMessage.copy(SupervisorMidi.sLastMidiMessage);
 		return lastMidiMessage;
 	}
-	
+	private void turnOffAgentNotes() {
+		int[] pitches = outputTracker.getOnPitches();
+		for(int i=0; i<pitches.length; i++) {
+			dataOut(new int[] {128, pitches[i], 0});
+		}
+	}
 	public void runTests() {
 		GenerateMidi_Segment gm_segment = tester.generateMidi_Segment(false);
 		gm_segment.generate(SupervisorMidi.sNextPlay); // 0 immediate, 1 next beat, 2 next bar

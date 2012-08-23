@@ -19,9 +19,11 @@ public class GenerateMidi_Segment extends GenerateMidi {
 
 	private volatile MidiSegment midiSegment;
 	private volatile OutputQueue midiQueue;
+	private SupervisorMidi supervisor;
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor) {
 		super(supervisor);
+		this.supervisor = supervisor;
 		midiQueue = new OutputQueue(this);
 	}
 	
@@ -34,6 +36,10 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	public void generate() {
 		midiQueue.addSegment(midiSegment);
 		midiQueue.play();
+	}
+	
+	public void stop() {
+		midiQueue.cancel();
 	}
 	public void generate(int start) {
 		switch(start) {
@@ -63,9 +69,10 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		this.midiSegment = new MidiSegment();
 		int[] pitches = {72, 74, 76, 79, 81, 84};
 		addNote(0, pitches[0], (int)(Math.random() * 30) + 80, duration);
-		for(int i=1; i<8; i++) {
+		for(int i=1; i<12; i++) {
 			addNote(i*duration, pitches[(int)(Math.random() * pitches.length)], (int)(Math.random() * 30) + 80, duration);
 		}
+		addNote(12 * duration, pitches[0], (int)(Math.random() * 30) + 80, duration * 2);
 	}
 	
 	public synchronized void makeSupportSegment(int duration) {
