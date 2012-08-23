@@ -28,6 +28,7 @@ public class SupervisorMidi implements Supervisor {
 	private int currentAction = -1;
 	
 	private boolean mirroring = false; //Flag used by addMidiMessage()
+	private boolean initiating = false;
 	private CimsMaxIO io;
 	private CaptureMidi capturer;
 	private AnalyseMidi_Silence analyser_silence;
@@ -104,7 +105,12 @@ public class SupervisorMidi implements Supervisor {
 		if (mirroring) {
 			generator_loop.stop();
 			generator_segment.stop();
+			this.txtMsg("Turning off notes");
 			turnOffAgentNotes(); // these two calls need to go together to avoid stuck notes
+			//mirroring = false;
+			//initiating = false;
+			// play mirrored note
+			this.io.outMidi(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity});
 		}
 		MidiMessage newMidiMessage = new MidiMessage();
 		newMidiMessage.copy(newMessage);
@@ -139,6 +145,7 @@ public class SupervisorMidi implements Supervisor {
 			case 0: // repeat
 				this.txtMsg("Choosing to REPEAT");
 				mirroring = false;
+				//initiating = false;
 				generator_loop.stop();
 				generator_segment.makeLastSegment();
 				generator_segment.generate(); // repeat last segment?
@@ -146,7 +153,10 @@ public class SupervisorMidi implements Supervisor {
 			case 1: // initiate
 				this.txtMsg("Choosing to INITIATE");
 				mirroring = false;
-				generator_loop.stop();
+				//initiating = true;
+				generator_loop.stop(); // stop support
+				generator_segment.stop(); // stop prev initiate
+				turnOffAgentNotes();
 				generator_segment.makeInitiateSegment(250);
 				generator_loop = new GenerateMidi_Loop(generator_segment);
 				generator_loop.setInterval(4000);
@@ -155,6 +165,7 @@ public class SupervisorMidi implements Supervisor {
 			case 2: // support
 				this.txtMsg("Choosing to SUPPORT");
 				mirroring = false;
+				//initiating = false;
 				generator_loop.stop();
 				generator_segment.makeSupportSegment(250);
 				generator_loop = new GenerateMidi_Loop(generator_segment);
@@ -179,9 +190,9 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	private void turnOffAgentNotes() {
-		MidiMessage[] messages = outputTracker.getOnNotes();
-		for(int i=0; i<messages.length; i++) {
-			dataOut(new int[] {messages[i].messageType, messages[i].pitch, messages[i].velocity});
+		int[] pitches = outputTracker.getOnPitches();
+		for(int i=0; i<pitches.length; i++) {
+			dataOut(new int[] {128, pitches[i], 0});
 		}
 	}
 }

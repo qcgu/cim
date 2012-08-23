@@ -16,8 +16,9 @@ public class MidiStatistics {
 	public int deviationPitch;
 	public int deviationVelocity;
 	public int deviationDuration;
-
 	
+	private int[] pitchClassHistogram = new int[12];
+
 	private DescriptiveStatistics midiStats_Pitch;
 	private DescriptiveStatistics midiStats_Velocity;
 	private DescriptiveStatistics midiStats_Duration;
@@ -27,6 +28,10 @@ public class MidiStatistics {
 		this.midiStats_Pitch = new SynchronizedDescriptiveStatistics();
 		this.midiStats_Velocity = new SynchronizedDescriptiveStatistics();
 		this.midiStats_Duration = new SynchronizedDescriptiveStatistics();
+		// initalise pitch class histgram
+		for (int i=0; i<pitchClassHistogram.length; i++) {
+			pitchClassHistogram[i] = 0;
+		}
 	}
 
 	public void addPitch(int newPitch) {
@@ -34,6 +39,9 @@ public class MidiStatistics {
 		midiStats_Pitch.addValue(newPitch);
 		meanPitch = (int) midiStats_Pitch.getMean();
 		deviationPitch = (int) midiStats_Pitch.getStandardDeviation();
+		// update pitch class histogram
+		int pitch_Class = newPitch%12;
+		pitchClassHistogram[pitch_Class]++;
 	}
 	
 	public void addVelocity(int newVelocity) {
@@ -50,4 +58,18 @@ public class MidiStatistics {
 		deviationDuration = (int) midiStats_Velocity.getStandardDeviation();
 	}
 	
+	// make a weighted selection of a pitch class from the histogram
+	public int getRandomPitchClass() {
+		int max = 0;
+		for (int i=0; i<pitchClassHistogram.length; i++) {
+			max += pitchClassHistogram[i];
+		}
+		int rnd = (int)(Math.random() * max);
+		int val = 0;
+		int i = 0;
+		while(val < rnd) {
+			val += pitchClassHistogram[i++];
+		}
+		return i;
+	}
 }

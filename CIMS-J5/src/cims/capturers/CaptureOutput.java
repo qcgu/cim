@@ -6,55 +6,51 @@
 package cims.capturers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
 
 public class CaptureOutput {
 
+	private ArrayList<Integer> onList = new ArrayList<Integer>();
 	private SupervisorMidi supervisor;
-	private MidiMessage message;
-	private ArrayList<MidiMessage> onList = new ArrayList();
 	
 	public CaptureOutput(SupervisorMidi supervisor) {
 		this.supervisor = supervisor;
 	}
 	
 	public void in(int[] midiData) {
-		message = new MidiMessage();
-		message.set(midiData, true);
-		//this.supervisor.txtMsg("Capture Outout: " + midiData[0] + " " + midiData[1] + " " + midiData[2]);
+		new MidiMessage();
 		
-		if (message.messageType == message.NOTE_ON) {
-			//this.supervisor.txtMsg("Message Type: ON");
-			onList.add(message);
+		if (midiData[0] == 144) {
+			//this.supervisor.txtMsg("Message Type: ON " + message.pitch);
+			onList.add(midiData[1]);
 		}
 		
-		if (message.messageType == message.NOTE_OFF) {
+		if (midiData[0] == 128) {
 			//this.supervisor.txtMsg("Message Type: OFF");
-			deleteMatchingNoteOn(message);
+			deleteMatchingNoteOn(midiData[1]);
 		}
 	}
 	
-	private void deleteMatchingNoteOn(MidiMessage offMessage) {
-		for (int i=0; i<onList.size(); i++) {
-			MidiMessage mess = (MidiMessage)onList.get(i);
-			if(mess.pitch == offMessage.pitch) {
+	private void deleteMatchingNoteOn(int offPitch) {
+		int size = onList.size();
+		for (int i=0; i<size; i++) {
+			if(offPitch == onList.get(i).intValue()) {
 				onList.remove(i);
-				i = onList.size();
+				//this.supervisor.txtMsg("Removed message from onList for pitch " + mess.pitch);
+				i = size;
 			}		
 		}
 	}
 	
-	// return the number of notes currently turned on but not yet off
-	public MidiMessage[] getOnNotes() {
-		MidiMessage[] messages = new MidiMessage[onList.size()];
-		for (int i=0; i<onList.size(); i++) {
-			MidiMessage mess = (MidiMessage)onList.get(i);
-			messages[i] = mess;
+	// return an array of the pitches currently turned on but not yet off
+	public int[] getOnPitches() {
+		int size = onList.size();
+		int[] pitches = new int[size];
+		for (int i=0; i<size; i++) {
+			pitches[i] = onList.get(i);
 		}
-		return messages;
+		return pitches;
 	}
 }
 
