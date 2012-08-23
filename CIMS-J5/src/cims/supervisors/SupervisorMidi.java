@@ -34,7 +34,7 @@ public class SupervisorMidi implements Supervisor {
 	
 	private int currentAction = -1;
 	private boolean mirroring = false; //Flag used by addMidiMessage()
-	private boolean initiating = false;
+	//private boolean initiating = false;
 	private CimsMaxIO io;
 	private CaptureMidi capturer;
 	private AnalyseMidi_Silence analyser_silence;

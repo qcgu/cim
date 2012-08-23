@@ -29,6 +29,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor, MidiSegment segment) {
 		super(supervisor);
+		this.supervisor = supervisor;
 		midiQueue = new OutputQueue(this);
 		this.midiSegment = segment;
 	}
@@ -41,6 +42,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	public void stop() {
 		midiQueue.cancel();
 	}
+	
 	public void generate(int start) {
 		switch(start) {
 		case 0:
@@ -58,6 +60,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	public void output(MidiMessage midimessage) {
 		int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
 		this.supervisor.dataOut(message);
+		//this.supervisor.txtMsg("OUTPUT");
 	}
 		
 	public synchronized void makeLastSegment () {

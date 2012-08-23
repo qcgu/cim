@@ -23,7 +23,7 @@ public class OutputQueue {
 	 * 
 	 */
 	public OutputQueue(GenerateMidi_Segment newMidiGen) {
-		midiGen = newMidiGen;
+		this.midiGen = newMidiGen;
 		
 	}
 	
@@ -58,6 +58,7 @@ public class OutputQueue {
 				timeToWait = timeToWait - elapsedTime;
 				delay = delay + timeToWait;
 			}
+			//System.out.println("DELAY IS "+delay);
 			segmentTimer = new Timer();
 			segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
 		}
@@ -73,13 +74,16 @@ public class OutputQueue {
 		private GenerateMidi_Segment gm;
 		private MidiMessage outputMessage;
 		public Player(GenerateMidi_Segment gm, MidiMessage midimessage) {
+			//System.out.println("New Player");
 			this.gm = gm;
 			this.outputMessage = midimessage;
 		}
 
 		@Override
 		public void run() {
+			//System.out.println("RUN called "+outputMessage.status);
 			this.gm.output(this.outputMessage);
+			
 		}
 		
 	}
