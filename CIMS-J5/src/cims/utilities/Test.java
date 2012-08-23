@@ -48,12 +48,12 @@ public class Test {
 		sm.txtMsg("TST: MidiMessage");
 		MidiMessage message = new MidiMessage();
 		switch(onOff) {
-		case 0:
+		case 1:
 			int[] noteOn = {MidiMessage.NOTE_ON,64,100};
 			message.set(noteOn, false);
 			message.timeMillis = 0;
 			break;
-		case 1:
+		case 0:
 			int[] noteOff = {MidiMessage.NOTE_OFF,64,0};
 			message.set(noteOff, false);
 			message.timeMillis = 2000;

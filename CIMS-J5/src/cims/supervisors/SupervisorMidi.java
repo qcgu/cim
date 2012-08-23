@@ -25,9 +25,11 @@ public class SupervisorMidi implements Supervisor {
 	// Static properties set by external control
 	public static int sSilenceDelay = 250;
 	public static int sRepeatInterval = 0;
+	public static boolean sMetronome = false;
 	public static int sCurrentBeat = 0;
 	public static long[] sBeatList={4,0,0,0,0};
 	public static int sTimeBetweenBeats = 0;
+	public static int sNextPlay = 0;
 	
 	private boolean mirroring = false; //Flag used by addMidiMessage()
 	private CimsMaxIO io;
@@ -77,7 +79,14 @@ public class SupervisorMidi implements Supervisor {
 			SupervisorMidi.sRepeatInterval = this.io.value();
 			this.txtMsg("Repeat interval set: "+SupervisorMidi.sRepeatInterval+"ms");
 		}
-		if(this.io.key().equals("beat")) {
+		if(this.io.key().equals("metronome")) {
+			if(this.io.value()==1) {
+				SupervisorMidi.sMetronome = true;
+			} else {
+				SupervisorMidi.sMetronome = false;
+			}
+		}
+		if(this.io.key().equals("beat") && SupervisorMidi.sMetronome) {
 			int beat = this.io.value();
 			SupervisorMidi.sCurrentBeat = beat;
 			SupervisorMidi.sBeatList[beat] = System.currentTimeMillis();
@@ -87,13 +96,16 @@ public class SupervisorMidi implements Supervisor {
 			if (timeBetween>4000) timeBetween = (long) 500; // default 120BPM
 			SupervisorMidi.sTimeBetweenBeats = timeBetween.intValue();
 			if (SupervisorMidi.sTimeBetweenBeats<1) SupervisorMidi.sTimeBetweenBeats = 0;
-			this.txtMsg("Time between beats: "+SupervisorMidi.sTimeBetweenBeats);
+			//this.txtMsg("Time between beats: "+SupervisorMidi.sTimeBetweenBeats);
 		}
 		if(this.io.key().equals("test")) {
 			if(this.io.value()==1) {
 			this.txtMsg("RUNNING TESTS");
 			this.runTests();
 			}
+		}
+		if(this.io.key().equals("nextPlay")) {
+			SupervisorMidi.sNextPlay = this.io.value();
 		}
 	}
 	
@@ -179,8 +191,7 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void runTests() {
-		GenerateMidi_Loop gm_loop = tester.generateMidi_Loop();
-		gm_loop.startOnBeat(0);
-		
+		GenerateMidi_Segment gm_segment = tester.generateMidi_Segment(false);
+		gm_segment.generate(SupervisorMidi.sNextPlay); // 0 immediate, 1 next beat, 2 next bar
 	}
 }

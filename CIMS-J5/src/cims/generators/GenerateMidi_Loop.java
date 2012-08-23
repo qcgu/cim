@@ -27,10 +27,6 @@ public class GenerateMidi_Loop {
 		this.repeatTimer.start(interval);
 	}
 	
-	public void startOnBeat(int beat) {
-		this.repeatTimer.start(true, beat);
-	}
-	
 	public void stop() {
 		this.repeatTimer.cancel();
 	}

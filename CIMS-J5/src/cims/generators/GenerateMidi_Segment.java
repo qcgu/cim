@@ -35,6 +35,19 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		midiQueue.addSegment(midiSegment);
 		midiQueue.play();
 	}
+	public void generate(int start) {
+		switch(start) {
+		case 0:
+			midiQueue.startOnPlay();
+			break;
+		case 1:
+			midiQueue.startOnNextBeat();
+			break;
+		case 2:
+			midiQueue.startOnNextBar();
+		}
+		this.generate();
+	}
 	
 	public void output(MidiMessage midimessage) {
 		int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
