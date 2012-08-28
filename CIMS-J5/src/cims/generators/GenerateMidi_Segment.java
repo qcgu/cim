@@ -60,7 +60,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	public void output(MidiMessage midimessage) {
 		int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
 		this.supervisor.dataOut(message);
-		//this.supervisor.txtMsg("OUTPUT");
+		//supervisor.txtMsg("TC: "+Thread.activeCount());
 	}
 		
 	public synchronized void makeLastSegment () {

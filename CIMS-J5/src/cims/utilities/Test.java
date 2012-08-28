@@ -9,9 +9,25 @@ import cims.supervisors.SupervisorMidi;
 public class Test {
 	
 	private SupervisorMidi sm;
+	
+	private static final int SEGMENT_TESTS = 0;
+	private static final int MESSAGE_TESTS = 1;
 
 	public Test(SupervisorMidi supervisor) {
 		sm = supervisor;
+	}
+	
+	public void runTests(int testType) {
+		switch(testType) {
+		case SEGMENT_TESTS:
+			GenerateMidi_Segment gm_segment = this.generateMidi_Segment_repeatLast();
+			gm_segment.generate(SupervisorMidi.sNextPlay); // 0 immediate, 1 next beat, 2 next bar
+			sm.txtMsg("Segment Active Threads: "+this.activeThreadCount());
+			break;
+		case MESSAGE_TESTS:
+			sm.txtMsg("Message Active Threads: "+this.activeThreadCount());
+			break;
+		}
 	}
 	
 	public GenerateMidi_Loop generateMidi_Loop() {
@@ -28,6 +44,13 @@ public class Test {
 		if(generate) {
 			gm_segment.generate();
 		}
+		return gm_segment;
+	}
+	
+	public GenerateMidi_Segment generateMidi_Segment_repeatLast() {
+		sm.txtMsg("TST: generateMidi_Segment");
+		MidiSegment segment = sm.getLastMidiSegment();
+		GenerateMidi_Segment gm_segment = new GenerateMidi_Segment(sm,segment);
 		return gm_segment;
 	}
 	
@@ -64,5 +87,7 @@ public class Test {
 		return message;
 	}
 	
-
+	public int activeThreadCount() {
+		return Thread.activeCount();
+	}
 }

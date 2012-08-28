@@ -29,11 +29,13 @@ public class SupervisorMidi implements Supervisor {
 	public static boolean sMetronome = false;
 	public static int sCurrentBeat = 0;
 	public static long[] sBeatList={4,0,0,0,0};
+	public static int sBeatsPerMinute = 120;
 	public static int sTimeBetweenBeats = 0;
 	public static int sNextPlay = 0;
 	
 	private int currentAction = -1;
 	private boolean mirroring = false; //Flag used by addMidiMessage()
+	private boolean testMode = false;
 	//private boolean initiating = false;
 	private CimsMaxIO io;
 	private CaptureMidi capturer;
@@ -45,6 +47,8 @@ public class SupervisorMidi implements Supervisor {
 	private GenerateMidi_Loop generator_loop;
 	private Test tester;
 	
+	private static final int SEGMENT_TESTS = 0;
+	private static final int MESSAGE_TESTS = 1;
 	//private PlayMidi player;
 	private CaptureOutput outputTracker;
 	
@@ -105,8 +109,12 @@ public class SupervisorMidi implements Supervisor {
 		}
 		if(this.io.key().equals("test")) {
 			if(this.io.value()==1) {
-			this.txtMsg("RUNNING TESTS");
-			this.runTests();
+				this.txtMsg("TEST MODE ON");
+				this.testMode = true;
+				//this.runTests();
+			} else {
+				this.txtMsg("TEST MODE OFF");
+				this.testMode = false;
 			}
 		}
 		if(this.io.key().equals("nextPlay")) {
@@ -125,7 +133,34 @@ public class SupervisorMidi implements Supervisor {
 		this.io.textOut(msg);
 	}
 	
+	/******************
+	 * THIS NEEDS SERIOUS CLEANING UP!!
+	 * @param newMessage
+	 */
+	
 	public void addMidiMessage(MidiMessage newMessage) {
+		MidiMessage newMidiMessage = new MidiMessage();
+		newMidiMessage.copy(newMessage);
+		SupervisorMidi.sLastMidiMessage = newMidiMessage;
+		SupervisorMidi.sMidiMessageList.add(newMidiMessage);
+		//this.txtMsg("AMM: "+newMessage.messageNum+"/"+MidiMessage.messagesCount+","+newMessage.timeMillis+","+newMessage.status+","+newMessage.pitch+","+newMessage.velocity+","+newMessage.noteOnOff+","+newMessage.channel+" |");
+		if (SupervisorMidi.sMidiStartTime==0) SupervisorMidi.sMidiStartTime = System.currentTimeMillis();
+
+		if(testMode) {
+			// Let the analyser know that there is new midi to analyse
+			if (newMidiMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
+				// Note messages
+				//this.txtMsg("Calling Analyser - Note");
+				if(analyser_silence.newMidi()) analyser_silence.analyse();
+				if(analyser_stats.newMidi()) analyser_stats.analyse();
+				//if (mirroring) generator_note.generate();
+			} else {
+				// Controller messages - call appropriate analyser
+				//this.txtMsg("Calling Analyser - Controller");
+				if(analyser_controls.newMidi()) analyser_controls.analyse();
+			}
+			tester.runTests(MESSAGE_TESTS);
+		} else {
 		// start with supporting role
 		if (currentAction == -1) {
 			this.txtMsg("Choosing to SUPPORT");
@@ -146,13 +181,8 @@ public class SupervisorMidi implements Supervisor {
 			// play mirrored note
 			this.io.outMidi(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity});
 		}
-		MidiMessage newMidiMessage = new MidiMessage();
-		newMidiMessage.copy(newMessage);
-		SupervisorMidi.sLastMidiMessage = newMidiMessage;
-		SupervisorMidi.sMidiMessageList.add(newMidiMessage);
-		//this.txtMsg("AMM: "+newMessage.messageNum+"/"+MidiMessage.messagesCount+","+newMessage.timeMillis+","+newMessage.status+","+newMessage.pitch+","+newMessage.velocity+","+newMessage.noteOnOff+","+newMessage.channel+" |");
-		if (SupervisorMidi.sMidiStartTime==0) SupervisorMidi.sMidiStartTime = System.currentTimeMillis();
 		
+
 		// Let the analyser know that there is new midi to analyse
 		if (newMidiMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 			// Note messages
@@ -164,14 +194,21 @@ public class SupervisorMidi implements Supervisor {
 			// Controller messages - call appropriate analyser
 			//this.txtMsg("Calling Analyser - Controller");
 			if(analyser_controls.newMidi()) analyser_controls.analyse();
-		}		
+		}
+		}
+		
 	}
 	
 	public synchronized void addMidiSegment(int segmentStart, int segmentEnd) {
 		SupervisorMidi.sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
 		//this.txtMsg("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
-		chooseNextAction();
-	}
+		System.gc();
+		if(testMode) {
+			tester.runTests(SEGMENT_TESTS);
+		} else {
+			chooseNextAction();
+		}
+	}	
 	
 	private void chooseNextAction() {	
 		currentAction = (int)(Math.random() * 4);
@@ -182,7 +219,7 @@ public class SupervisorMidi implements Supervisor {
 				//initiating = false;
 				generator_loop.stop();
 				generator_segment.makeLastSegment();
-				generator_segment.generate(); // repeat last segment?
+				generator_segment.generate(SupervisorMidi.sNextPlay); // repeat last segment?
 				break;
 			case 1: // initiate
 				this.txtMsg("Choosing to INITIATE");
@@ -228,8 +265,7 @@ public class SupervisorMidi implements Supervisor {
 			dataOut(new int[] {128, pitches[i], 0});
 		}
 	}
-	public void runTests() {
-		GenerateMidi_Segment gm_segment = tester.generateMidi_Segment(false);
-		gm_segment.generate(SupervisorMidi.sNextPlay); // 0 immediate, 1 next beat, 2 next bar
-	}
+	
+	
+	
 }

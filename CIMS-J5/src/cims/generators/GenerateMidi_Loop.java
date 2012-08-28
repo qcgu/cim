@@ -33,6 +33,6 @@ public class GenerateMidi_Loop {
 	}
 
 	public void play() {
-		this.gm_segment.generate();
+		this.gm_segment.generate(SupervisorMidi.sNextPlay);
 	}
 }

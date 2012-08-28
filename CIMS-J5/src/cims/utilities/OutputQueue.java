@@ -61,6 +61,7 @@ public class OutputQueue {
 			//System.out.println("DELAY IS "+delay);
 			segmentTimer = new Timer();
 			segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
+			//segmentTimer.cancel();
 		}
 	}
 		
@@ -83,7 +84,6 @@ public class OutputQueue {
 		public void run() {
 			//System.out.println("RUN called "+outputMessage.status);
 			this.gm.output(this.outputMessage);
-			
 		}
 		
 	}
