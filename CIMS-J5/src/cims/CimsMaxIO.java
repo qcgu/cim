@@ -40,7 +40,7 @@ public class CimsMaxIO extends MaxObject {
 		switch(current_inlet) {
 		case 0:
 			this.midiData = arg;
-			superMidi.dataIn();
+			//superMidi.dataIn();
 			break;
 		case 1:
 			this.oscData = arg;
