@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import cims.supervisors.SupervisorMidi;
+import static cims.supervisors.SupervisorMidi_Globals.sMidiMessageList;
 
 public class MidiSegment {
 	private List<MidiMessage> segment;
@@ -16,7 +16,7 @@ public class MidiSegment {
 	}
 	
 	public MidiSegment(int start, int end) { //Segment as subset of MessageList
-		List<MidiMessage> safeList = new CopyOnWriteArrayList<MidiMessage>(SupervisorMidi.sMidiMessageList);
+		List<MidiMessage> safeList = new CopyOnWriteArrayList<MidiMessage>(sMidiMessageList);
 		segment = safeList.subList(start, end);
 	}
 	

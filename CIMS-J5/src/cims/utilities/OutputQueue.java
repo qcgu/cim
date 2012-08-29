@@ -1,12 +1,13 @@
-/**
- * 
- */
 package cims.utilities;
+
 import java.util.*;
 
 import cims.datatypes.*;
 import cims.generators.*;
-import cims.supervisors.SupervisorMidi;
+
+import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeat;
+import static cims.supervisors.SupervisorMidi_Globals.sBeatList;
+import static cims.supervisors.SupervisorMidi_Globals.sTimeBetweenBeats;
 
 /**
  * @author andrew
@@ -47,13 +48,13 @@ public class OutputQueue {
 			delay = midimessage.timeMillis - startTime;
 			if (delay<1) delay=1; //allow 1 ms for timer
 			if(startOnNextBeat || startOnNextBar) {
-				int currentBeat = SupervisorMidi.sCurrentBeat;
-				long currentBeatTime = SupervisorMidi.sBeatList[currentBeat];
+				int currentBeat = sCurrentBeat;
+				long currentBeatTime = sBeatList[currentBeat];
 				long elapsedTime = System.currentTimeMillis() - currentBeatTime;
-				long timeToWait = SupervisorMidi.sTimeBetweenBeats;
+				long timeToWait = sTimeBetweenBeats;
 				if(startOnNextBar) {
 					long barElapsed = (currentBeat - 1) * timeToWait;
-					timeToWait = (timeToWait * SupervisorMidi.sBeatList[0]) - barElapsed;
+					timeToWait = (timeToWait * sBeatList[0]) - barElapsed;
 				}
 				timeToWait = timeToWait - elapsedTime;
 				delay = delay + timeToWait;

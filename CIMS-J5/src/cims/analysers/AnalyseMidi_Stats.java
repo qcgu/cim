@@ -3,6 +3,9 @@ package cims.analysers;
 import cims.supervisors.SupervisorMidi;
 import cims.datatypes.MidiStatistics;
 
+import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
+
+
 public class AnalyseMidi_Stats extends AnalyseMidi {
 	
 	
@@ -23,7 +26,11 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 		//this.supervisor.txtMsg("P_SD: "+ midiStats.deviationPitch);
 		
 		//Update static version of midiStats
-		SupervisorMidi.sMidiStats = midiStats;
+		sMidiStats = midiStats;
 
+	}
+	
+	public boolean isUnusual() {
+		return false;
 	}
 }

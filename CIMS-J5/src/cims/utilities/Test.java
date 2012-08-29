@@ -6,6 +6,9 @@ import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_Segment;
 import cims.supervisors.SupervisorMidi;
 
+import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
+
+
 public class Test {
 	
 	private SupervisorMidi sm;
@@ -21,7 +24,7 @@ public class Test {
 		switch(testType) {
 		case SEGMENT_TESTS:
 			GenerateMidi_Segment gm_segment = this.generateMidi_Segment_repeatLast();
-			gm_segment.generate(SupervisorMidi.sNextPlay); // 0 immediate, 1 next beat, 2 next bar
+			gm_segment.generate(sNextPlay); // 0 immediate, 1 next beat, 2 next bar
 			sm.txtMsg("Segment Active Threads: "+this.activeThreadCount());
 			break;
 		case MESSAGE_TESTS:

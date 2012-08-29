@@ -5,6 +5,7 @@ package cims.analysers;
 import cims.supervisors.SupervisorMidi;
 import cims.datatypes.MidiMessage;
 
+import static cims.supervisors.SupervisorMidi_Globals.sMidiMessageList;
 
 public abstract class AnalyseMidi {
 
@@ -19,8 +20,8 @@ public abstract class AnalyseMidi {
 	
 	public boolean newMidi() {
 		boolean returnValue = false;
-			if (SupervisorMidi.sMidiMessageList.size() > 0) {
-				this.current_message.copy(SupervisorMidi.sMidiMessageList.get(MidiMessage.sMessagesCount - 1));
+			if (sMidiMessageList.size() > 0) {
+				this.current_message.copy(sMidiMessageList.get(MidiMessage.sMessagesCount - 1));
 				returnValue = true;
 			} 
 			return returnValue;

@@ -52,5 +52,12 @@ public class CaptureOutput {
 		}
 		return pitches;
 	}
+	
+	public void allNotesOff() {
+		int[] pitches = getOnPitches();
+		for(int i=0; i<pitches.length; i++) {
+			supervisor.dataOut(new int[] {128, pitches[i], 0});
+		}
+	}
 }
 

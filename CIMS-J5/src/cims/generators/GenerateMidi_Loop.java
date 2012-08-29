@@ -3,6 +3,9 @@ package cims.generators;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.RepeatTimer;
 
+import static cims.supervisors.SupervisorMidi_Globals.sRepeatInterval;
+import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
+
 public class GenerateMidi_Loop {
 	private RepeatTimer repeatTimer;
 	private int interval;
@@ -12,7 +15,7 @@ public class GenerateMidi_Loop {
 
 		this.repeatTimer = new RepeatTimer(this);
 		this.gm_segment = segment;
-		this.interval = SupervisorMidi.sRepeatInterval;
+		this.interval = sRepeatInterval;
 	}
 	
 	public void setInterval(int interval) {
@@ -33,6 +36,6 @@ public class GenerateMidi_Loop {
 	}
 
 	public void play() {
-		this.gm_segment.generate(SupervisorMidi.sNextPlay);
+		this.gm_segment.generate(sNextPlay);
 	}
 }
