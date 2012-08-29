@@ -24,9 +24,7 @@ public class DecideMidi_UserControl {
 		//this.txtMsg("Super Key: "+this.io.key()+" Super Value: "+this.io.value());
 				if(key.equals("segmentGap")) {
 					sSegmentGap = value;
-					int beatLength = 1000/(sBeatsPerMinute/60);
-					sSilenceDelay = (sSegmentGap*(beatLength/4))-20;
-					supervisor.txtMsg("Silence detect time set: "+sSilenceDelay+"ms");
+					recalcSilenceDelay();
 				}
 				if(key.equals("repeatCue")) {
 					sRepeatInterval = value;
@@ -53,6 +51,7 @@ public class DecideMidi_UserControl {
 				}
 				if(key.equals("bpm") && sMetronome) {
 					sBeatsPerMinute = value;
+					recalcSilenceDelay();
 				}
 				if(key.equals("test")) {
 					if(value==1) {
@@ -67,6 +66,14 @@ public class DecideMidi_UserControl {
 				if(key.equals("nextPlay")) {
 					sNextPlay = value;
 				}
+	}
+	
+	public void recalcSilenceDelay() {
+		int beatLength = 1000/(sBeatsPerMinute/60);
+		sSilenceDelay = (sSegmentGap*(beatLength/4));
+		supervisor.txtMsg("Silence Delay: "+sSilenceDelay+"ms");
+		supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
+		supervisor.txtMsg("Beat Length: "+beatLength+"ms");
 	}
 
 }

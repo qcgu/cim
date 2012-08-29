@@ -28,7 +28,6 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Stats analyser_stats;
 	private GenerateMidi_Segment generator_segment;
 	private GenerateMidi_NoteMirror generator_note;
-	private GenerateMidi_Loop generator_loop;
 	private DecideMidi_UserControl decider_userControl;
 	private DecideMidi_01 decider_01;
 	private Test tester;
@@ -59,8 +58,6 @@ public class SupervisorMidi implements Supervisor {
 		decider_01.addGenerator(generator_segment);
 		generator_note = new GenerateMidi_NoteMirror(this);
 		
-		generator_loop = new GenerateMidi_Loop(generator_segment);
-		decider_01.addGenerator(generator_loop);
 		//Test
 		tester = new Test(this);
 	}
@@ -90,11 +87,11 @@ public class SupervisorMidi implements Supervisor {
 		if(sTestMode) {
 			// Run Tests
 		} else {
-			// Run appropriate decider
-			decider_01.messageIn(newMessage);
 			// Let the analyser know that there is new midi to analyse
 			if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 				// Note messages
+				// Run appropriate decider
+				decider_01.messageIn(newMessage);
 				//this.txtMsg("Calling Analyser - Note");
 				if(analyser_silence.newMidi()) analyser_silence.analyse();
 				if(analyser_stats.newMidi()) analyser_stats.analyse();

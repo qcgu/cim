@@ -58,6 +58,7 @@ public class OutputQueue {
 				}
 				timeToWait = timeToWait - elapsedTime;
 				delay = delay + timeToWait;
+				if (delay<0) delay=0;
 			}
 			//System.out.println("DELAY IS "+delay);
 			segmentTimer = new Timer();
