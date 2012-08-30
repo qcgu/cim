@@ -90,6 +90,8 @@ public class DecideMidi_01 {
 				initiate_loop = new GenerateMidi_Loop(generator_segment);
 				initiate_loop.setInterval(sSilenceDelay*16);
 				initiate_loop.start();
+				// clear out pitch histogram memory
+				supervisor.analyser_stats.clearPitchHistogram();
 				break;
 			case 2: // support
 				supervisor.txtMsg("Choosing to SUPPORT");

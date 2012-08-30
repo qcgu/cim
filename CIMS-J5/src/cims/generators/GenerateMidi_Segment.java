@@ -69,13 +69,19 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public synchronized void makeInitiateSegment(int duration) {
+		//supervisor.txtMsg("rnd pitch = " + supervisor.analyser_stats.getRandomPitchClass());
 		this.midiSegment = new MidiSegment();
-		int[] pitches = {72, 74, 76, 79, 81, 84};
-		addNote(0, pitches[0], (int)(Math.random() * 30) + 80, duration);
-		for(int i=1; i<12; i++) {
-			addNote(i*duration, pitches[(int)(Math.random() * pitches.length)], (int)(Math.random() * 30) + 80, duration);
+		//int[] pitches = {72, 74, 76, 79, 81, 84};
+		int accumTime = 0;
+		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 60, (int)(Math.random() * 30) + 80, duration);
+		accumTime += duration;
+		for(int i=1; i<16; i++) {
+			int dur = duration;
+			if (Math.random() < 0.5) dur = duration / 2;
+			addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 60, (int)(Math.random() * 30) + 80, dur);
+			accumTime += dur;
 		}
-		addNote(12 * duration, pitches[0], (int)(Math.random() * 30) + 80, duration * 2);
+		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 60, (int)(Math.random() * 30) + 80, duration * 2);
 	}
 	
 	public synchronized void makeSupportSegment(int duration) {

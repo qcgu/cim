@@ -25,7 +25,7 @@ public class SupervisorMidi implements Supervisor {
 	private CaptureMidi capturer;
 	private AnalyseMidi_Silence analyser_silence;
 	private AnalyseMidi_Controls analyser_controls;
-	private AnalyseMidi_Stats analyser_stats;
+	public AnalyseMidi_Stats analyser_stats;
 	private GenerateMidi_Segment generator_segment;
 	private GenerateMidi_NoteMirror generator_note;
 	private DecideMidi_UserControl decider_userControl;
