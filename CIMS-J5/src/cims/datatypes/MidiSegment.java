@@ -39,5 +39,9 @@ public class MidiSegment {
 		MidiMessage message = new MidiMessage();
 		return message;
 	}
+	
+	public MidiMessage getFirstMessage() {
+		return (MidiMessage)(segment.get(0));
+	}
 
 }

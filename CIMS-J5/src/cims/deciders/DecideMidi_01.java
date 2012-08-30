@@ -46,6 +46,9 @@ public class DecideMidi_01 {
 		}
 		// play support with note on
 		if (currentAction==2 && !support_loop.hasStarted) {
+			generator_segment.makeSupportSegment(sSilenceDelay, newMidiMessage.pitch);
+			support_loop = new GenerateMidi_Loop(generator_segment);
+			support_loop.setInterval(sSilenceDelay);
 			support_loop.start();
 		}
 		// stop generator if in mirror mode
@@ -66,13 +69,12 @@ public class DecideMidi_01 {
 		if(currentAction<0) {
 			currentAction=2; //default start is SUPPORT
 		} else {
-			currentAction = 1; //(int)(Math.random() * 4);
+			currentAction = (int)(Math.random() * 4);
 		}
 		switch (currentAction) {
 			case 0: // repeat
 				supervisor.txtMsg("Choosing to REPEAT");
 				mirroring = false;
-				//initiating = false;
 				support_loop.stop();
 				initiate_loop.stop();
 				generator_segment.makeLastSegment();
@@ -81,12 +83,11 @@ public class DecideMidi_01 {
 			case 1: // initiate
 				supervisor.txtMsg("Choosing to INITIATE");
 				mirroring = false;
-				//initiating = true;
 				support_loop.stop(); // stop support
 				initiate_loop.stop();
 				generator_segment.stop(); // stop prev initiate
 				turnOffAgentNotes();
-				generator_segment.makeInitiateSegment(sSilenceDelay);
+				generator_segment.makeInitiateSegment(500); //sSilenceDelay);
 				initiate_loop = new GenerateMidi_Loop(generator_segment);
 				initiate_loop.setInterval(sSilenceDelay*16);
 				initiate_loop.start();
@@ -96,12 +97,9 @@ public class DecideMidi_01 {
 			case 2: // support
 				supervisor.txtMsg("Choosing to SUPPORT");
 				mirroring = false;
-				//initiating = false;
 				support_loop.stop();
 				initiate_loop.stop();
-				generator_segment.makeSupportSegment(sSilenceDelay);
-				support_loop = new GenerateMidi_Loop(generator_segment);
-				support_loop.setInterval(sSilenceDelay);
+				
 				//generator_loop.start();
 				break;
 			case 3: // mirror
