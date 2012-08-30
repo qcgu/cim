@@ -66,7 +66,7 @@ public class DecideMidi_01 {
 		if(currentAction<0) {
 			currentAction=2; //default start is SUPPORT
 		} else {
-			currentAction = (int)(Math.random() * 4);
+			currentAction = 1; //(int)(Math.random() * 4);
 		}
 		switch (currentAction) {
 			case 0: // repeat
