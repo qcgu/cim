@@ -20,6 +20,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	private volatile MidiSegment midiSegment;
 	private volatile OutputQueue midiQueue;
 	private SupervisorMidi supervisor;
+	private int initiateSegementLength = 0;
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor) {
 		super(supervisor);
@@ -36,6 +37,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	
 	public void generate() {
 		midiQueue.addSegment(midiSegment);
+		System.out.println("Playing generated segment " + midiSegment.size());
 		midiQueue.play();
 	}
 	
@@ -65,7 +67,8 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		
 	public synchronized void makeLastSegment () {
 		// Play back the last segment
-		midiSegment = supervisor.getLastMidiSegment();	
+		midiSegment = supervisor.getLastMidiSegment();
+		midiSegment.zeroTiming();
 	}
 	
 	public synchronized void makeInitiateSegment(int duration) {
@@ -82,6 +85,11 @@ public class GenerateMidi_Segment extends GenerateMidi {
 			accumTime += dur;
 		}
 		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 30) + 80, duration * 2);
+		initiateSegementLength = accumTime + duration * 2;
+	}
+	
+	public int getInitiateSegementLength() {
+		return initiateSegementLength;
 	}
 	
 	public synchronized void makeSupportSegment(int duration, int pitch) {
@@ -92,7 +100,10 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		//	MidiMessage mess = supervisor.getLastMidiSegment().getFirstMessage();
 		//	pitchClass = mess.pitch % 12;
 		//}
-		addNote(0, pitch - 12, (int)(Math.random() * 30) + 80, duration);
+		for (int i=0; i<4; i++) {
+			addNote(i * duration, pitch - 12, (int)(Math.random() * 30) + 80, duration);
+		}
+		
 	}
 	
 	private void addNote(int startTime, int pitch, int velocity, int duration) {

@@ -21,9 +21,15 @@ public class MidiSegment {
 	}
 	
 	public void add(MidiMessage message) {
-		int duration = (int)message.timeMillis;
-		segment.add(message);
-		segmentDuration =+ duration;
+		MidiMessage mess = new MidiMessage();
+		mess.pitch = message.pitch;
+		mess.velocity = message.velocity;
+		mess.channel = message.channel;
+		mess.timeMillis = message.timeMillis;
+		mess.messageType = message.messageType;
+		mess.status = message.status;
+		segment.add(mess);
+		segmentDuration = (int)message.timeMillis;
 	}
 	
 	public int duration() {
@@ -42,6 +48,18 @@ public class MidiSegment {
 	
 	public MidiMessage getFirstMessage() {
 		return (MidiMessage)(segment.get(0));
+	}
+	
+	public int size() {
+		return segment.size();
+	}
+	
+	public void zeroTiming() {
+		long startTime = getFirstMessage().timeMillis;
+		for(int i=0; i< segment.size(); i++) {
+			long currTime = ((MidiMessage)(segment.get(i))).timeMillis;
+			((MidiMessage)(segment.get(i))).timeMillis = currTime - startTime;
+		}
 	}
 
 }

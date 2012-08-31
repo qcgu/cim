@@ -31,6 +31,7 @@ public class SupervisorMidi implements Supervisor {
 	private DecideMidi_UserControl decider_userControl;
 	private DecideMidi_01 decider_01;
 	private Test tester;
+	private MidiSegment sMidiSegment;
 	
 	private static final int SEGMENT_TESTS = 0;
 	//private static final int MESSAGE_TESTS = 1;
@@ -42,6 +43,7 @@ public class SupervisorMidi implements Supervisor {
 		sLastMidiMessage = new MidiMessage();
 		sMidiMessageList = new ArrayList<MidiMessage>();
 		sMidiStartTime=0;
+		sMidiSegment = new MidiSegment();
 		
 		//Capture input and output midi
 		capturer = new CaptureMidi(this);
@@ -91,6 +93,8 @@ public class SupervisorMidi implements Supervisor {
 			if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 				// Note messages
 				// Run appropriate decider
+				sMidiSegment.add(newMessage);
+				this.txtMsg("addMidiMessage: " + newMessage.pitch + " " + newMessage.velocity);
 				decider_01.messageIn(newMessage);
 				//this.txtMsg("Calling Analyser - Note");
 				if(analyser_silence.newMidi()) analyser_silence.analyse();
@@ -104,8 +108,7 @@ public class SupervisorMidi implements Supervisor {
 		}
 	}
 
-	public synchronized void addMidiSegment(int segmentStart, int segmentEnd) {
-		sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
+	public synchronized void addMidiSegment(int segmentStart, int segmentEnd) {	
 		//this.txtMsg("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
 		System.gc();
 		if(sTestMode) {
@@ -113,6 +116,8 @@ public class SupervisorMidi implements Supervisor {
 		} else {
 			decider_01.chooseNextAction();
 		}
+		//this.txtMsg("in SupervisorMidi sMidiSegment duration is " + sMidiSegment.size());
+		sMidiSegment = new MidiSegment(); //segmentStart-1, segmentEnd);
 	}	
 	
 	

@@ -44,13 +44,15 @@ public class OutputQueue {
 			if(firstEvent) {
 				startTime = midimessage.timeMillis;
 				firstEvent = false;
-			}
+			//}
 			delay = midimessage.timeMillis - startTime;
 			if (delay<1) delay=1; //allow 1 ms for timer
 			if(startOnNextBeat || startOnNextBar) {
 				int currentBeat = sCurrentBeat;
 				long currentBeatTime = sBeatList[currentBeat];
 				long elapsedTime = System.currentTimeMillis() - currentBeatTime;
+				System.out.println("ElapsedTime = " + elapsedTime);
+				if (elapsedTime > 450) elapsedTime = 0;
 				long timeToWait = sTimeBetweenBeats;
 				if(startOnNextBar) {
 					long barElapsed = (currentBeat - 1) * timeToWait;
@@ -59,10 +61,12 @@ public class OutputQueue {
 				timeToWait = timeToWait - elapsedTime;
 				delay = delay + timeToWait;
 				if (delay<0) delay=0;
+			} // added
 			}
 			//System.out.println("DELAY IS "+delay);
+			//System.out.println("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
 			segmentTimer = new Timer();
-			segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
+			segmentTimer.schedule(new Player(this.midiGen,midimessage), midimessage.timeMillis + delay);
 			//segmentTimer.cancel();
 		}
 	}

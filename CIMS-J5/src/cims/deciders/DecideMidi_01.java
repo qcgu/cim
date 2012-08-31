@@ -19,6 +19,7 @@ public class DecideMidi_01 {
 	
 	private int currentAction = -1;
 	private boolean mirroring = false;
+	private boolean mirrorFirstPass = false;
 	
 	
 	public DecideMidi_01(SupervisorMidi supervisor) {
@@ -46,21 +47,20 @@ public class DecideMidi_01 {
 		}
 		// play support with note on
 		if (currentAction==2 && !support_loop.hasStarted) {
-			generator_segment.makeSupportSegment(sSilenceDelay, newMidiMessage.pitch);
+			generator_segment.makeSupportSegment(500, newMidiMessage.pitch); //sSilenceDelay, newMidiMessage.pitch);
 			support_loop = new GenerateMidi_Loop(generator_segment);
-			support_loop.setInterval(sSilenceDelay);
+			support_loop.setInterval(500 * 4); //sSilenceDelay * 4); // hard coded to 120 bpm for now2
 			support_loop.start();
 		}
 		// stop generator if in mirror mode
 		if (mirroring) {
-			support_loop.stop();
-			initiate_loop.stop();
-			generator_segment.stop();
-			//supervisor.txtMsg("Turning off notes");
-			turnOffAgentNotes(); // these stop and turn-off calls need to go together to avoid stuck notes
-			//mirroring = false;
-			//initiating = false;
-			// play mirrored note
+			if (mirrorFirstPass){
+				support_loop.stop();
+				initiate_loop.stop();
+				generator_segment.stop();
+				turnOffAgentNotes();
+				mirrorFirstPass = false;
+			}
 			supervisor.dataOut(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity});
 		}
 	}
@@ -78,7 +78,7 @@ public class DecideMidi_01 {
 				support_loop.stop();
 				initiate_loop.stop();
 				generator_segment.makeLastSegment();
-				generator_segment.generate(sNextPlay); // repeat last segment?
+				generator_segment.generate(); //sNextPlay); // repeat last segment?
 				break;
 			case 1: // initiate
 				supervisor.txtMsg("Choosing to INITIATE");
@@ -89,7 +89,7 @@ public class DecideMidi_01 {
 				turnOffAgentNotes();
 				generator_segment.makeInitiateSegment(500); //sSilenceDelay);
 				initiate_loop = new GenerateMidi_Loop(generator_segment);
-				initiate_loop.setInterval(sSilenceDelay*4);
+				initiate_loop.setInterval(generator_segment.getInitiateSegementLength());
 				initiate_loop.start();
 				// clear out pitch histogram memory
 				supervisor.analyser_stats.clearPitchHistogram();
@@ -105,6 +105,7 @@ public class DecideMidi_01 {
 			case 3: // mirror
 				supervisor.txtMsg("Choosing to MIRROR");
 				mirroring = true;
+				mirrorFirstPass = true;
 				break;
 		}
 	}
