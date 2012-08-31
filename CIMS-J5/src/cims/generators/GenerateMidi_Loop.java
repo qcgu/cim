@@ -34,6 +34,7 @@ public class GenerateMidi_Loop {
 	}
 	
 	public void stop() {
+		//System.out.println("GenerateMidi_Loop.stop() has been called");
 		this.repeatTimer.cancel();
 		this.hasStarted = false;
 	}

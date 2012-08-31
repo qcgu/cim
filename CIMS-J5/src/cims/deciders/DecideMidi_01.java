@@ -56,8 +56,8 @@ public class DecideMidi_01 {
 			support_loop.stop();
 			initiate_loop.stop();
 			generator_segment.stop();
-			supervisor.txtMsg("Turning off notes");
-			turnOffAgentNotes(); // these two calls need to go together to avoid stuck notes
+			//supervisor.txtMsg("Turning off notes");
+			turnOffAgentNotes(); // these stop and turn-off calls need to go together to avoid stuck notes
 			//mirroring = false;
 			//initiating = false;
 			// play mirrored note
@@ -89,7 +89,7 @@ public class DecideMidi_01 {
 				turnOffAgentNotes();
 				generator_segment.makeInitiateSegment(500); //sSilenceDelay);
 				initiate_loop = new GenerateMidi_Loop(generator_segment);
-				initiate_loop.setInterval(sSilenceDelay*16);
+				initiate_loop.setInterval(sSilenceDelay*4);
 				initiate_loop.start();
 				// clear out pitch histogram memory
 				supervisor.analyser_stats.clearPitchHistogram();
