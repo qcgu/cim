@@ -37,7 +37,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	
 	public void generate() {
 		midiQueue.addSegment(midiSegment);
-		System.out.println("Playing generated segment " + midiSegment.size());
+		//System.out.println("Playing generated segment " + midiSegment.size());
 		midiQueue.play();
 	}
 	
@@ -85,7 +85,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 			accumTime += dur;
 		}
 		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 30) + 80, duration * 2);
-		initiateSegementLength = accumTime + duration * 2;
+		initiateSegementLength = accumTime + duration * 2 - 20; // slight reduction to avoid overshoot assuming quantise is on
 	}
 	
 	public int getInitiateSegementLength() {

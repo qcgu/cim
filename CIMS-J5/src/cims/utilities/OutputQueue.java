@@ -51,8 +51,8 @@ public class OutputQueue {
 				int currentBeat = sCurrentBeat;
 				long currentBeatTime = sBeatList[currentBeat];
 				long elapsedTime = System.currentTimeMillis() - currentBeatTime;
-				System.out.println("ElapsedTime = " + elapsedTime);
-				if (elapsedTime > 450) elapsedTime = 0;
+				//System.out.println("ElapsedTime = " + elapsedTime);
+				//if (elapsedTime > 450) elapsedTime = 500;
 				long timeToWait = sTimeBetweenBeats;
 				if(startOnNextBar) {
 					long barElapsed = (currentBeat - 1) * timeToWait;

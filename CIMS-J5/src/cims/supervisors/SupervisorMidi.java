@@ -94,7 +94,7 @@ public class SupervisorMidi implements Supervisor {
 				// Note messages
 				// Run appropriate decider
 				sMidiSegment.add(newMessage);
-				this.txtMsg("addMidiMessage: " + newMessage.pitch + " " + newMessage.velocity);
+				//this.txtMsg("addMidiMessage: " + newMessage.pitch + " " + newMessage.velocity);
 				decider_01.messageIn(newMessage);
 				//this.txtMsg("Calling Analyser - Note");
 				if(analyser_silence.newMidi()) analyser_silence.analyse();
