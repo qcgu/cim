@@ -36,16 +36,19 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public void generate() {
+		midiQueue = new OutputQueue(this);
 		midiQueue.addSegment(midiSegment);
 		//System.out.println("Playing generated segment " + midiSegment.size());
 		midiQueue.play();
 	}
 	
 	public void stop() {
+		//supervisor.txtMsg("Cancelling Queue");
 		midiQueue.cancel();
 	}
 	
 	public void generate(int start) {
+		midiQueue = new OutputQueue(this);
 		switch(start) {
 		case 0:
 			midiQueue.startOnPlay();

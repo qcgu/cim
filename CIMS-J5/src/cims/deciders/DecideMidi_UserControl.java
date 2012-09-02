@@ -71,9 +71,9 @@ public class DecideMidi_UserControl {
 	public void recalcSilenceDelay() {
 		int beatLength = 1000/(sBeatsPerMinute/60);
 		sSilenceDelay = (sSegmentGap*(beatLength/4));
-		supervisor.txtMsg("Silence Delay: "+sSilenceDelay+"ms");
-		supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
-		supervisor.txtMsg("Beat Length: "+beatLength+"ms");
+		//supervisor.txtMsg("Silence Delay: "+sSilenceDelay+"ms");
+		//supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
+		//supervisor.txtMsg("Beat Length: "+beatLength+"ms");
 	}
 
 }
