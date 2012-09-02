@@ -9,7 +9,7 @@ import static cims.supervisors.SupervisorMidi_Globals.sLastMidiMessage;
 import static cims.supervisors.SupervisorMidi_Globals.sMidiMessageList;
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStartTime;
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
-import static cims.supervisors.SupervisorMidi_Globals.sSilenceDelay;
+import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
 
 public class DecideMidi_01 {
 	private SupervisorMidi supervisor;
@@ -86,9 +86,9 @@ public class DecideMidi_01 {
 				initiate_loop.stop();
 				generator_segment.stop(); // stop prev initiate
 				turnOffAgentNotes();
-				generator_segment.makeInitiateSegment(sSilenceDelay);
+				generator_segment.makeInitiateSegment(sDefaultDuration);
 				initiate_loop = new GenerateMidi_Loop(generator_segment);
-				initiate_loop.setInterval(sSilenceDelay*16);
+				initiate_loop.setInterval(sDefaultDuration*16);
 				initiate_loop.start();
 				break;
 			case 2: // support
@@ -97,9 +97,9 @@ public class DecideMidi_01 {
 				//initiating = false;
 				support_loop.stop();
 				initiate_loop.stop();
-				generator_segment.makeSupportSegment(sSilenceDelay);
+				generator_segment.makeSupportSegment(sDefaultDuration);
 				support_loop = new GenerateMidi_Loop(generator_segment);
-				support_loop.setInterval(sSilenceDelay);
+				support_loop.setInterval(sDefaultDuration);
 				//generator_loop.start();
 				break;
 			case 3: // mirror

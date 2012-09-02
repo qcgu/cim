@@ -6,7 +6,7 @@ import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.SilenceTimer;
 
-import static cims.supervisors.SupervisorMidi_Globals.sSilenceDelay;
+import static cims.supervisors.SupervisorMidi_Globals.sSegmentGapDuration;
 
 public class AnalyseMidi_Silence extends AnalyseMidi {
 
@@ -42,7 +42,7 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 					//This is the first all notes off event
 					this.segmentEnd = this.current_message.messageNum;
 					//Start silence timer
-					silenceTimer.start(sSilenceDelay);
+					silenceTimer.start(sSegmentGapDuration);
 				}			
 			} 
 	}

@@ -8,7 +8,7 @@ import cims.capturers.CaptureOutput;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
-import cims.generators.GenerateMidi_Loop;
+//import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_NoteMirror;
 import cims.generators.GenerateMidi_Segment;
 import cims.utilities.Test;

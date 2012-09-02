@@ -13,7 +13,8 @@ public class SupervisorMidi_Globals {
 	public static MidiSegment sMidiSegment;
 	public static MidiStatistics sMidiStats;
 	public static long sMidiStartTime=0;
-	public static int sSilenceDelay = 390;
+	public static int sSegmentGapDuration = 390;
+	public static int sDefaultDuration = 250;
 	
 	// Static properties set by external control
 	public static int sSegmentGap = 3;

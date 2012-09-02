@@ -6,7 +6,8 @@ import static cims.supervisors.SupervisorMidi_Globals.sMetronome;
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
 import static cims.supervisors.SupervisorMidi_Globals.sRepeatInterval;
 import static cims.supervisors.SupervisorMidi_Globals.sSegmentGap;
-import static cims.supervisors.SupervisorMidi_Globals.sSilenceDelay;
+import static cims.supervisors.SupervisorMidi_Globals.sSegmentGapDuration;
+import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
 import static cims.supervisors.SupervisorMidi_Globals.sTimeBetweenBeats;
 import static cims.supervisors.SupervisorMidi_Globals.sTestMode;
 import static cims.supervisors.SupervisorMidi_Globals.sBeatsPerMinute;
@@ -24,7 +25,7 @@ public class DecideMidi_UserControl {
 		//this.txtMsg("Super Key: "+this.io.key()+" Super Value: "+this.io.value());
 				if(key.equals("segmentGap")) {
 					sSegmentGap = value;
-					recalcSilenceDelay();
+					recalcDefaultTimings();
 				}
 				if(key.equals("repeatCue")) {
 					sRepeatInterval = value;
@@ -51,7 +52,7 @@ public class DecideMidi_UserControl {
 				}
 				if(key.equals("bpm") && sMetronome) {
 					sBeatsPerMinute = value;
-					recalcSilenceDelay();
+					recalcDefaultTimings();
 				}
 				if(key.equals("test")) {
 					if(value==1) {
@@ -68,10 +69,12 @@ public class DecideMidi_UserControl {
 				}
 	}
 	
-	public void recalcSilenceDelay() {
-		int beatLength = 1000/(sBeatsPerMinute/60);
-		sSilenceDelay = (sSegmentGap*(beatLength/4));
-		supervisor.txtMsg("Silence Delay: "+sSilenceDelay+"ms");
+	public void recalcDefaultTimings() {
+		Float beatLength = 1000/((float)sBeatsPerMinute/60);
+		sSegmentGapDuration = (sSegmentGap*(beatLength.intValue()/4))-10;
+		sDefaultDuration = (beatLength.intValue()/2);
+		supervisor.txtMsg("Segment Gap Duration: "+sSegmentGapDuration+"ms");
+		supervisor.txtMsg("Default Duration: "+sDefaultDuration+"ms");
 		supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
 		supervisor.txtMsg("Beat Length: "+beatLength+"ms");
 	}
