@@ -102,7 +102,7 @@ public class DecideMidi_01 {
 				//initiating = false;
 				support_loop.stop();
 				initiate_loop.stop();
-				generator_segment.makeSupportSegment(sDefaultDuration);
+				//generator_segment.makeSupportSegment(sDefaultDuration);
 				support_loop = new GenerateMidi_Loop(generator_segment);
 				support_loop.setInterval(sDefaultDuration);
 				//generator_loop.start();
