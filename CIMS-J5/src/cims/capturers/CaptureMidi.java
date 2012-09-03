@@ -71,7 +71,6 @@ public class CaptureMidi {
 	}
 
 	public void finalMessage() {
-		
 		midiMessage.set(midiData);
 		this.supervisor.addMidiMessage(midiMessage);
 		//this.supervisor.txtMsg("TYPE: "+midiMessage.messageType+" DATA: "+midiData[1]+","+midiData[2]);

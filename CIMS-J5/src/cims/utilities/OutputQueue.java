@@ -1,4 +1,4 @@
-package cims.utilities;
+ package cims.utilities;
 
 import java.util.*;
 
@@ -18,6 +18,9 @@ public class OutputQueue {
 	private volatile MidiSegment segmentToPlay;
 	private Timer segmentTimer;
 	
+	private ArrayList<Timer> timerList;
+	private ArrayList<MidiMessage> noteOnList;
+	
 	private boolean startOnNextBeat = false;
 	private boolean startOnNextBar = false;
 	/**
@@ -25,7 +28,8 @@ public class OutputQueue {
 	 */
 	public OutputQueue(GenerateMidi_Segment newMidiGen) {
 		this.midiGen = newMidiGen;
-		
+		this.timerList = new ArrayList<Timer>();
+		this.noteOnList = new ArrayList<MidiMessage>();
 	}
 	
 	public synchronized void addSegment(MidiSegment segment) {
@@ -41,16 +45,21 @@ public class OutputQueue {
 		while (segmentIterator.hasNext()) {
 			MidiMessage midimessage = new MidiMessage();
 			midimessage.copy(segmentIterator.next());
+			if(midimessage.noteOnOff==1) {
+				noteOnList.add(midimessage);
+			}
 			if(firstEvent) {
 				startTime = midimessage.timeMillis;
 				firstEvent = false;
-			}
+			//}
 			delay = midimessage.timeMillis - startTime;
 			if (delay<1) delay=1; //allow 1 ms for timer
 			if(startOnNextBeat || startOnNextBar) {
 				int currentBeat = sCurrentBeat;
 				long currentBeatTime = sBeatList[currentBeat];
 				long elapsedTime = System.currentTimeMillis() - currentBeatTime;
+				//System.out.println("ElapsedTime = " + elapsedTime);
+				//if (elapsedTime > 450) elapsedTime = 500;
 				long timeToWait = sTimeBetweenBeats;
 				if(startOnNextBar) {
 					long barElapsed = (currentBeat - 1) * timeToWait;
@@ -59,17 +68,31 @@ public class OutputQueue {
 				timeToWait = timeToWait - elapsedTime;
 				delay = delay + timeToWait;
 				if (delay<0) delay=0;
+			} // added
 			}
 			//System.out.println("DELAY IS "+delay);
+			//System.out.println("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
 			segmentTimer = new Timer();
-			segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
+			timerList.add(segmentTimer);
+			segmentTimer.schedule(new Player(this.midiGen,midimessage), midimessage.timeMillis + delay);
 			//segmentTimer.cancel();
 		}
 	}
 		
 	public void cancel() {
-		if(segmentTimer!=null) {
-			this.segmentTimer.cancel();
+		//System.out.println("Events to Cancel: "+timerList.size());
+		Iterator<Timer> timerIterator = timerList.iterator();
+		while(timerIterator.hasNext()) {
+			Timer killTimer = timerIterator.next();
+			if(killTimer!=null) {
+				killTimer.cancel();
+			}
+		}
+		Iterator<MidiMessage> noteOnIterator = noteOnList.iterator();
+		while(noteOnIterator.hasNext()) {
+			MidiMessage message = noteOnIterator.next();
+			message.status = MidiMessage.NOTE_OFF;
+			this.midiGen.output(message);
 		}
 	}
 	

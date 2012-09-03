@@ -69,6 +69,7 @@ public class DecideMidi_UserControl {
 				}
 	}
 	
+<<<<<<< HEAD
 	public void recalcDefaultTimings() {
 		Float beatLength = 1000/((float)sBeatsPerMinute/60);
 		sSegmentGapDuration = (sSegmentGap*(beatLength.intValue()/4))-10;
@@ -77,6 +78,14 @@ public class DecideMidi_UserControl {
 		supervisor.txtMsg("Default Duration: "+sDefaultDuration+"ms");
 		supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
 		supervisor.txtMsg("Beat Length: "+beatLength+"ms");
+=======
+	public void recalcSilenceDelay() {
+		int beatLength = 1000/(sBeatsPerMinute/60);
+		sSilenceDelay = (sSegmentGap*(beatLength/4));
+		//supervisor.txtMsg("Silence Delay: "+sSilenceDelay+"ms");
+		//supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
+		//supervisor.txtMsg("Beat Length: "+beatLength+"ms");
+>>>>>>> refs/heads/development
 	}
 
 }
