@@ -20,11 +20,11 @@ public abstract class AnalyseMidi {
 	
 	public boolean newMidi() {
 		boolean returnValue = false;
-			if (sMidiMessageList.size() > 0) {
-				this.current_message.copy(sMidiMessageList.get(MidiMessage.sMessagesCount - 1));
-				returnValue = true;
-			} 
-			return returnValue;
+		if (sMidiMessageList.size() > 0) {
+			this.current_message.copy(sMidiMessageList.get(MidiMessage.sMessagesCount - 1));
+			returnValue = true;
+		} 
+		return returnValue;
 	}
 	abstract void analyse();
 

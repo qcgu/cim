@@ -21,12 +21,12 @@ public class CaptureOutput {
 	public void in(int[] midiData) {
 		new MidiMessage();
 		
-		if (midiData[0] == 144) {
+		if (midiData[0] >= 144 && midiData[0] <= 159) {
 			//this.supervisor.txtMsg("Message Type: ON " + message.pitch);
 			onList.add(midiData[1]);
 		}
 		
-		if (midiData[0] == 128) {
+		if (midiData[0] >= 128 && midiData[0] <= 143) {
 			//this.supervisor.txtMsg("Message Type: OFF");
 			deleteMatchingNoteOn(midiData[1]);
 		}
@@ -55,9 +55,12 @@ public class CaptureOutput {
 	
 	public void allNotesOff() {
 		//int[] pitches = getOnPitches();
-		for(int i=0; i<onList.size(); i++) {
+		//for(int i=0; i<onList.size(); i++) {
+		for(int i=0; i<128; i++) {
 			//supervisor.txtMsg("pitch  in on pitches " + pitches[i]);
-			supervisor.dataOut(new int[] {128, onList.get(i), 0});
+			for(int j=0; j<2; j++) {
+				supervisor.dataOut(new int[] {128+j, i, 0});
+			}
 		}
 	}
 }

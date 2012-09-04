@@ -61,5 +61,19 @@ public class MidiSegment {
 			((MidiMessage)(segment.get(i))).timeMillis = currTime - startTime;
 		}
 	}
+	
+	// works for note on and off only at present
+	public void setChannel(int channel) {
+		for(int i=0; i< segment.size(); i++) {
+			int currChan = ((MidiMessage)(segment.get(i))).status;
+			//System.out.println("MidiSegment " + currChan);
+			if (currChan >= 144 && currChan <= 159) {
+				((MidiMessage)(segment.get(i))).status = 144 + channel - 1;
+			}
+			if (currChan >= 128 && currChan <= 143) {
+				((MidiMessage)(segment.get(i))).status = 128 + channel - 1;
+			}
+		}
+	}
 
 }

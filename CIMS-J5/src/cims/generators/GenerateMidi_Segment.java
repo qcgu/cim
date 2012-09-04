@@ -68,6 +68,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	public synchronized void makeLastSegment () {
 		// Play back the last segment
 		midiSegment = supervisor.getLastMidiSegment();
+		midiSegment.setChannel(2); // channel is in the prochial range of 1-16
 		midiSegment.zeroTiming();
 	}
 	
@@ -76,15 +77,15 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		this.midiSegment = new MidiSegment();
 		//int[] pitches = {72, 74, 76, 79, 81, 84};
 		int accumTime = 0;
-		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 30) + 80, duration);
+		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 40) + 80, duration);
 		accumTime += duration;
-		for(int i=1; i<4; i++) {
+		for(int i=1; i<8; i++) {
 			int dur = duration;
 			if (Math.random() < 0.5) dur = duration / 2;
-			addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 30) + 80, dur);
+			addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 40) + 80, dur);
 			accumTime += dur;
 		}
-		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 30) + 80, duration * 2);
+		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 40) + 80, duration * 2);
 		initiateSegementLength = accumTime + duration * 2 - 20; // slight reduction to avoid overshoot assuming quantise is on
 	}
 	
@@ -101,18 +102,19 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		//	pitchClass = mess.pitch % 12;
 		//}
 		for (int i=0; i<4; i++) {
-			addNote(i * duration, pitch - 12, (int)(Math.random() * 30) + 80, duration);
+			addNote(i * duration, pitch - 12, (int)(Math.random() * 40) + 80, duration);
 		}
 		
 	}
 	
 	private void addNote(int startTime, int pitch, int velocity, int duration) {
 		MidiMessage noteOn = new MidiMessage();
-		int[] onMessage = {MidiMessage.NOTE_ON,pitch,velocity};
+		// + 1 is to move the data to MIDI channel 2
+		int[] onMessage = {MidiMessage.NOTE_ON + 1, pitch, velocity};
 		noteOn.set(onMessage, false);
 		noteOn.timeMillis = startTime;
 		MidiMessage noteOff = new MidiMessage();
-		int[] offMessage = {MidiMessage.NOTE_OFF,pitch,0};
+		int[] offMessage = {MidiMessage.NOTE_OFF + 1, pitch, 0};
 		noteOff.set(offMessage, false);
 		noteOff.timeMillis = (int)(startTime + duration * 0.8);
 		this.midiSegment.add(noteOn);

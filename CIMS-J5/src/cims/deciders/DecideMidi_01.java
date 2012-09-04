@@ -61,7 +61,7 @@ public class DecideMidi_01 {
 				turnOffAgentNotes();
 				mirrorFirstPass = false;
 			}
-			supervisor.dataOut(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity});
+			supervisor.dataOut(new int[] {newMessage.status + 1, newMessage.pitch, newMessage.velocity});
 		}
 	}
 	
@@ -73,7 +73,7 @@ public class DecideMidi_01 {
 		}
 		switch (currentAction) {
 			case 0: // repeat
-				supervisor.txtMsg("Choosing to REPEAT");
+				supervisor.txtMsg("Choosing to REPEATING");
 				mirroring = false;
 				support_loop.stop();
 				initiate_loop.stop();
@@ -81,7 +81,7 @@ public class DecideMidi_01 {
 				generator_segment.generate(); //sNextPlay); // repeat last segment?
 				break;
 			case 1: // initiate
-				supervisor.txtMsg("Choosing to INITIATE");
+				supervisor.txtMsg("Choosing to INITIATING");
 				mirroring = false;
 				support_loop.stop(); // stop support
 				initiate_loop.stop();

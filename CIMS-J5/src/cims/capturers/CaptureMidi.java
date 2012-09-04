@@ -44,7 +44,8 @@ public class CaptureMidi {
 				midiData[2] = 0;
 				this.finalMessage();
 			}
-		} else {
+		} else { // ignore non note messages
+		//if(arg>=MidiMessage.NOTE_ON) {
 			//Data byte
 			//this.supervisor.txtMsg("DATA: "+arg);
 			switch(midiByte) {
