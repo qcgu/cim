@@ -91,8 +91,13 @@ public class SupervisorMidi implements Supervisor {
 			if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 				// Note messages
 				// Run appropriate decider
-				decider_01.messageIn(newMessage);
+
+				//this.txtMsg("addMidiMessage: " + newMessage.pitch + " " + newMessage.velocity);
+				sMidiSegment.add(newMessage);
+
 				//this.txtMsg("Calling Analyser - Note");
+				decider_01.messageIn(newMessage);
+				
 				if(analyser_silence.newMidi()) analyser_silence.analyse();
 				if(analyser_stats.newMidi()) analyser_stats.analyse();
 				if (decider_01.isMirroring()) generator_note.generate();

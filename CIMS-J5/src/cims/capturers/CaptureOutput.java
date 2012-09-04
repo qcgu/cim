@@ -21,12 +21,12 @@ public class CaptureOutput {
 	public void in(int[] midiData) {
 		new MidiMessage();
 		
-		if (midiData[0] == 144) {
+		if (midiData[0] >= 144 && midiData[0] <= 159) {
 			//this.supervisor.txtMsg("Message Type: ON " + message.pitch);
 			onList.add(midiData[1]);
 		}
 		
-		if (midiData[0] == 128) {
+		if (midiData[0] >= 128 && midiData[0] <= 143) {
 			//this.supervisor.txtMsg("Message Type: OFF");
 			deleteMatchingNoteOn(midiData[1]);
 		}
