@@ -59,8 +59,12 @@ public class MidiStatistics {
 		deviationDuration = (int) midiStats_Velocity.getStandardDeviation();
 	}
 	
+	/**
+	 * DUPLICATE OF  ALALYSEMIDI_STATS - Which do we want??
+	 */
 	// make a weighted selection of a pitch class from the histogram
-	public int getRandomPitchClass() {
+	/*
+	public int getRandomPitchValue() {
 		int max = 0;
 		for (int i=0; i<pitchClassHistogram.length; i++) {
 			max += pitchClassHistogram[i];
@@ -73,4 +77,5 @@ public class MidiStatistics {
 		}
 		return i;
 	}
+	*/
 }
