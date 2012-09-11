@@ -1,10 +1,11 @@
 package cims.analysers;
 
 import cims.supervisors.SupervisorMidi;
+import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiStatistics;
 
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
-
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class AnalyseMidi_Stats extends AnalyseMidi {
 	
@@ -19,14 +20,15 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 
 	@Override
 	public void analyse() {
-		midiStats.addPitch(current_message.pitch);
-		if (current_message.messageType == 144) { // note on message
+		
+		if (current_message.messageType == MidiMessage.NOTE_ON) { // note on message
 			pitchHistogram[current_message.pitch % 12]++;
 		}
-		//this.supervisor.txtMsg("Rnd Pitcht = " + getRandomPitch());
-		//this.supervisor.txtMsg("P_CUR: " + midiStats.current_pitch);
-		//this.supervisor.txtMsg("P_MEAN: "+ midiStats.meanPitch);
-		//this.supervisor.txtMsg("P_SD: "+ midiStats.deviationPitch);
+		
+		midiStats.addPitch(current_message.pitch);
+		LOGGER.info("P_CUR: " + midiStats.current_pitch);
+		LOGGER.info("P_MEAN: "+ midiStats.meanPitch);
+		LOGGER.info("P_SD: "+ midiStats.deviationPitch);
 		
 		//Update static version of midiStats
 		sMidiStats = midiStats;
@@ -38,13 +40,13 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 	}
 	
 	// choose a pitch from the histogram with weighted probability
-	public int getRandomPitchClass() {
+	public int getRandomPitchValue() {
 		int maxCnt = 0;
 		for (int i=0; i< pitchHistogram.length; i++) {
 			maxCnt += pitchHistogram[i];
 		}
 		int rnd = (int)(Math.random() * maxCnt);
-		//this.supervisor.txtMsg("mxCnt = " + maxCnt + " rnd = " + rnd);
+		//LOGGER.info("mxCnt = " + maxCnt + " rnd = " + rnd);
 		int val = 0;
 		int pClass = -1;
 		while (rnd >= val) {
