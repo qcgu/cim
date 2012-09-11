@@ -38,7 +38,10 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 	public boolean isUnusual() {
 		return false;
 	}
-	
+	/**
+	 * DUPLICATE of MIDISTATICS - Which do we want??
+	 */
+	/*
 	// choose a pitch from the histogram with weighted probability
 	public int getRandomPitchValue() {
 		int maxCnt = 0;
@@ -59,4 +62,5 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 	public void clearPitchHistogram() {
 		pitchHistogram = new int[12];
 	}
+	*/
 }
