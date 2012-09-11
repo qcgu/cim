@@ -1,6 +1,7 @@
 package cims.supervisors;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
@@ -27,6 +28,8 @@ public class SupervisorMidi_Globals {
 	public static int sNextPlay = 0;
 	
 	public static boolean sTestMode = false;
+	
+	public static final Logger LOGGER = Logger.getLogger(SupervisorMidi.class.getName());
 	
 	public SupervisorMidi_Globals() {
 		// TODO Auto-generated constructor stub
