@@ -29,6 +29,7 @@ public class MidiStatistics {
 		this.midiStats_Velocity = new SynchronizedDescriptiveStatistics();
 		this.midiStats_Duration = new SynchronizedDescriptiveStatistics();
 		// initialise pitch class histogram
+		this.pitchClassHistogram = new int[12];
 		this.clearPitchHistogram();
 	}
 
