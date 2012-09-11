@@ -46,7 +46,7 @@ public class SupervisorMidi implements Supervisor {
 		sMidiMessageList = new ArrayList<MidiMessage>();
 		sMidiSegment = new MidiSegment();
 		sMidiStartTime=0;
-		
+		sMidiStats = new MidiStatistics();
 		//Capture input and output midi
 		capturer = new CaptureMidi(this);
 		outputTracker = new CaptureOutput(this);

@@ -14,6 +14,7 @@ import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.OutputQueue;
+import cims.utilities.Randomiser;
 
 public class GenerateMidi_Segment extends GenerateMidi {
 
@@ -21,6 +22,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	private volatile OutputQueue midiQueue;
 	private SupervisorMidi supervisor;
 	private int initiateSegementLength = 0;
+	private Randomiser randomiser;
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor) {
 		super(supervisor);
@@ -70,9 +72,8 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		
 	public synchronized void makeLastSegment () {
 		// Play back the last segment
-		midiSegment = supervisor.getLastMidiSegment();
+		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
 		midiSegment.setChannel(2); // channel is in the prochial range of 1-16
-		midiSegment.zeroTiming();
 	}
 	
 	public synchronized void makeInitiateSegment(int duration) {
@@ -80,15 +81,15 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		this.midiSegment = new MidiSegment();
 		//int[] pitches = {72, 74, 76, 79, 81, 84};
 		int accumTime = 0;
-		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 40) + 80, duration);
+		addNote(accumTime, randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, duration);
 		accumTime += duration;
 		for(int i=1; i<8; i++) {
 			int dur = duration;
 			if (Math.random() < 0.5) dur = duration / 2;
-			addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 40) + 80, dur);
+			addNote(accumTime, randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, dur);
 			accumTime += dur;
 		}
-		addNote(accumTime, supervisor.analyser_stats.getRandomPitchClass() + 72, (int)(Math.random() * 40) + 80, duration * 2);
+		addNote(accumTime, randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, duration * 2);
 		initiateSegementLength = accumTime + duration * 2 - 20; // slight reduction to avoid overshoot assuming quantise is on
 	}
 	
@@ -105,7 +106,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		//	pitchClass = mess.pitch % 12;
 		//}
 		for (int i=0; i<4; i++) {
-			addNote(i * duration, pitch - 12, (int)(Math.random() * 40) + 80, duration);
+			addNote(i * duration, pitch - 12, randomiser.positiveInteger(40) + 80, duration);
 		}
 		
 	}
