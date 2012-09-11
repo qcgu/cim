@@ -1,7 +1,9 @@
 package cims.deciders;
 
 import cims.datatypes.MidiMessage;
+import cims.datatypes.MidiSegment;
 import cims.generators.GenerateMidi_Loop;
+import cims.generators.GenerateMidi_NoteMirror;
 import cims.generators.GenerateMidi_Segment;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.Randomiser;
@@ -16,114 +18,109 @@ import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class DecideMidi_01 {
 	private SupervisorMidi supervisor;
-	private GenerateMidi_Segment generator_segment;
+	private GenerateMidi_Segment generator_repeatSegment;
+	private GenerateMidi_Segment generator_mirrorSegment;
+	private GenerateMidi_Segment generator_initiateSegment;
+	private GenerateMidi_NoteMirror generator_mirror;
 	private GenerateMidi_Loop support_loop;
 	private GenerateMidi_Loop initiate_loop;
 	private Randomiser randomiser;
 	
 	private int currentAction = -1;
+	private int nextAction = 2;
 	private boolean mirroring = false;
-	private boolean mirrorFirstPass = false;
-	
 	
 	public DecideMidi_01(SupervisorMidi supervisor) {
 		this.supervisor=supervisor;
-		support_loop = new GenerateMidi_Loop(generator_segment);
-		initiate_loop = new GenerateMidi_Loop(generator_segment);
+		generator_repeatSegment = new GenerateMidi_Segment(supervisor);
+		generator_mirrorSegment = new GenerateMidi_Segment(supervisor);
+		generator_initiateSegment = new GenerateMidi_Segment(supervisor);
+		generator_mirror = new GenerateMidi_NoteMirror(supervisor);
+		randomiser = new Randomiser();
 	}
-	
-	public void addGenerator(GenerateMidi_Segment gs) {
-		this.generator_segment = gs;
-	}
-	
-	public void messageIn(MidiMessage newMessage) {
-		MidiMessage newMidiMessage = new MidiMessage();
-		newMidiMessage.copy(newMessage);
-		sLastMidiMessage = newMidiMessage;
-		sMidiMessageList.add(newMidiMessage);
-		LOGGER.info("AMM: "+newMessage.messageNum+"/"+MidiMessage.sMessagesCount+","+newMessage.timeMillis+","+newMessage.status+","+newMessage.pitch+","+newMessage.velocity+","+newMessage.noteOnOff+","+newMessage.channel+" |");
-		if (sMidiStartTime==0) sMidiStartTime = System.currentTimeMillis();
 
-		// start with supporting role
-		if (currentAction == -1) {
-			chooseNextAction();
+	public void messageIn(MidiMessage newMessage) {
+		if(mirroring) {
+			generator_mirror.setMessage(newMessage);
+			generator_mirror.transform(GenerateMidi_NoteMirror.PITCH_SHIFT, 12);
+			generator_mirror.output();
+		}
+
+		if (currentAction==2 && !support_loop.hasStarted) { //Wait for midi in before supporting
 			support_loop.start();
 		}
-		// play support with note on
-		if (currentAction==2 && !support_loop.hasStarted) {
-			generator_segment.makeSupportSegment(500, newMidiMessage.pitch); //sSilenceDelay, newMidiMessage.pitch);
-			support_loop = new GenerateMidi_Loop(generator_segment);
-			support_loop.setInterval(500 * 4); //sSilenceDelay * 4); // hard coded to 120 bpm for now2
-			support_loop.start();
-		}
-		// stop generator if in mirror mode
-		if (mirroring) {
-			if (mirrorFirstPass){
-				support_loop.stop();
-				initiate_loop.stop();
-				generator_segment.stop();
-				turnOffAgentNotes();
-				mirrorFirstPass = false;
-			}
-			supervisor.dataOut(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity}); // Should this be queue immediate??
-		}
+
 	}
 	
 	public void chooseNextAction() {
+		mirroring = false;
+		if(support_loop!=null) support_loop.stop();
+		if(initiate_loop!=null) initiate_loop.stop();
+		
 		if(currentAction<0) {
 			currentAction=2; //default start is SUPPORT
 		} else {
-			currentAction = randomiser.positiveInteger(3);
+			currentAction = nextAction;
 		}
+		nextAction = randomiser.positiveInteger(3);
+		supervisor.txtMsg("NOW >> "+ this.actionName(currentAction) +" -- NEXT >>"+ this.actionName(nextAction));
 		switch (currentAction) {
 			case 0: // repeat
-				supervisor.txtMsg("Choosing to REPEAT");
-				mirroring = false;
-				//initiating = false;
-				support_loop.stop();
-				initiate_loop.stop();
-				generator_segment.makeLastSegment();
-				generator_segment.generate(sNextPlay); // repeat last segment?
+				generator_repeatSegment.makeLastSegment();
+				generator_repeatSegment.generate(sNextPlay); // repeat last segment?
 				break;
 			case 1: // initiate
-				supervisor.txtMsg("Choosing to INITIATE");
-				mirroring = false;
-				//initiating = true;
-				support_loop.stop(); // stop support
-				initiate_loop.stop();
-				generator_segment.stop(); // stop prev initiate
-				turnOffAgentNotes();
-				generator_segment.makeInitiateSegment(sDefaultDuration);
-				initiate_loop = new GenerateMidi_Loop(generator_segment);
-				initiate_loop.setInterval(generator_segment.getInitiateSegementLength());
+				generator_initiateSegment.makeEmptySegment();
+				int length = this.addInitiateNotes(sDefaultDuration);
+				initiate_loop = new GenerateMidi_Loop(generator_initiateSegment);
+				initiate_loop.setInterval(length);
 				initiate_loop.start();
 				// clear out pitch histogram memory
 				sMidiStats.clearPitchHistogram();
 				break;
 			case 2: // support
-				supervisor.txtMsg("Choosing to SUPPORT");
-				mirroring = false;
-				//initiating = false;
-				support_loop.stop();
-				initiate_loop.stop();
-				//generator_segment.makeSupportSegment(sDefaultDuration);
-				support_loop = new GenerateMidi_Loop(generator_segment);
+				generator_mirrorSegment.makeNoteSegment(0,supervisor.getLastMidiSegment().firstMessage().pitch, randomiser.positiveInteger(40) + 80, sDefaultDuration);
+				support_loop = new GenerateMidi_Loop(generator_mirrorSegment);
 				support_loop.setInterval(sDefaultDuration);
-				//generator_loop.start();
+				//support_loop.start();  >>> Starts only when next midi is received.
 				break;
 			case 3: // mirror
-				supervisor.txtMsg("Choosing to MIRROR");
 				mirroring = true;
-				mirrorFirstPass = true;
 				break;
 		}
 	}
 	
-	private void turnOffAgentNotes() {
-		supervisor.allNotesOff();
+	public String actionName(int action) {
+		String returnString = "";
+		switch(action) {
+		case 0:
+			returnString = "REPEAT";
+			break;
+		case 1:
+			returnString = "INITIATE";
+			break;
+		case 2:
+			returnString = "SUPPORT";
+			break;
+		case 3:
+			returnString = "MIRROR";
+			break;
+		}
+		return returnString;
 	}
-	
-	public boolean isMirroring () {
-		return mirroring;
+	public int addInitiateNotes(int duration) {
+		int accumTime = 0;
+		int segmentLength = 0;
+		generator_initiateSegment.addNote(accumTime,randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, duration);
+		accumTime += duration;
+		for(int i=1; i<8; i++) {
+			int dur = duration;
+			if (Math.random() < 0.5) dur = duration / 2;
+			generator_initiateSegment.addNote(accumTime,randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, dur);
+			accumTime += dur;
+		}
+		generator_initiateSegment.addNote(accumTime,randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, duration*2);
+		segmentLength = accumTime + duration * 2 - 20; // slight reduction to avoid overshoot assuming quantise is on
+		return segmentLength;
 	}
 }

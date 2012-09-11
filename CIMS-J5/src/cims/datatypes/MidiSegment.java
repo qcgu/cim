@@ -74,7 +74,8 @@ public class MidiSegment {
 		long startTime = this.firstMessage().timeMillis;
 		Iterator<MidiMessage> segmentIterator = newSegment.asList().iterator();
 		while(segmentIterator.hasNext()) {
-			segmentIterator.next().timeMillis =- startTime;
+			MidiMessage message = segmentIterator.next();
+			message.timeMillis -= startTime;
 		}
 		return newSegment;
 	}

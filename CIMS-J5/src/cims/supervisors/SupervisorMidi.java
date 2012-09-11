@@ -15,6 +15,7 @@ import cims.generators.GenerateMidi_Segment;
 import cims.utilities.Test;
 import cims.datatypes.*;
 import cims.deciders.DecideMidi_01;
+import cims.deciders.DecideMidi_SimpleRepeat;
 import cims.deciders.DecideMidi_UserControl;
 
 import static cims.supervisors.SupervisorMidi_Globals.*;
@@ -30,6 +31,7 @@ public class SupervisorMidi implements Supervisor {
 	private GenerateMidi_NoteMirror generator_note;
 	private DecideMidi_UserControl decider_userControl;
 	private DecideMidi_01 decider_01;
+	private DecideMidi_SimpleRepeat decider_simpleRepeat;
 	private CaptureOutput outputTracker;
 	private Test tester;
 	
@@ -57,14 +59,14 @@ public class SupervisorMidi implements Supervisor {
 		//Decide what to do
 		decider_userControl = new DecideMidi_UserControl(this);
 		decider_01 = new DecideMidi_01(this);
+		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
 		//Generate output
 		generator_segment = new GenerateMidi_Segment(this);
-		decider_01.addGenerator(generator_segment);
 		generator_note = new GenerateMidi_NoteMirror(this);
 		//Test
 		tester = new Test(this);
 		//Set Log Level for SupervisorMidi Global Logger
-		LOGGER.setLevel(Level.INFO);
+		LOGGER.setLevel(Level.WARNING);
 	}
 	
 	public void dataIn() {
@@ -86,8 +88,10 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void addMidiMessage(MidiMessage newMessage) {
+		sLastMidiMessage = new MidiMessage();
 		sLastMidiMessage.copy(newMessage);
 		sMidiMessageList.add(sLastMidiMessage);
+
 		if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 			LOGGER.info("addMidiMessage: NOTE");
 			this.doNext(MESSAGE_NOTE);
@@ -110,7 +114,6 @@ public class SupervisorMidi implements Supervisor {
 			decider_01.messageIn(sLastMidiMessage);
 			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			if(analyser_stats.newMidi()) analyser_stats.analyse();	
-			if (decider_01.isMirroring()) generator_note.generate();
 			break;
 		case MESSAGE_CONTROL:
 			if(analyser_controls.newMidi()) analyser_controls.analyse();
@@ -118,6 +121,7 @@ public class SupervisorMidi implements Supervisor {
 		case SEGMENT:
 			System.gc(); //force garbage collection
 			decider_01.chooseNextAction();
+			//decider_simpleRepeat.repeatLastSegment();
 			break;
 		case TEST_MESSAGE_NOTE:
 			LOGGER.info("RUN MIDIMESSAGE TESTS");

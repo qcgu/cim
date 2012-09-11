@@ -44,7 +44,7 @@ public class MidiStatistics {
 	}
 	
 	public int getPitchClass(int pitch) {
-		pitch =- 1; //Allow for 1-12
+		pitch -= 1; //Allow for 1-12
 		return pitchClassHistogram[pitch];
 	}
 	

@@ -38,6 +38,7 @@ public class OutputQueue {
 		long segmentStartTime = 0;
 		long delay = 0;
 		long timeToWait = sTimeBetweenBeats;
+		MidiMessage midimessage = new MidiMessage();
 		
 		if(segmentToPlay==null) {
 			LOGGER.warning("segmentToPlay is NULL");
@@ -46,8 +47,8 @@ public class OutputQueue {
 		if(!segmentToPlay.isEmpty()) {
 			segmentIterator = segmentToPlay.asList().iterator();
 			while (segmentIterator.hasNext()) {
-				MidiMessage midimessage = new MidiMessage();
-				midimessage.copy(segmentIterator.next());	
+				midimessage = new MidiMessage();
+				midimessage.copy(segmentIterator.next());
 				if(midimessage.noteOnOff==MidiMessage.NOTE_ON) {
 					noteOnList.add(midimessage);
 				}
@@ -70,7 +71,7 @@ public class OutputQueue {
 					} else {
 						timeToWait = sTimeBetweenBeats - elapsedSinceBeat;
 					}
-					LOGGER.warning("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
+					LOGGER.info("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
 					delay = delay + timeToWait;
 				}
 				if(startOnNextBar) {
@@ -79,17 +80,17 @@ public class OutputQueue {
 					} else {
 						timeToWait = (sTimeBetweenBeats*sBeatList[0]) - elapsedSinceBar;
 					}
-					LOGGER.warning("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
+					LOGGER.info("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
 					delay = delay + timeToWait;
 				}
 				if(delay<0) {
 					LOGGER.warning("NEGATIVE DELAY - SET TO 0");
 					delay=0;
 				}
-				LOGGER.info("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
+				//LOGGER.info("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
 				segmentTimer = new Timer();
 				timerList.add(segmentTimer);
-				segmentTimer.schedule(new Player(this.midiGen,midimessage), midimessage.timeMillis + delay);
+				segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
 			}
 		} else {
 			LOGGER.warning("NO SEGMENT TO PLAY!! ");

@@ -24,12 +24,12 @@ public class CaptureOutput {
 		
 		if (MidiMessage.isNoteOn(midiData[0])) {
 			//LOGGER.info("Message Type: ON " + message.pitch);
-			onList.add(midiData[1]);
+			//onList.add(midiData[1]);
 		}
 		
 		if (MidiMessage.isNoteOff(midiData[0])) {
 			//this.supervisor.txtMsg("Message Type: OFF");
-			deleteMatchingNoteOn(midiData[1]);
+			//deleteMatchingNoteOn(midiData[1]);
 		}
 	}
 	

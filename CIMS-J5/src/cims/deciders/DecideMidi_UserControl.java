@@ -11,8 +11,10 @@ import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
 import static cims.supervisors.SupervisorMidi_Globals.sTimeBetweenBeats;
 import static cims.supervisors.SupervisorMidi_Globals.sTestMode;
 import static cims.supervisors.SupervisorMidi_Globals.sBeatsPerMinute;
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 import cims.supervisors.SupervisorMidi;
+
 
 public class DecideMidi_UserControl {
 	private SupervisorMidi supervisor;
@@ -34,11 +36,14 @@ public class DecideMidi_UserControl {
 				if(key.equals("metronome")) {
 					if(value==1) {
 						sMetronome = true;
+						LOGGER.info("METRONOME ON");
 					} else {
 						sMetronome = false;
+						LOGGER.info("METRONOME OFF");
 					}
 				}
 				if(key.equals("beat") && sMetronome) {
+					
 					int beat = value;
 					sCurrentBeat = beat;
 					sBeatList[beat] = System.currentTimeMillis();
@@ -65,6 +70,7 @@ public class DecideMidi_UserControl {
 					}
 				}
 				if(key.equals("nextPlay")) {
+					LOGGER.info("NEXTPLAY: "+value);
 					sNextPlay = value;
 				}
 	}
@@ -73,10 +79,10 @@ public class DecideMidi_UserControl {
 		Float beatLength = 1000/((float)sBeatsPerMinute/60);
 		sSegmentGapDuration = (sSegmentGap*(beatLength.intValue()/4))-10;
 		sDefaultDuration = (beatLength.intValue()/2);
-		//supervisor.txtMsg("Segment Gap Duration: "+sSegmentGapDuration+"ms");
-		//supervisor.txtMsg("Default Duration: "+sDefaultDuration+"ms");
-		//supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
-		//supervisor.txtMsg("Beat Length: "+beatLength+"ms");
+		/* supervisor.txtMsg("Segment Gap Duration: "+sSegmentGapDuration+"ms");
+		supervisor.txtMsg("Default Duration: "+sDefaultDuration+"ms");
+		supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
+		supervisor.txtMsg("Beat Length: "+beatLength+"ms"); */
 		
 	}
 

@@ -21,7 +21,7 @@ public abstract class AnalyseMidi {
 	public boolean newMidi() {
 		boolean returnValue = false;
 		if (sMidiMessageList.size() > 0) {
-			this.current_message.copy(sMidiMessageList.get(MidiMessage.sMessagesCount - 1));
+			this.current_message = this.supervisor.getLastMidiMessage();
 			returnValue = true;
 		} 
 		return returnValue;

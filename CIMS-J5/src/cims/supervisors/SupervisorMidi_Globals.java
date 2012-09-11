@@ -30,6 +30,8 @@ public class SupervisorMidi_Globals {
 	public static boolean sTestMode = false;
 	
 	public static final Logger LOGGER = Logger.getLogger(SupervisorMidi.class.getName());
+	public static final int ON = 1;
+	public static final int OFF = 0;
 	
 	public SupervisorMidi_Globals() {
 		// TODO Auto-generated constructor stub

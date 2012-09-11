@@ -8,6 +8,8 @@ import cims.utilities.SilenceTimer;
 
 import static cims.supervisors.SupervisorMidi_Globals.sSegmentGapDuration;
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+import static cims.supervisors.SupervisorMidi_Globals.ON;
+//import static cims.supervisors.SupervisorMidi_Globals.OFF;
 
 public class AnalyseMidi_Silence extends AnalyseMidi {
 
@@ -26,11 +28,11 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	
 	public void analyse() {
 		notesCount = MidiMessage.sTotalNotesOn;	
-		LOGGER.info("Analysing Silence - NotesOnCount:"+notesCount);
-			if(this.current_message.noteOnOff==MidiMessage.NOTE_ON) {
+		LOGGER.info("Analysing Silence - NotesOnCount:"+notesCount+" noteOnOff: "+ this.current_message.noteOnOff);
+			if(this.current_message.noteOnOff==ON) {
 				silenceTimer.cancel();
 				if(!segmentStarted) {
-					//This is the first note of the segment
+					LOGGER.info("START SEGMENT");
 					this.segmentStart = this.current_message.messageNum;
 					segmentStarted = true;
 				}

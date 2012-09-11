@@ -10,6 +10,10 @@
 
 package cims.generators;
 
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+
+import java.util.Iterator;
+
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.supervisors.SupervisorMidi;
@@ -40,12 +44,10 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	public void generate() {
 		midiQueue = new OutputQueue(this);
 		midiQueue.addSegment(midiSegment);
-		//System.out.println("Playing generated segment " + midiSegment.size());
 		midiQueue.play();
 	}
 	
 	public void stop() {
-		//supervisor.txtMsg("Cancelling Queue");
 		midiQueue.cancel();
 	}
 	
@@ -61,7 +63,8 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		case 2:
 			midiQueue.startOnNextBar();
 		}
-		this.generate();
+		midiQueue.addSegment(midiSegment);
+		midiQueue.play();
 	}
 	
 	public void output(MidiMessage midimessage) {
@@ -72,46 +75,21 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		
 	public synchronized void makeLastSegment () {
 		// Play back the last segment
+		//midiSegment = supervisor.getLastMidiSegment();
 		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
 		midiSegment.setChannel(2); // channel is in the prochial range of 1-16
 	}
 	
-	public synchronized void makeInitiateSegment(int duration) {
-		//supervisor.txtMsg("rnd pitch = " + supervisor.analyser_stats.getRandomPitchClass());
+	public void makeEmptySegment() {
 		this.midiSegment = new MidiSegment();
-		//int[] pitches = {72, 74, 76, 79, 81, 84};
-		int accumTime = 0;
-		addNote(accumTime, randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, duration);
-		accumTime += duration;
-		for(int i=1; i<8; i++) {
-			int dur = duration;
-			if (Math.random() < 0.5) dur = duration / 2;
-			addNote(accumTime, randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, dur);
-			accumTime += dur;
-		}
-		addNote(accumTime, randomiser.getRandomPitchClass() + 72, randomiser.positiveInteger(40) + 80, duration * 2);
-		initiateSegementLength = accumTime + duration * 2 - 20; // slight reduction to avoid overshoot assuming quantise is on
 	}
 	
-	public int getInitiateSegementLength() {
-		return initiateSegementLength;
+	public void makeNoteSegment(int startTime, int pitch, int velocity, int duration ) {
+		this.makeEmptySegment();
+		this.addNote(startTime,pitch,velocity,duration);
 	}
 	
-	public synchronized void makeSupportSegment(int duration, int pitch) {
-		this.midiSegment = new MidiSegment();
-		// for getting previous segment first pitch - depricated
-		//int pitchClass = 0; 
-		//if (supervisor.getLastMidiSegment() != null) {
-		//	MidiMessage mess = supervisor.getLastMidiSegment().getFirstMessage();
-		//	pitchClass = mess.pitch % 12;
-		//}
-		for (int i=0; i<4; i++) {
-			addNote(i * duration, pitch - 12, randomiser.positiveInteger(40) + 80, duration);
-		}
-		
-	}
-	
-	private void addNote(int startTime, int pitch, int velocity, int duration) {
+	public void addNote(int startTime, int pitch, int velocity, int duration) {
 		MidiMessage noteOn = new MidiMessage();
 		// + 1 is to move the data to MIDI channel 2
 		int[] onMessage = {MidiMessage.NOTE_ON + 1, pitch, velocity};
