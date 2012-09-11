@@ -5,6 +5,7 @@ import cims.utilities.RepeatTimer;
 
 import static cims.supervisors.SupervisorMidi_Globals.sRepeatInterval;
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class GenerateMidi_Loop {
 	private RepeatTimer repeatTimer;

@@ -4,18 +4,22 @@ import cims.datatypes.MidiMessage;
 import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_Segment;
 import cims.supervisors.SupervisorMidi;
+import cims.utilities.Randomiser;
 
 import static cims.supervisors.SupervisorMidi_Globals.sLastMidiMessage;
 import static cims.supervisors.SupervisorMidi_Globals.sMidiMessageList;
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStartTime;
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
 import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
+import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class DecideMidi_01 {
 	private SupervisorMidi supervisor;
 	private GenerateMidi_Segment generator_segment;
 	private GenerateMidi_Loop support_loop;
 	private GenerateMidi_Loop initiate_loop;
+	private Randomiser randomiser;
 	
 	private int currentAction = -1;
 	private boolean mirroring = false;
@@ -37,7 +41,7 @@ public class DecideMidi_01 {
 		newMidiMessage.copy(newMessage);
 		sLastMidiMessage = newMidiMessage;
 		sMidiMessageList.add(newMidiMessage);
-		//this.txtMsg("AMM: "+newMessage.messageNum+"/"+MidiMessage.messagesCount+","+newMessage.timeMillis+","+newMessage.status+","+newMessage.pitch+","+newMessage.velocity+","+newMessage.noteOnOff+","+newMessage.channel+" |");
+		LOGGER.info("AMM: "+newMessage.messageNum+"/"+MidiMessage.sMessagesCount+","+newMessage.timeMillis+","+newMessage.status+","+newMessage.pitch+","+newMessage.velocity+","+newMessage.noteOnOff+","+newMessage.channel+" |");
 		if (sMidiStartTime==0) sMidiStartTime = System.currentTimeMillis();
 
 		// start with supporting role
@@ -61,7 +65,7 @@ public class DecideMidi_01 {
 				turnOffAgentNotes();
 				mirrorFirstPass = false;
 			}
-			supervisor.dataOut(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity});
+			supervisor.dataOut(new int[] {newMessage.status, newMessage.pitch, newMessage.velocity}); // Should this be queue immediate??
 		}
 	}
 	
@@ -69,7 +73,7 @@ public class DecideMidi_01 {
 		if(currentAction<0) {
 			currentAction=2; //default start is SUPPORT
 		} else {
-			currentAction = (int)(Math.random() * 4);
+			currentAction = randomiser.positiveInteger(3);
 		}
 		switch (currentAction) {
 			case 0: // repeat
@@ -94,7 +98,7 @@ public class DecideMidi_01 {
 				initiate_loop.setInterval(generator_segment.getInitiateSegementLength());
 				initiate_loop.start();
 				// clear out pitch histogram memory
-				supervisor.analyser_stats.clearPitchHistogram();
+				sMidiStats.clearPitchHistogram();
 				break;
 			case 2: // support
 				supervisor.txtMsg("Choosing to SUPPORT");
