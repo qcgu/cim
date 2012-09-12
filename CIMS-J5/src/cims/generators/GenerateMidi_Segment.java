@@ -12,21 +12,16 @@ package cims.generators;
 
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
-import java.util.Iterator;
-
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.OutputQueue;
-import cims.utilities.Randomiser;
 
 public class GenerateMidi_Segment extends GenerateMidi {
 
 	private volatile MidiSegment midiSegment;
 	private volatile OutputQueue midiQueue;
 	private SupervisorMidi supervisor;
-	private int initiateSegementLength = 0;
-	private Randomiser randomiser;
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor) {
 		super(supervisor);
@@ -42,6 +37,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public void generate() {
+		LOGGER.info("generate()");
 		midiQueue = new OutputQueue(this);
 		midiQueue.addSegment(midiSegment);
 		midiQueue.play();

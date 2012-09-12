@@ -9,12 +9,11 @@ import cims.capturers.CaptureOutput;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
-//import cims.generators.GenerateMidi_Loop;
-import cims.generators.GenerateMidi_NoteMirror;
+import cims.generators.GenerateMidi_Note;
 import cims.generators.GenerateMidi_Segment;
 import cims.utilities.Test;
+import cims.v01.DecideMidi_01;
 import cims.datatypes.*;
-import cims.deciders.DecideMidi_01;
 import cims.deciders.DecideMidi_SimpleRepeat;
 import cims.deciders.DecideMidi_UserControl;
 
@@ -27,8 +26,6 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Silence analyser_silence;
 	private AnalyseMidi_Controls analyser_controls;
 	private AnalyseMidi_Stats analyser_stats;
-	private GenerateMidi_Segment generator_segment;
-	private GenerateMidi_NoteMirror generator_note;
 	private DecideMidi_UserControl decider_userControl;
 	private DecideMidi_01 decider_01;
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
@@ -60,9 +57,6 @@ public class SupervisorMidi implements Supervisor {
 		decider_userControl = new DecideMidi_UserControl(this);
 		decider_01 = new DecideMidi_01(this);
 		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
-		//Generate output
-		generator_segment = new GenerateMidi_Segment(this);
-		generator_note = new GenerateMidi_NoteMirror(this);
 		//Test
 		tester = new Test(this);
 		//Set Log Level for SupervisorMidi Global Logger
@@ -125,13 +119,13 @@ public class SupervisorMidi implements Supervisor {
 			break;
 		case TEST_MESSAGE_NOTE:
 			LOGGER.info("RUN MIDIMESSAGE TESTS");
-			//tester.runTests(Test.MESSAGE_TESTS);
+			tester.runTests(Test.MESSAGE_TESTS);
 			break;
 		case TEST_MESSAGE_CONTROL:
 			break;
 		case TEST_SEGMENT:
 			LOGGER.info("RUN SEGMENT TESTS");
-			//tester.runTests(Test.SEGMENT_TESTS);
+			tester.runTests(Test.SEGMENT_TESTS);
 			break;
 		}
 	}
