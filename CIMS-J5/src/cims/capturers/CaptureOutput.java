@@ -23,17 +23,19 @@ public class CaptureOutput {
 		new MidiMessage();
 		
 		if (MidiMessage.isNoteOn(midiData[0])) {
-			//LOGGER.info("Message Type: ON " + message.pitch);
+			
 			//onList.add(midiData[1]);
 		}
 		
 		if (MidiMessage.isNoteOff(midiData[0])) {
 			//this.supervisor.txtMsg("Message Type: OFF");
-			//deleteMatchingNoteOn(midiData[1]);
+			deleteMatchingNoteOn(midiData[1]);
 		}
 	}
 	
 	private void deleteMatchingNoteOn(int offPitch) {
+		LOGGER.info("deleteMatchingNoteOn");
+		/*
 		int size = onList.size();
 		for (int i=0; i<size; i++) {
 			if(offPitch == onList.get(i).intValue()) {
@@ -42,6 +44,7 @@ public class CaptureOutput {
 				i = size;
 			}		
 		}
+		*/
 	}
 	
 	// return an array of the pitches currently turned on but not yet off

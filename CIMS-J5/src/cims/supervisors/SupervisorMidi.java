@@ -9,8 +9,6 @@ import cims.capturers.CaptureOutput;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
-import cims.generators.GenerateMidi_Note;
-import cims.generators.GenerateMidi_Segment;
 import cims.utilities.Test;
 import cims.v01.DecideMidi_01;
 import cims.datatypes.*;
@@ -28,6 +26,7 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Stats analyser_stats;
 	private DecideMidi_UserControl decider_userControl;
 	private DecideMidi_01 decider_01;
+	@SuppressWarnings(value="unused")
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
 	private CaptureOutput outputTracker;
 	private Test tester;

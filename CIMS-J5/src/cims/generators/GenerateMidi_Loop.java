@@ -25,6 +25,7 @@ public class GenerateMidi_Loop {
 	}
 	
 	public void start(){
+		LOGGER.info("start loop");
 		this.play();
 		if (interval==0) {
 			//Calculate the length of the segement
