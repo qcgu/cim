@@ -10,9 +10,8 @@
 package cims.capturers;
 
 import cims.datatypes.MidiMessage;
-//import cims.*;
-//import cims.datatypes.*;
 import cims.supervisors.SupervisorMidi;
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 
 public class CaptureMidi {
@@ -31,10 +30,8 @@ public class CaptureMidi {
 	}
 	
 	public void in(int arg) {
-		//this.supervisor.txtMsg("ARG: "+arg);
 		if(arg>=MidiMessage.NOTE_OFF) {
-			//Status byte 
-			//this.supervisor.txtMsg("STATUS: "+arg);
+			//LOGGER.info("STATUS: "+arg);
 			midiMessage.detectMessageType(arg);
 			midiData[0] = arg;
 			if(midiMessage.dataByteLength>0) {
@@ -45,8 +42,7 @@ public class CaptureMidi {
 				this.finalMessage();
 			}
 		} else {
-			//Data byte
-			//this.supervisor.txtMsg("DATA: "+arg);
+			//LOGGER.info("DATA: "+arg);
 			switch(midiByte) {
 			case 1:
 				midiData[1] = arg;
@@ -62,7 +58,7 @@ public class CaptureMidi {
 				this.finalMessage();
 				break;
 			default:
-				this.supervisor.txtMsg("ERROR: Bad number of data bytes");
+				LOGGER.severe("Bad number of data bytes");
 				midiByte=0;
 					
 			}
@@ -71,7 +67,6 @@ public class CaptureMidi {
 	}
 
 	public void finalMessage() {
-		
 		midiMessage.set(midiData);
 		this.supervisor.addMidiMessage(midiMessage);
 		//this.supervisor.txtMsg("TYPE: "+midiMessage.messageType+" DATA: "+midiData[1]+","+midiData[2]);

@@ -6,6 +6,11 @@ import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.SilenceTimer;
 
+import static cims.supervisors.SupervisorMidi_Globals.sSegmentGapDuration;
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+import static cims.supervisors.SupervisorMidi_Globals.ON;
+//import static cims.supervisors.SupervisorMidi_Globals.OFF;
+
 public class AnalyseMidi_Silence extends AnalyseMidi {
 
 	private int segmentStart;
@@ -22,31 +27,27 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	}
 	
 	public void analyse() {
-		notesCount = MidiMessage.sTotalNotesOn;
-		
-		//supervisor.txtMsg("Analysing Silence - NotesOnCount:"+notesCount);
-			if(this.current_message.noteOnOff==1) {
-				// Event is note on
-				// Cancel any running silence timer
+		notesCount = MidiMessage.sTotalNotesOn;	
+		LOGGER.info("Analysing Silence - NotesOnCount:"+notesCount+" noteOnOff: "+ this.current_message.noteOnOff);
+			if(this.current_message.noteOnOff==ON) {
 				silenceTimer.cancel();
 				if(!segmentStarted) {
-					//This is the first note of the segment
+					LOGGER.info("START SEGMENT");
 					this.segmentStart = this.current_message.messageNum;
 					segmentStarted = true;
 				}
 			} else if(notesCount==0) {
-				// All notes are off
 				if(segmentStarted) {
 					//This is the first all notes off event
 					this.segmentEnd = this.current_message.messageNum;
 					//Start silence timer
-					silenceTimer.start(SupervisorMidi.sSilenceDelay);
+					silenceTimer.start(sSegmentGapDuration);
 				}			
 			} 
 	}
 	
 	public void silent() {
-		//supervisor.txtMsg("SEGMENT START: "+segmentStart+" END: "+MidiMessage.messagesCount);		
+		LOGGER.info("SILENCE DETECTED >> segmentStart: "+segmentStart+" segmentEnd: "+segmentEnd);		
 		supervisor.addMidiSegment(this.segmentStart, this.segmentEnd);
 		segmentStarted = false;
 	}

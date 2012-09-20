@@ -1,0 +1,11 @@
+cims
+cims.analysers
+cims.capturers
+cims.datatypes
+cims.deciders
+cims.generators
+cims.players
+cims.supervisors
+cims.utilities
+cims.v01
+cims.v02

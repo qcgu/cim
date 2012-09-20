@@ -8,6 +8,7 @@ package cims.capturers;
 import java.util.ArrayList;
 import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class CaptureOutput {
 
@@ -21,18 +22,20 @@ public class CaptureOutput {
 	public void in(int[] midiData) {
 		new MidiMessage();
 		
-		if (midiData[0] == 144) {
-			//this.supervisor.txtMsg("Message Type: ON " + message.pitch);
-			onList.add(midiData[1]);
+		if (MidiMessage.isNoteOn(midiData[0])) {
+			
+			//onList.add(midiData[1]);
 		}
 		
-		if (midiData[0] == 128) {
+		if (MidiMessage.isNoteOff(midiData[0])) {
 			//this.supervisor.txtMsg("Message Type: OFF");
 			deleteMatchingNoteOn(midiData[1]);
 		}
 	}
 	
 	private void deleteMatchingNoteOn(int offPitch) {
+		LOGGER.info("deleteMatchingNoteOn");
+		/*
 		int size = onList.size();
 		for (int i=0; i<size; i++) {
 			if(offPitch == onList.get(i).intValue()) {
@@ -41,6 +44,7 @@ public class CaptureOutput {
 				i = size;
 			}		
 		}
+		*/
 	}
 	
 	// return an array of the pitches currently turned on but not yet off
@@ -51,6 +55,14 @@ public class CaptureOutput {
 			pitches[i] = onList.get(i);
 		}
 		return pitches;
+	}
+	
+	public void allNotesOff() {
+		//int[] pitches = getOnPitches();
+		for(int i=0; i<onList.size(); i++) {
+			//supervisor.txtMsg("pitch  in on pitches " + pitches[i]);
+			supervisor.dataOut(new int[] {128, onList.get(i), 0});
+		}
 	}
 }
 

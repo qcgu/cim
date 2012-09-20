@@ -13,13 +13,13 @@ package cims.generators;
 import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
 
-public class GenerateMidi_NoteMirror extends GenerateMidi {
+public class GenerateMidi_Note extends GenerateMidi {
 	
-	private static final int PITCH_SHIFT = 0;
+	public static final int PITCH_SHIFT = 0;
 	
 	private volatile MidiMessage currentMessage;
 	
-	public GenerateMidi_NoteMirror(SupervisorMidi supervisor) {
+	public GenerateMidi_Note(SupervisorMidi supervisor) {
 		super(supervisor);
 		this.currentMessage = new MidiMessage();
 	}
@@ -27,12 +27,21 @@ public class GenerateMidi_NoteMirror extends GenerateMidi {
 	public void generate() {
 		this.currentMessage = this.supervisor.getLastMidiMessage();
 		//this.supervisor.txtMsg("MIRROR: "+ this.currentMessage.pitch);
-		this.transform(PITCH_SHIFT, 7);
-		this.output(this.currentMessage);
+		this.transform(PITCH_SHIFT, -12);
+		this.output();
 	}
 	
-	public void output(MidiMessage midimessage) {
-		int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
+	public void setMessage(MidiMessage newMessage) {
+		this.currentMessage = newMessage;
+	}
+	
+	public void output(MidiMessage newMessage) {
+		this.setMessage(newMessage);
+		this.output();
+	}
+	
+	public void output() {
+		int[] message = {this.currentMessage.status,this.currentMessage.pitch,this.currentMessage.velocity};
 		this.supervisor.dataOut(message);
 	}
 	

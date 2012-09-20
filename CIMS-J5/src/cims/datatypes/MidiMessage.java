@@ -29,12 +29,26 @@ public class MidiMessage {
 	public static final int CHANNEL_16 = 15;
 	
 	public static final int NOTE_OFF = 128;
+	public static final int NOTE_OFF_CH01 = 128;
+	public static final int NOTE_OFF_CH16 = 143;
 	public static final int NOTE_ON = 144;
+	public static final int NOTE_ON_CH01 = 144;
+	public static final int NOTE_ON_CH16 = 159;
 	public static final int POLY_AFTERTOUCH = 160;
+	public static final int POLY_AFTERTOUCH_CH01 = 160;
+	public static final int POLY_AFTERTOUCH_CH16 = 175;
 	public static final int CONTROL_CHANGE = 176;
+	public static final int CONTROL_CHANGE_CH01 = 176;
+	public static final int CONTROL_CHANGE_CH16 = 191;
 	public static final int PROGRAM_CHANGE = 192;
+	public static final int PROGRAM_CHANGE_CH01 = 192;
+	public static final int PROGRAM_CHANGE_CH16 = 207;
 	public static final int CHANNEL_AFTERTOUCH =208;
+	public static final int CHANNEL_AFTERTOUCH_CH01 =208;
+	public static final int CHANNEL_AFTERTOUCH_CH16 =223;
 	public static final int PITCH_WHEEL = 224;
+	public static final int PITCH_WHEEL_CH01 = 224;
+	public static final int PITCH_WHEEL_CH16 = 239;
 	
 	public static final int SYSEX = 240;
 	public static final int MIDI_TIMECODE_QTR_FRAME = 241;
@@ -191,13 +205,13 @@ public class MidiMessage {
 	}
 	
 	public int detectMessageType(int statusByte) {
-		if(inTheRange(statusByte, NOTE_OFF, NOTE_OFF+CHANNEL_16)) this.messageType = NOTE_OFF;
-		if(inTheRange(statusByte, NOTE_ON ,NOTE_ON+CHANNEL_16)) this.messageType = NOTE_ON;
-		if(inTheRange(statusByte, POLY_AFTERTOUCH ,POLY_AFTERTOUCH+CHANNEL_16)) this.messageType = POLY_AFTERTOUCH;
-		if(inTheRange(statusByte, CONTROL_CHANGE ,CONTROL_CHANGE+CHANNEL_16)) this.messageType = CONTROL_CHANGE;
-		if(inTheRange(statusByte, PROGRAM_CHANGE ,PROGRAM_CHANGE+CHANNEL_16)) this.messageType = PROGRAM_CHANGE;
-		if(inTheRange(statusByte, CHANNEL_AFTERTOUCH ,CHANNEL_AFTERTOUCH+CHANNEL_16)) this.messageType = CHANNEL_AFTERTOUCH;
-		if(inTheRange(statusByte, PITCH_WHEEL ,PITCH_WHEEL+CHANNEL_16)) this.messageType = PITCH_WHEEL;
+		if(inTheRange(statusByte, NOTE_OFF_CH01, NOTE_OFF_CH16)) this.messageType = NOTE_OFF;
+		if(inTheRange(statusByte, NOTE_ON_CH01 ,NOTE_ON_CH16)) this.messageType = NOTE_ON;
+		if(inTheRange(statusByte, POLY_AFTERTOUCH_CH01 ,POLY_AFTERTOUCH_CH16)) this.messageType = POLY_AFTERTOUCH;
+		if(inTheRange(statusByte, CONTROL_CHANGE_CH01 ,CONTROL_CHANGE_CH16)) this.messageType = CONTROL_CHANGE;
+		if(inTheRange(statusByte, PROGRAM_CHANGE_CH01 ,PROGRAM_CHANGE_CH16)) this.messageType = PROGRAM_CHANGE;
+		if(inTheRange(statusByte, CHANNEL_AFTERTOUCH_CH01 ,CHANNEL_AFTERTOUCH_CH16)) this.messageType = CHANNEL_AFTERTOUCH;
+		if(inTheRange(statusByte, PITCH_WHEEL_CH01 ,PITCH_WHEEL_CH16)) this.messageType = PITCH_WHEEL;
 		
 		if(this.messageType==PROGRAM_CHANGE || this.messageType==CHANNEL_AFTERTOUCH) {
 			this.dataByteLength = 1;
@@ -207,7 +221,11 @@ public class MidiMessage {
 		return this.messageType;
 	}
 	
-
+	public void changeChannel(int channel) {
+		int messageType = this.detectMessageType(this.status);
+		this.channel = channel-1;
+		this.status = messageType + this.channel;
+	}
 	
 	public void copy(MidiMessage newEvent) {
 		this.messageNum = newEvent.messageNum;
@@ -243,10 +261,19 @@ public class MidiMessage {
 		this.dataByteLength = 0;
 	}
 	
+	public static boolean isNoteOn(int value) {
+		return MidiMessage.inTheRange(value, MidiMessage.NOTE_ON_CH01, MidiMessage.NOTE_ON_CH16);
+	}
+	
+	public static boolean isNoteOff(int value) {
+		return MidiMessage.inTheRange(value, MidiMessage.NOTE_OFF_CH01, MidiMessage.NOTE_OFF_CH16);
+	}
+	
 	public static boolean inTheRange(int value, int min, int max)
 	{
 	  return((value >= min) && (value <= max));
 	}
-
+	
+	
 }
 

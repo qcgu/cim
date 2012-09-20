@@ -4,6 +4,8 @@ package cims.analysers;
 import cims.analysers.AnalyseMidi;
 import cims.supervisors.SupervisorMidi;
 
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+
 public class AnalyseMidi_Controls extends AnalyseMidi {
 	
 	public AnalyseMidi_Controls(SupervisorMidi supervisor) {
@@ -11,7 +13,7 @@ public class AnalyseMidi_Controls extends AnalyseMidi {
 	}
 	
 	public void analyse() {
-		supervisor.txtMsg("CONTROLLER: "+current_message.controller + " VALUE: "+current_message.controlData);
+		LOGGER.info("CONTROLLER: "+current_message.controller + " VALUE: "+current_message.controlData);
 	}
 	
 }

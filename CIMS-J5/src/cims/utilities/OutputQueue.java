@@ -1,30 +1,30 @@
-/**
- * 
- */
 package cims.utilities;
-import java.util.*;
 
+import java.util.*;
 import cims.datatypes.*;
 import cims.generators.*;
-import cims.supervisors.SupervisorMidi;
+import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeat;
+import static cims.supervisors.SupervisorMidi_Globals.sBeatList;
+import static cims.supervisors.SupervisorMidi_Globals.sTimeBetweenBeats;
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
-/**
- * @author andrew
- *
- */
+
 public class OutputQueue {
 	private GenerateMidi_Segment midiGen;
 	private volatile MidiSegment segmentToPlay;
 	private Timer segmentTimer;
-	
+	private ArrayList<Timer> timerList;
+	private ArrayList<MidiMessage> noteOnList;
 	private boolean startOnNextBeat = false;
 	private boolean startOnNextBar = false;
-	/**
-	 * 
-	 */
+	private long elapsedSinceBeat = 0;
+	private long elapsedSinceBar = 0;
+	private long pastTheBeatTolerance = sTimeBetweenBeats/64;
+
 	public OutputQueue(GenerateMidi_Segment newMidiGen) {
 		this.midiGen = newMidiGen;
-		
+		this.timerList = new ArrayList<Timer>();
+		this.noteOnList = new ArrayList<MidiMessage>();
 	}
 	
 	public synchronized void addSegment(MidiSegment segment) {
@@ -32,42 +32,86 @@ public class OutputQueue {
 	}
 	
 	public void play() {
-		//Iterate segment and play
-		Iterator<MidiMessage> segmentIterator = segmentToPlay.asList().iterator();
+		LOGGER.info("OutputQueue:play()");
+		Iterator<MidiMessage> segmentIterator;
 		boolean firstEvent = true;
-		long startTime = 0;
+		long segmentStartTime = 0;
 		long delay = 0;
-		while (segmentIterator.hasNext()) {
-			MidiMessage midimessage = new MidiMessage();
-			midimessage.copy(segmentIterator.next());
-			if(firstEvent) {
-				startTime = midimessage.timeMillis;
-				firstEvent = false;
-			}
-			delay = midimessage.timeMillis - startTime;
-			if (delay<1) delay=1; //allow 1 ms for timer
-			if(startOnNextBeat || startOnNextBar) {
-				int currentBeat = SupervisorMidi.sCurrentBeat;
-				long currentBeatTime = SupervisorMidi.sBeatList[currentBeat];
-				long elapsedTime = System.currentTimeMillis() - currentBeatTime;
-				long timeToWait = SupervisorMidi.sTimeBetweenBeats;
-				if(startOnNextBar) {
-					long barElapsed = (currentBeat - 1) * timeToWait;
-					timeToWait = (timeToWait * SupervisorMidi.sBeatList[0]) - barElapsed;
-				}
-				timeToWait = timeToWait - elapsedTime;
-				delay = delay + timeToWait;
-			}
-			//System.out.println("DELAY IS "+delay);
-			segmentTimer = new Timer();
-			segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
-			//segmentTimer.cancel();
+		long timeToWait = sTimeBetweenBeats;
+		MidiMessage midimessage = new MidiMessage();
+		
+		if(segmentToPlay==null) {
+			LOGGER.warning("segmentToPlay is NULL");
+			segmentToPlay = new MidiSegment();
 		}
+		if(!segmentToPlay.isEmpty()) {
+			segmentIterator = segmentToPlay.asList().iterator();
+			while (segmentIterator.hasNext()) {
+				midimessage = new MidiMessage();
+				midimessage.copy(segmentIterator.next());
+				if(midimessage.noteOnOff==MidiMessage.NOTE_ON) {
+					noteOnList.add(midimessage);
+				}
+				if(midimessage.timeMillis<0) {
+					LOGGER.warning("midimessage.timeMillis is less than 0: "+midimessage.timeMillis+ " >> now set to 0");
+					midimessage.timeMillis = 0;
+				}
+				if(firstEvent) {
+					LOGGER.info("First MidiMessage in queue");
+					segmentStartTime = midimessage.timeMillis;
+					delay = 0; //Play first message straight away
+					firstEvent = false;
+				} else {
+					delay = midimessage.timeMillis - segmentStartTime;
+				}
+				this.beatCalcs();
+				if(startOnNextBeat) {
+					if (elapsedSinceBeat<pastTheBeatTolerance) {
+						timeToWait=0;
+					} else {
+						timeToWait = sTimeBetweenBeats - elapsedSinceBeat;
+					}
+					LOGGER.info("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
+					delay = delay + timeToWait;
+				}
+				if(startOnNextBar) {
+					if (elapsedSinceBar<pastTheBeatTolerance) {
+						timeToWait=0;
+					} else {
+						timeToWait = (sTimeBetweenBeats*sBeatList[0]) - elapsedSinceBar;
+					}
+					LOGGER.info("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
+					delay = delay + timeToWait;
+				}
+				if(delay<0) {
+					LOGGER.warning("NEGATIVE DELAY - SET TO 0");
+					delay=0;
+				}
+				//LOGGER.info("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
+				segmentTimer = new Timer();
+				timerList.add(segmentTimer);
+				segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
+			}
+		} else {
+			LOGGER.warning("NO SEGMENT TO PLAY!! ");
+		}
+		
 	}
 		
 	public void cancel() {
-		if(segmentTimer!=null) {
-			this.segmentTimer.cancel();
+		//System.out.println("Events to Cancel: "+timerList.size());
+		Iterator<Timer> timerIterator = timerList.iterator();
+		while(timerIterator.hasNext()) {
+			Timer killTimer = timerIterator.next();
+			if(killTimer!=null) {
+				killTimer.cancel();
+			}
+		}
+		Iterator<MidiMessage> noteOnIterator = noteOnList.iterator();
+		while(noteOnIterator.hasNext()) {
+			MidiMessage message = noteOnIterator.next();
+			message.status = MidiMessage.NOTE_OFF;
+			this.midiGen.output(message);
 		}
 	}
 	
@@ -101,6 +145,15 @@ public class OutputQueue {
 	public void startOnPlay() {
 		this.startOnNextBeat = false;
 		this.startOnNextBar = false;
+	}
+	
+	public void beatCalcs() {
+		int currentBeat = 1;
+		long currentBeatTime = 0;
+		currentBeat = sCurrentBeat;
+		currentBeatTime = sBeatList[currentBeat];
+		elapsedSinceBeat = System.currentTimeMillis() - currentBeatTime;
+		elapsedSinceBar = System.currentTimeMillis() - sBeatList[1];
 	}
 
 }

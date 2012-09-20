@@ -5,8 +5,9 @@
 
 package cims;
 
-import cims.supervisors.*;
+import java.util.logging.*;
 
+import cims.supervisors.*;
 import com.cycling74.max.*;
 
 public class CimsMaxIO extends MaxObject {
@@ -20,18 +21,20 @@ public class CimsMaxIO extends MaxObject {
 	
 	private String controlKey = "";
 	private int controlValue = 0;
+	
+	private static final Logger LOGGER = Logger.getLogger(CimsMaxIO.class.getName());
 
 	public CimsMaxIO() {
-		declareIO(4,4);
-        
+		declareIO(4,4); 
 		createInfoOutlet(false); // Right most outlet not required	
 		superMidi = new SupervisorMidi(this);
+		LOGGER.setLevel(Level.WARNING);
 	}
 	
 	public void controlParams(Atom[] args) {
 		controlKey=args[0].toString();
 		controlValue=args[1].toInt();
-		//this.textOut("K: "+controlKey+" V: "+controlValue);
+		LOGGER.log(Level.INFO, "KEY: "+controlKey+" VALUE: "+controlValue);
 		superMidi.controlIn();
 	}
 	
@@ -39,19 +42,22 @@ public class CimsMaxIO extends MaxObject {
 		int current_inlet = getInlet();
 		switch(current_inlet) {
 		case 0:
+			LOGGER.log(Level.INFO, "MIDI IN");
 			this.midiData = arg;
 			//superMidi.dataIn();
 			break;
 		case 1:
+			LOGGER.log(Level.INFO, "OSC IN");
 			this.oscData = arg;
 			superOsc.dataIn();
 			break;
 		case 2:
+			LOGGER.log(Level.INFO, "AUDIO IN");
 			this.audioData = arg;
 			superAudio.dataIn();
 			break;
 		case 3:
-			//this.textOut(">>CONTROL");
+			LOGGER.log(Level.INFO, "CONTROL IN");
 		}
 		
 	}
@@ -67,12 +73,15 @@ public class CimsMaxIO extends MaxObject {
 	}
 	
 	public void outMidi(int[] midi) {
+		LOGGER.log(Level.INFO, "MIDI OUT");
 		outlet(0,midi);
 	}
 	public void outOsc(int osc) {
+		LOGGER.log(Level.INFO, "OSC OUT");
 		outlet(2,osc);
 	}
 	public void outAudio(int audio) {
+		LOGGER.log(Level.INFO, "CONTROL OUT");
 		outlet(2,audio);
 	}
 	
