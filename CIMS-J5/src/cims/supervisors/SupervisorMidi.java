@@ -17,6 +17,10 @@ import cims.deciders.DecideMidi_UserControl;
 
 import static cims.supervisors.SupervisorMidi_Globals.*;
 
+/**
+ * @author andrew
+ *
+ */
 public class SupervisorMidi implements Supervisor {
 	
 	private CimsMaxIO io;
@@ -38,6 +42,19 @@ public class SupervisorMidi implements Supervisor {
 	private static final int TEST_MESSAGE_CONTROL = 11;
 	private static final int TEST_SEGMENT = 12;
 	
+	/**
+	 * SupervisorMidi is the primary class handling message flow within the application.
+	 * On construction, it takes a single paramater being {@link CimsMaxIO} which is the 
+	 * entry class to the application. CimsMaxIO is the mxj object that is included in Max
+	 * and handles all IO between the Max environment and the Supervisor.
+	 * 
+	 * The Supervisor also sets up and coordinates a number of global properties which are
+	 * in {@link SupervisorMidi_Globals}. As the name suggests, these are used application wide.
+	 *
+	 * @param  ioObj  the reference to the CimsMaxIO mxj object embedded in Max
+	 * @see		CimsMaxIO
+	 * @see		SupervisorMidi_Globals
+	 */
 	public SupervisorMidi(CimsMaxIO ioObj) {
 		this.io = ioObj;
 		sLastMidiMessage = new MidiMessage();
