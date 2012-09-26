@@ -56,7 +56,7 @@ public class DecideMidi_02 {
 		} else {
 			currentAction = nextAction;
 		}
-		nextAction = randomiser.weightedActionChoice(); //randomiser.positiveInteger(0);
+		nextAction = randomiser.weightedActivityChoice(); //randomiser.positiveInteger(0);
 		LOGGER.info("chooseNextAction");
 		supervisor.txtMsg(""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction));
 		switch (currentAction) {

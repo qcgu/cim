@@ -32,7 +32,7 @@ public class Randomiser {
 		return pitchClass;
 	}
 	
-	public int weightedActionChoice() {
+	public int weightedActivityChoice() {
 		double repeatWeight = 0.5;
 		double initiateWeight = 0.5;
 		double supportWeight = 0.5;
