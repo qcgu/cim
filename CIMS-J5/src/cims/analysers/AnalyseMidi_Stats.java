@@ -23,6 +23,12 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 
 		if (current_message.messageType == MidiMessage.NOTE_ON) { // note on message
 			midiStats.addPitch(current_message.pitch);
+			midiStats.addOnset(current_message.timeMillis);
+			int density = midiStats.getOnsetIntervalTrend();
+			if (density > 1 && density < 5) {
+				System.out.println("ANALYSE MIDI STATS: density break detected.");
+				supervisor.densitySegmentBreak();
+			}
 		}
 
 		LOGGER.info("P_CUR: " + midiStats.getCurrent_pitch());

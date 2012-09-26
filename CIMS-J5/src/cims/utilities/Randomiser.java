@@ -18,17 +18,19 @@ public class Randomiser {
 		int pchLength = sMidiStats.getPitchClassHistogram().length; //Fixed at 12
 		int maxCnt = 0;
 		for (int i=0; i<pchLength; i++) {
-			maxCnt += sMidiStats.getPitchClass(i+1);
+			//System.out.println("pitchClass " + i + " = " + sMidiStats.getPitchClass(i));
+			maxCnt += sMidiStats.getPitchClass(i);
 		}
 		int rnd = (int)(Math.random() * maxCnt);
 		LOGGER.info("mxCnt = " + maxCnt + " rnd = " + rnd);
-
-		int val = 0;
+		
 		int pitchClass = 0;
+		int val = sMidiStats.getPitchClass(pitchClass);
 		while(val < rnd) {
 			pitchClass++;
 			val += sMidiStats.getPitchClass(pitchClass);
 		}
+		//System.out.println("pitchClass returned is " + (pitchClass));
 		return pitchClass;
 	}
 	

@@ -10,7 +10,7 @@ import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
 import cims.utilities.Test;
-import cims.v01.DecideMidi_01;
+//import cims.v01.DecideMidi_01;
 import cims.v02.DecideMidi_02;
 import cims.datatypes.*;
 import cims.deciders.DecideMidi_SimpleRepeat;
@@ -77,7 +77,7 @@ public class SupervisorMidi implements Supervisor {
 		//Test
 		tester = new Test(this);
 		//Set Log Level for SupervisorMidi Global Logger
-		LOGGER.setLevel(Level.INFO);
+		LOGGER.setLevel(Level.WARNING);
 	}
 	
 	public void dataIn() {
@@ -115,7 +115,12 @@ public class SupervisorMidi implements Supervisor {
 	public void addMidiSegment(int segmentStart, int segmentEnd) {
 		sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
 		LOGGER.info("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
+		//sMidiStats.clearPitchHistogram();
 		this.doNext(SEGMENT);	
+	}
+	
+	public void densitySegmentBreak() {
+		analyser_silence.silent();
 	}
 	
 	public void doNext(int nextType) {
