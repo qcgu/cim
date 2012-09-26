@@ -10,6 +10,7 @@ import java.util.logging.*;
 import cims.supervisors.*;
 import com.cycling74.max.*;
 
+//comment
 public class CimsMaxIO extends MaxObject {
 	private SupervisorMidi superMidi;
 	private SupervisorOsc superOsc;
@@ -28,7 +29,7 @@ public class CimsMaxIO extends MaxObject {
 		declareIO(4,4); 
 		createInfoOutlet(false); // Right most outlet not required	
 		superMidi = new SupervisorMidi(this);
-		LOGGER.setLevel(Level.WARNING);
+		LOGGER.setLevel(Level.WARNING); //INFO
 	}
 	
 	public void controlParams(Atom[] args) {
@@ -44,7 +45,7 @@ public class CimsMaxIO extends MaxObject {
 		case 0:
 			LOGGER.log(Level.INFO, "MIDI IN");
 			this.midiData = arg;
-			//superMidi.dataIn();
+			superMidi.dataIn();
 			break;
 		case 1:
 			LOGGER.log(Level.INFO, "OSC IN");
@@ -59,7 +60,6 @@ public class CimsMaxIO extends MaxObject {
 		case 3:
 			LOGGER.log(Level.INFO, "CONTROL IN");
 		}
-		
 	}
 	
 	public int inMidi() {
@@ -96,7 +96,4 @@ public class CimsMaxIO extends MaxObject {
 	public void textOut(String text) {
 		post(text);
 	}
-	
-
-
 }

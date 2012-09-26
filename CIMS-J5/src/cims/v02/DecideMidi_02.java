@@ -56,7 +56,7 @@ public class DecideMidi_02 {
 		} else {
 			currentAction = nextAction;
 		}
-		nextAction = randomiser.positiveInteger(3);
+		nextAction = randomiser.weightedActionChoice(); //randomiser.positiveInteger(0);
 		LOGGER.info("chooseNextAction");
 		supervisor.txtMsg(""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction));
 		switch (currentAction) {
@@ -82,6 +82,9 @@ public class DecideMidi_02 {
 			case 3: // mirror
 				mirroring = true;
 				break;
+			case 4: // silence
+				// do nothing
+				break;
 		}
 	}
 	
@@ -99,6 +102,9 @@ public class DecideMidi_02 {
 			break;
 		case 3:
 			returnString = "MIRROR on play";
+			break;
+		case 4:
+			returnString = "SLIENCE on play";
 			break;
 		}
 		return returnString;

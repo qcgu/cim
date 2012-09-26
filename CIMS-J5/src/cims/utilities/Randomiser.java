@@ -32,4 +32,27 @@ public class Randomiser {
 		return pitchClass;
 	}
 	
+	public int weightedActionChoice() {
+		double repeatWeight = 0.5;
+		double initiateWeight = 0.5;
+		double supportWeight = 0.5;
+		double mirrorWeight = 0.5;
+		double silenceWeight = 0.5;
+		double totalWeight = repeatWeight + initiateWeight + supportWeight + mirrorWeight + silenceWeight;
+		double rnd = Math.random() * totalWeight;
+		int returnVal = 0;
+		if (rnd < repeatWeight) {
+			returnVal = 0;
+		} else if (rnd < (repeatWeight + initiateWeight)) {
+			returnVal = 1;
+		} else if (rnd < (repeatWeight + initiateWeight + supportWeight)) {
+			returnVal = 2;
+		} else if (rnd < (repeatWeight + initiateWeight + supportWeight + mirrorWeight)) {
+			returnVal = 3;
+		} else {
+			returnVal = 4;
+		}
+		return returnVal;
+	}
+	
 }
