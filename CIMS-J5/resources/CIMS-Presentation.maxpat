@@ -4327,21 +4327,21 @@
 		"dependency_cache" : [ 			{
 				"name" : "openTransport.maxpat",
 				"bootpath" : "/Applications/Max6/Cycling '74/max-help",
-				"patcherrelativepath" : "../../../../Applications/Max6/Cycling '74/max-help",
+				"patcherrelativepath" : "../../../../../../Applications/Max6/Cycling '74/max-help",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "channel_plug.maxpat",
 				"bootpath" : "/Applications/Max6/Cycling '74/msp-help",
-				"patcherrelativepath" : "../../../../Applications/Max6/Cycling '74/msp-help",
+				"patcherrelativepath" : "../../../../../../Applications/Max6/Cycling '74/msp-help",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "get_plugs.js",
 				"bootpath" : "/Applications/Max6/Cycling '74/msp-help",
-				"patcherrelativepath" : "../../../../Applications/Max6/Cycling '74/msp-help",
+				"patcherrelativepath" : "../../../../../../Applications/Max6/Cycling '74/msp-help",
 				"type" : "TEXT",
 				"implicit" : 1
 			}

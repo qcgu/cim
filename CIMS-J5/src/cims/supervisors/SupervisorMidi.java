@@ -76,7 +76,7 @@ public class SupervisorMidi implements Supervisor {
 		//Test
 		tester = new Test(this);
 		//Set Log Level for SupervisorMidi Global Logger
-		LOGGER.setLevel(Level.WARNING);
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public void dataIn() {
