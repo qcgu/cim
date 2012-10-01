@@ -10,7 +10,8 @@ import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
 import cims.utilities.Test;
-import cims.v01.DecideMidi_01;
+//import cims.v01.DecideMidi_01;
+import cims.v02.DecideMidi_02;
 import cims.datatypes.*;
 import cims.deciders.DecideMidi_SimpleRepeat;
 import cims.deciders.DecideMidi_UserControl;
@@ -29,7 +30,7 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Controls analyser_controls;
 	private AnalyseMidi_Stats analyser_stats;
 	private DecideMidi_UserControl decider_userControl;
-	private DecideMidi_01 decider_01;
+	private DecideMidi_02 decider;
 	@SuppressWarnings(value="unused")
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
 	private CaptureOutput outputTracker;
@@ -71,7 +72,7 @@ public class SupervisorMidi implements Supervisor {
 		analyser_stats = new AnalyseMidi_Stats(this);
 		//Decide what to do
 		decider_userControl = new DecideMidi_UserControl(this);
-		decider_01 = new DecideMidi_01(this);
+		decider = new DecideMidi_02(this);
 		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
 		//Test
 		tester = new Test(this);
@@ -114,14 +115,22 @@ public class SupervisorMidi implements Supervisor {
 	public void addMidiSegment(int segmentStart, int segmentEnd) {
 		sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
 		LOGGER.info("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
+		//sMidiStats.clearPitchHistogram();
 		this.doNext(SEGMENT);	
 	}
+	
+	//TODO Check with Andrew what this method is for - potentially dangerous to call the silent() method directly
+	/*
+	public void densitySegmentBreak() {
+		analyser_silence.silent();
+	}
+	*/
 	
 	public void doNext(int nextType) {
 		if (sTestMode) nextType=+10;
 		switch(nextType) {
 		case MESSAGE_NOTE:
-			decider_01.messageIn(sLastMidiMessage);
+			decider.messageIn(sLastMidiMessage);
 			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			if(analyser_stats.newMidi()) analyser_stats.analyse();	
 			break;
@@ -130,7 +139,7 @@ public class SupervisorMidi implements Supervisor {
 			break;
 		case SEGMENT:
 			System.gc(); //force garbage collection
-			decider_01.chooseNextAction();
+			decider.chooseNextAction();
 			//decider_simpleRepeat.repeatLastSegment();
 			break;
 		case TEST_MESSAGE_NOTE:

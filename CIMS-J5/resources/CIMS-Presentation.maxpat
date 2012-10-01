@@ -140,7 +140,7 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-64",
-					"items" : [ "to Max 1", ",", "to Max 2" ],
+					"items" : [ "MK-249 USB MIDI keyboard", ",", "to Max 1", ",", "to Max 2" ],
 					"maxclass" : "umenu",
 					"numinlets" : 1,
 					"numoutlets" : 3,
@@ -861,12 +861,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -1284,13 +1284,13 @@
 					"presentation_rect" : [ 510.0, 156.5, 256.0, 49.0 ],
 					"saved_attribute_attributes" : 					{
 						"valueof" : 						{
-							"parameter_mmin" : -70.0,
-							"parameter_initial" : [ 0.0 ],
 							"parameter_type" : 0,
 							"parameter_shortname" : "live.gain~",
 							"parameter_longname" : "live.gain~[2]",
 							"parameter_unitstyle" : 4,
-							"parameter_mmax" : 6.0
+							"parameter_mmax" : 6.0,
+							"parameter_mmin" : -70.0,
+							"parameter_initial" : [ 0.0 ]
 						}
 
 					}
@@ -1313,13 +1313,13 @@
 					"presentation_rect" : [ 510.0, 111.0, 256.0, 49.0 ],
 					"saved_attribute_attributes" : 					{
 						"valueof" : 						{
-							"parameter_mmin" : -70.0,
-							"parameter_initial" : [ 0.0 ],
 							"parameter_type" : 0,
 							"parameter_shortname" : "live.gain~",
 							"parameter_longname" : "live.gain~[3]",
 							"parameter_unitstyle" : 4,
-							"parameter_mmax" : 6.0
+							"parameter_mmax" : 6.0,
+							"parameter_mmin" : -70.0,
+							"parameter_initial" : [ 0.0 ]
 						}
 
 					}
@@ -1582,12 +1582,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -1652,12 +1652,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -1722,12 +1722,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -1896,12 +1896,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -2070,12 +2070,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -2119,7 +2119,6 @@
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -2150,7 +2149,7 @@
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-14",
-									"items" : [ "nanoKEY2 KEYBOARD", ",", "to Max 1", ",", "to Max 2" ],
+									"items" : [ "MK-249 USB MIDI keyboard", ",", "to Max 1", ",", "to Max 2" ],
 									"maxclass" : "umenu",
 									"numinlets" : 1,
 									"numoutlets" : 3,
@@ -2277,12 +2276,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -2327,7 +2326,6 @@
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
-						"visible" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -2934,12 +2932,12 @@
 										"fontsize" : 12.0,
 										"default_fontface" : 0,
 										"digest" : "",
-										"globalpatchername" : "",
 										"default_fontname" : "Arial",
-										"default_fontsize" : 12.0,
 										"tags" : "",
+										"default_fontsize" : 12.0,
 										"description" : "",
 										"fontname" : "Arial",
+										"globalpatchername" : "",
 										"fontface" : 0
 									}
 ,
@@ -3423,12 +3421,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -3510,13 +3508,13 @@
 									"patching_rect" : [ 303.0, 319.0, 48.0, 136.0 ],
 									"saved_attribute_attributes" : 									{
 										"valueof" : 										{
-											"parameter_mmin" : -70.0,
-											"parameter_initial" : [ 0.0 ],
 											"parameter_type" : 0,
 											"parameter_shortname" : "live.gain~",
 											"parameter_longname" : "live.gain~[1]",
 											"parameter_unitstyle" : 4,
-											"parameter_mmax" : 6.0
+											"parameter_mmax" : 6.0,
+											"parameter_mmin" : -70.0,
+											"parameter_initial" : [ 0.0 ]
 										}
 
 									}
@@ -3536,13 +3534,13 @@
 									"patching_rect" : [ 243.0, 319.0, 48.0, 136.0 ],
 									"saved_attribute_attributes" : 									{
 										"valueof" : 										{
-											"parameter_mmin" : -70.0,
-											"parameter_initial" : [ 0.0 ],
 											"parameter_type" : 0,
 											"parameter_shortname" : "live.gain~",
 											"parameter_longname" : "live.gain~",
 											"parameter_unitstyle" : 4,
-											"parameter_mmax" : 6.0
+											"parameter_mmax" : 6.0,
+											"parameter_mmin" : -70.0,
+											"parameter_initial" : [ 0.0 ]
 										}
 
 									}
@@ -3897,12 +3895,12 @@
 						"fontsize" : 12.0,
 						"default_fontface" : 0,
 						"digest" : "",
-						"globalpatchername" : "",
 						"default_fontname" : "Arial",
-						"default_fontsize" : 12.0,
 						"tags" : "",
+						"default_fontsize" : 12.0,
 						"description" : "",
 						"fontname" : "Arial",
+						"globalpatchername" : "",
 						"fontface" : 0
 					}
 ,
@@ -4318,9 +4316,9 @@
 			}
  ],
 		"parameters" : 		{
+			"obj-6::obj-18" : [ "live.gain~[1]", "live.gain~", 0 ],
 			"obj-6::obj-17" : [ "live.gain~", "live.gain~", 0 ],
 			"obj-18" : [ "live.gain~[2]", "live.gain~", 0 ],
-			"obj-6::obj-18" : [ "live.gain~[1]", "live.gain~", 0 ],
 			"obj-17" : [ "live.gain~[3]", "live.gain~", 0 ]
 		}
 ,

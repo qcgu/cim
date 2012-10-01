@@ -1,5 +1,7 @@
 package cims.datatypes;
 
+import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 
@@ -8,26 +10,34 @@ public class MidiStatistics {
 	private int current_pitch;
 	private int current_velocity;
 	private int current_duration;
+	private long current_onsetInterval;
+	private long previousOnsetTime;
 	
 	private int meanPitch;
 	private int meanVelocity;
 	private int meanDuration;
+	private int meanOnsetInterval;
+	private int onsetIntervalTrend;
 	
 	private int deviationPitch;
 	private int deviationVelocity;
 	private int deviationDuration;
+	private int deviationOnsetInterval;
 
 	private int[] pitchClassHistogram;
 
 	private DescriptiveStatistics midiStats_Pitch;
 	private DescriptiveStatistics midiStats_Velocity;
 	private DescriptiveStatistics midiStats_Duration;
+	private DescriptiveStatistics midiStats_OnsetInterval;
 	
 	
 	public MidiStatistics() {
 		this.midiStats_Pitch = new SynchronizedDescriptiveStatistics();
 		this.midiStats_Velocity = new SynchronizedDescriptiveStatistics();
 		this.midiStats_Duration = new SynchronizedDescriptiveStatistics();
+		this.midiStats_OnsetInterval = new SynchronizedDescriptiveStatistics();
+		this.previousOnsetTime = 0;
 		// initialise pitch class histogram
 		this.pitchClassHistogram = new int[12];
 		this.clearPitchHistogram();
@@ -44,7 +54,7 @@ public class MidiStatistics {
 	}
 	
 	public int getPitchClass(int pitch) {
-		pitch -= 1; //Allow for 1-12
+		//pitch -= 1; //Allow for 1-12
 		return pitchClassHistogram[pitch];
 	}
 	
@@ -171,4 +181,34 @@ public class MidiStatistics {
 	public void setMidiStats_Duration(DescriptiveStatistics midiStats_Duration) {
 		this.midiStats_Duration = midiStats_Duration;
 	}	
+	
+	public void addOnset(long onsetTime) {
+		LOGGER.info("MIDI_STATSITICS: addOnset " + onsetTime + " mean: " + meanOnsetInterval);
+		// check for first time exception
+		if (previousOnsetTime != 0) {
+			int prevOnsetMean = meanOnsetInterval;
+			current_onsetInterval = onsetTime - previousOnsetTime ;
+			midiStats_OnsetInterval.addValue((int)current_onsetInterval);
+			meanOnsetInterval = (int) midiStats_OnsetInterval.getMean();
+			deviationOnsetInterval = (int) midiStats_OnsetInterval.getStandardDeviation();
+			if (prevOnsetMean != 0) {
+				onsetIntervalTrend = meanOnsetInterval - prevOnsetMean;
+			}
+			//System.out.println("MIDI_STATSITICS: addOnset " + onsetTime + " mean: " + meanOnsetInterval 
+				//	+ " prev: " + prevOnsetMean + " trend: " + onsetIntervalTrend);
+		}
+		previousOnsetTime = onsetTime;
+	}
+	
+	public int getOnsetIntervalTrend() {
+		return onsetIntervalTrend;
+	}
+	
+	public int getMeanOnsetInterval() {
+		return meanOnsetInterval;
+	}
+	
+	public int getDeviationOnsetInterval() {
+		return deviationOnsetInterval;
+	}
 }
