@@ -8,6 +8,7 @@
  */
 package cims.datatypes;
 //import cims.*;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class MidiMessage {
 
@@ -63,10 +64,15 @@ public class MidiMessage {
 	public static final int ACTIVE_SENSING = 254;
 	public static final int SYSTEM_RESET = 255;
 	
+	public static final int CONTROLLER_SUSTAIN = 64;
+	public static final int SUSTAIN_ON = 127;
+	public static final int SUSTAIN_OFF = 0;
 	
 	public static int sMessagesCount;
 	public static int sTotalNotesOn;
+	public static boolean sSustainOn = false;
 	
+	public int[] rawMessage;
 	public int messageNum;
 	public int notesOnCount;
 	
@@ -78,6 +84,7 @@ public class MidiMessage {
 	public int noteOnOff;
 	public int channel;
 	public int controller;
+	public int sustainOnOff;
 	public int controlData;
 	public int otherData1; // e.g. program change, pitch wheel LSB
 	public int otherData2; // e.g. pitch wheel MSB
@@ -90,6 +97,9 @@ public class MidiMessage {
 	
 	public void set(int[] message) {
 		sMessagesCount++;
+		this.rawMessage = this.copyRaw(message);
+		//LOGGER.warning("MIDIMESSAGE SET: "+this.rawMessage.toString() + " STATUS: " +this.rawMessage[0]);
+		//LOGGER.warning("sSustainOn: "+MidiMessage.sSustainOn);
 		this.messageNum = MidiMessage.sMessagesCount;
 		
 		this.timeMillis = System.currentTimeMillis();
@@ -97,6 +107,7 @@ public class MidiMessage {
 		switch(detectMessageType(this.status)) {
 		case NOTE_ON:
 			this.channel = this.status-NOTE_ON-1;
+			this.controller=0;
 			this.pitch = message[1];
 			this.velocity = message[2];
 			if(this.velocity>0) {
@@ -111,6 +122,7 @@ public class MidiMessage {
 			break;
 		case NOTE_OFF:
 			this.channel = this.status-NOTE_OFF-1;
+			this.controller=0;
 			this.pitch = message[1];
 			this.velocity = 0;
 			this.noteOnOff = 0;
@@ -118,6 +130,7 @@ public class MidiMessage {
 			break;
 		case POLY_AFTERTOUCH:
 			this.channel = this.status-POLY_AFTERTOUCH-1;
+			this.controller = this.messageType;
 			this.pitch = message[1];
 			this.pressure = message[2];
 			break;
@@ -125,17 +138,28 @@ public class MidiMessage {
 			this.channel = this.status-CONTROL_CHANGE-1;
 			this.controller = message[1];
 			this.controlData = message[2];
+			//LOGGER.warning("CONTROLLER: "+this.controller + " CONTROLDATA: "+this.controlData);
+			if(this.controller==CONTROLLER_SUSTAIN) {
+				if (this.controlData==SUSTAIN_ON) {
+					MidiMessage.sSustainOn = true;
+				} else {
+					MidiMessage.sSustainOn = false;
+				}
+			}
 			break;
 		case PROGRAM_CHANGE:
 			this.channel = this.status-PROGRAM_CHANGE-1;
+			this.controller = this.messageType;
 			this.otherData1 = message[1];
 			break;
 		case CHANNEL_AFTERTOUCH:
 			this.channel = this.status-CHANNEL_AFTERTOUCH-1;
+			this.controller = this.messageType;
 			this.pressure = message[1];
 			break;
 		case PITCH_WHEEL:
 			this.channel = this.status-PITCH_WHEEL-1;
+			this.controller = this.messageType;
 			this.otherData1 = message[1];
 			this.otherData2 = message[2];
 			break;
@@ -225,9 +249,11 @@ public class MidiMessage {
 		int messageType = this.detectMessageType(this.status);
 		this.channel = channel-1;
 		this.status = messageType + this.channel;
+		this.rawMessage[0] = this.status;
 	}
 	
 	public void copy(MidiMessage newEvent) {
+		this.rawMessage = newEvent.rawMessage;
 		this.messageNum = newEvent.messageNum;
 		this.timeMillis = newEvent.timeMillis;
 		this.status = newEvent.status;
@@ -259,6 +285,10 @@ public class MidiMessage {
 		this.otherData2 = 0;
 		this.messageType =0;
 		this.dataByteLength = 0;
+	}
+	
+	public int[] copyRaw(int[] message) {
+		return (int[])message.clone();
 	}
 	
 	public static boolean isNoteOn(int value) {

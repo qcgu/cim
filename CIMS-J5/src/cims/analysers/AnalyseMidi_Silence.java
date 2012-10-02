@@ -28,15 +28,17 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	
 	public void analyse() {
 		notesCount = MidiMessage.sTotalNotesOn;	
-		LOGGER.info("Analysing Silence - NotesOnCount:"+notesCount+" noteOnOff: "+ this.current_message.noteOnOff);
-			if(this.current_message.noteOnOff==ON) {
+		LOGGER.info("Analysing Silence - NotesOnCount:"+notesCount+" noteOnOff: "+ this.current_message.noteOnOff + " controller: "+this.current_message.controller+ " sustain: "+MidiMessage.sSustainOn);
+			if((this.current_message.noteOnOff==ON) || 
+					((this.current_message.controller>0) && ((this.current_message.controlData>0) || (this.current_message.otherData1>0)))) {
+
 				silenceTimer.cancel();
 				if(!segmentStarted) {
 					LOGGER.info("START SEGMENT");
 					this.segmentStart = this.current_message.messageNum;
 					segmentStarted = true;
 				}
-			} else if(notesCount==0) {
+			} else if((notesCount==0) && (this.current_message.controlData==0) && (this.current_message.otherData1==0)) {
 				if(segmentStarted) {
 					//This is the first all notes off event
 					this.segmentEnd = this.current_message.messageNum;

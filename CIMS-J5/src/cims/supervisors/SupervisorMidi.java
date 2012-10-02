@@ -77,7 +77,7 @@ public class SupervisorMidi implements Supervisor {
 		//Test
 		tester = new Test(this);
 		//Set Log Level for SupervisorMidi Global Logger
-		LOGGER.setLevel(Level.INFO);
+		LOGGER.setLevel(Level.WARNING);
 	}
 	
 	public void dataIn() {
@@ -92,10 +92,14 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void dataOut(int[] message) {
-		LOGGER.info("dataOut: "+message[0]+"|"+message[1]+"|"+message[2]);
-		this.io.outMidi(message);
+		if (message==null) {
+			LOGGER.warning("NULL MESSAGE FOR DATA OUT!");
+		} else {
+			LOGGER.info("DATA OUT: "+message[0]);
+			this.io.outMidi(message);
+		}
 		// output capture to stop stuck notes
-		outputTracker.in(message);
+		//outputTracker.in(message);
 	}
 	
 	public void addMidiMessage(MidiMessage newMessage) {
@@ -136,6 +140,7 @@ public class SupervisorMidi implements Supervisor {
 			break;
 		case MESSAGE_CONTROL:
 			if(analyser_controls.newMidi()) analyser_controls.analyse();
+			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			break;
 		case SEGMENT:
 			System.gc(); //force garbage collection

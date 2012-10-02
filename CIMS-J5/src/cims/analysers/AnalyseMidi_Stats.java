@@ -27,7 +27,7 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 			int density = midiStats.getOnsetIntervalTrend();
 			if (density > 1 && density < 5) {
 				System.out.println("ANALYSE MIDI STATS: density break detected.");
-				supervisor.densitySegmentBreak();
+				//supervisor.densitySegmentBreak();
 			}
 		}
 

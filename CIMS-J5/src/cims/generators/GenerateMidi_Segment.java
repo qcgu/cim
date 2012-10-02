@@ -64,8 +64,10 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public void output(MidiMessage midimessage) {
-		int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
-		this.supervisor.dataOut(message);
+		//int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
+		//LOGGER.warning("OUTPUT STATUS: "+ midimessage.status);
+		//LOGGER.warning("OUTPUT RAW MESSAGE: "+ midimessage.rawMessage[0]);
+		this.supervisor.dataOut(midimessage.rawMessage);
 		//supervisor.txtMsg("TC: "+Thread.activeCount());
 	}
 		

@@ -13,7 +13,7 @@ public class AnalyseMidi_Controls extends AnalyseMidi {
 	}
 	
 	public void analyse() {
-		LOGGER.info("CONTROLLER: "+current_message.controller + " VALUE: "+current_message.controlData);
+		LOGGER.info("ANALYSE CONTROLLER: "+current_message.controller + " VALUE: "+current_message.controlData + " DATA1: "+current_message.otherData1 + " DATA2: "+current_message.otherData2);
 	}
 	
 }
