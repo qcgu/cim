@@ -60,6 +60,9 @@ public class SupervisorMidi implements Supervisor {
 		this.io = ioObj;
 		sLastMidiMessage = new MidiMessage();
 		sMidiMessageList = new ArrayList<MidiMessage>();
+		sLastMidiControlMessage = new MidiControlMessage();
+		sMidiControlMessageTable = new MidiControlMessageTable();
+		
 		sMidiSegment = new MidiSegment();
 		sMidiStartTime=0;
 		sMidiStats = new MidiStatistics();
@@ -112,7 +115,10 @@ public class SupervisorMidi implements Supervisor {
 			this.doNext(MESSAGE_NOTE);
 		} else {
 			LOGGER.info("addMidiMessage: CONTROL");
+			sLastMidiControlMessage.addMessage(sLastMidiMessage);
+			sMidiControlMessageTable.add(sLastMidiControlMessage);
 			this.doNext(MESSAGE_CONTROL);
+			//LOGGER.info("allControlsMap: " + sMidiControlMessageTable.getAllControlMessages());
 		}
 	}
 

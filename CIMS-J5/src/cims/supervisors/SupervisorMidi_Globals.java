@@ -3,6 +3,8 @@ package cims.supervisors;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import cims.datatypes.MidiControlMessage;
+import cims.datatypes.MidiControlMessageTable;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.datatypes.MidiStatistics;
@@ -11,6 +13,9 @@ public class SupervisorMidi_Globals {
 	
 	public static MidiMessage sLastMidiMessage;
 	public static ArrayList<MidiMessage> sMidiMessageList;
+	public static MidiControlMessage sLastMidiControlMessage;
+	public static MidiControlMessageTable sMidiControlMessageTable;
+	
 	public static MidiSegment sMidiSegment;
 	public static MidiStatistics sMidiStats;
 	public static long sMidiStartTime=0;
