@@ -105,6 +105,15 @@ public class SupervisorMidi implements Supervisor {
 		//outputTracker.in(message);
 	}
 	
+	public void dataThru(int[] message) {
+		if (message==null) {
+			LOGGER.warning("NULL MESSAGE FOR DATA THRU!");
+		} else {
+			LOGGER.info("DATA THRU: "+message[0]);
+			this.io.outMidiThru(message);
+		}
+	}
+	
 	public void addMidiMessage(MidiMessage newMessage) {
 		sLastMidiMessage = new MidiMessage();
 		sLastMidiMessage.copy(newMessage);
@@ -128,13 +137,6 @@ public class SupervisorMidi implements Supervisor {
 		//sMidiStats.clearPitchHistogram();
 		this.doNext(SEGMENT);	
 	}
-	
-	//TODO Check with Andrew what this method is for - potentially dangerous to call the silent() method directly
-	/*
-	public void densitySegmentBreak() {
-		analyser_silence.silent();
-	}
-	*/
 	
 	public void doNext(int nextType) {
 		if (sTestMode) nextType=+10;

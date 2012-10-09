@@ -7,6 +7,8 @@
  *
  */
 package cims.datatypes;
+
+import static cims.supervisors.SupervisorMidi_Globals.ON;
 //import cims.*;
 //import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
@@ -243,6 +245,23 @@ public class MidiMessage {
 			this.dataByteLength = 2;
 		}
 		return this.messageType;
+	}
+	
+	public boolean canBeSegmentStart() {
+		if((this.noteOnOff==ON) || 
+				((this.controller>0) && ((this.controlData>0) || (this.otherData1>0)))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean canBeSegmentEnd() {
+		if((MidiMessage.sTotalNotesOn==0) && (this.controlData==0) && (this.otherData1==0)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public void changeChannel(int channel) {
