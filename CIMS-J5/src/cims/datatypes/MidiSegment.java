@@ -5,13 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
 import static cims.supervisors.SupervisorMidi_Globals.sMidiMessageList;
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class MidiSegment {
 	private List<MidiMessage> segment;
 	private int segmentDuration;
-	
+	private Class<?> creatorClass;
+
 	public MidiSegment() { //Empty Segment
 		segment = new ArrayList<MidiMessage>();
 		segmentDuration = 0;
@@ -20,6 +22,14 @@ public class MidiSegment {
 	public MidiSegment(int start, int end) { //Segment as subset of MessageList
 		List<MidiMessage> safeList = new CopyOnWriteArrayList<MidiMessage>(sMidiMessageList);
 		segment = safeList.subList(start, end);
+	}
+	
+	public Class<?> getCreatorClass() {
+		return creatorClass;
+	}
+
+	public void setCreatorClass(Class<?> creatorClass) {
+		this.creatorClass = creatorClass;
 	}
 	
 	public void add(MidiMessage message) {
@@ -85,5 +95,7 @@ public class MidiSegment {
 			segmentIterator.next().changeChannel(channel);
 		}
 	}
+	
+	
 
 }

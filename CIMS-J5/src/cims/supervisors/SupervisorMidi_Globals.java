@@ -7,6 +7,7 @@ import cims.datatypes.MidiControlMessage;
 import cims.datatypes.MidiControlMessageTable;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
+import cims.datatypes.MidiSegmentTable;
 import cims.datatypes.MidiStatistics;
 
 public class SupervisorMidi_Globals {
@@ -17,6 +18,7 @@ public class SupervisorMidi_Globals {
 	public static MidiControlMessageTable sMidiControlMessageTable;
 	
 	public static MidiSegment sMidiSegment;
+	public static MidiSegmentTable sMidiSegmentTable;
 	public static MidiStatistics sMidiStats;
 	public static long sMidiStartTime=0;
 	public static int sSegmentGapDuration = 390;

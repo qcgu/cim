@@ -65,6 +65,8 @@ public class SupervisorMidi implements Supervisor {
 		sMidiControlMessageTable = new MidiControlMessageTable();
 		
 		sMidiSegment = new MidiSegment();
+		sMidiSegmentTable = new MidiSegmentTable();
+		
 		sMidiStartTime=0;
 		sMidiStats = new MidiStatistics();
 		//Capture input and output midi
@@ -123,8 +125,6 @@ public class SupervisorMidi implements Supervisor {
 		if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 			LOGGER.info("addMidiMessage: NOTE");
 			if(firstMessage) {
-				//if(analyser_silence.newMidi()) analyser_silence.analyse();
-				//if(analyser_stats.newMidi()) analyser_stats.analyse();
 				decider.firstAction(newMessage);
 				firstMessage = false;
 			}
@@ -138,7 +138,8 @@ public class SupervisorMidi implements Supervisor {
 		}
 	}
 
-	public void addMidiSegment(int segmentStart, int segmentEnd) {
+	public void addMidiSegment(int segmentStart, int segmentEnd, Class<?> creatorClass) {
+		
 		sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
 		LOGGER.info("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
 		//sMidiStats.clearPitchHistogram();
@@ -174,8 +175,6 @@ public class SupervisorMidi implements Supervisor {
 			break;
 		}
 	}
-	
-	
 	
 	public synchronized MidiSegment getLastMidiSegment() {
 		return sMidiSegment;
