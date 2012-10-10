@@ -19,8 +19,8 @@ import cims.utilities.OutputQueue;
 
 public class GenerateMidi_Segment extends GenerateMidi {
 
-	private volatile MidiSegment midiSegment;
-	private volatile OutputQueue midiQueue;
+	protected volatile MidiSegment midiSegment;
+	protected volatile OutputQueue midiQueue;
 	private SupervisorMidi supervisor;
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor) {
@@ -63,6 +63,9 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		midiQueue.play();
 	}
 	
+	public MidiSegment getMidiSegment() {
+		return this.midiSegment;
+	}
 	public void output(MidiMessage midimessage) {
 		//int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
 		//LOGGER.warning("OUTPUT STATUS: "+ midimessage.status);
@@ -97,6 +100,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		int[] offMessage = {MidiMessage.NOTE_OFF + 1, pitch, 0};
 		noteOff.set(offMessage, false);
 		noteOff.timeMillis = (int)(startTime + duration * 0.8);
+		
 		this.midiSegment.add(noteOn);
 		this.midiSegment.add(noteOff);
 	}

@@ -53,8 +53,7 @@ public class MidiSegment {
 	}
 	
 	public MidiMessage lastMessage() {
-		MidiMessage message = new MidiMessage();
-		return message;
+		return (MidiMessage)(segment.get(segment.size()-1));
 	}
 	
 	public MidiMessage firstMessage() {

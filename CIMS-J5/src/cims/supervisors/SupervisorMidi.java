@@ -35,6 +35,7 @@ public class SupervisorMidi implements Supervisor {
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
 	private CaptureOutput outputTracker;
 	private Test tester;
+	private boolean firstMessage = true;
 	
 	private static final int MESSAGE_NOTE = 0;
 	private static final int MESSAGE_CONTROL = 1;
@@ -121,6 +122,12 @@ public class SupervisorMidi implements Supervisor {
 
 		if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 			LOGGER.info("addMidiMessage: NOTE");
+			if(firstMessage) {
+				//if(analyser_silence.newMidi()) analyser_silence.analyse();
+				//if(analyser_stats.newMidi()) analyser_stats.analyse();
+				decider.firstAction(newMessage);
+				firstMessage = false;
+			}
 			this.doNext(MESSAGE_NOTE);
 		} else {
 			LOGGER.info("addMidiMessage: CONTROL");
