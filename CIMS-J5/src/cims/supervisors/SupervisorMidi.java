@@ -139,11 +139,18 @@ public class SupervisorMidi implements Supervisor {
 	}
 
 	public void addMidiSegment(int segmentStart, int segmentEnd, Class<?> creatorClass) {
-		
 		sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
+		sMidiSegment.setCreatorClass(creatorClass);
+		//add the segment to the MidiSegmentTable
+		sMidiSegmentTable.add(sMidiSegment);
 		LOGGER.info("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
 		//sMidiStats.clearPitchHistogram();
 		this.doNext(SEGMENT);	
+	}
+	
+	//TODO Sometimes we don't know start and end of segments, but want to add a point that will define a segment later on
+	public void addSegmentBreakPoint(long breakPoint, Class<?> creatorClass) {
+		
 	}
 	
 	public void doNext(int nextType) {
