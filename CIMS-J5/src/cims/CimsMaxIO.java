@@ -10,6 +10,7 @@ import java.util.logging.*;
 import cims.supervisors.*;
 import com.cycling74.max.*;
 
+//comment
 public class CimsMaxIO extends MaxObject {
 	private SupervisorMidi superMidi;
 	private SupervisorOsc superOsc;
@@ -28,13 +29,13 @@ public class CimsMaxIO extends MaxObject {
 		declareIO(4,4); 
 		createInfoOutlet(false); // Right most outlet not required	
 		superMidi = new SupervisorMidi(this);
-		LOGGER.setLevel(Level.WARNING);
+		LOGGER.setLevel(Level.OFF); //INFO
 	}
 	
 	public void controlParams(Atom[] args) {
 		controlKey=args[0].toString();
 		controlValue=args[1].toInt();
-		LOGGER.log(Level.INFO, "KEY: "+controlKey+" VALUE: "+controlValue);
+		LOGGER.log(Level.OFF, "KEY: "+controlKey+" VALUE: "+controlValue);
 		superMidi.controlIn();
 	}
 	
@@ -42,24 +43,23 @@ public class CimsMaxIO extends MaxObject {
 		int current_inlet = getInlet();
 		switch(current_inlet) {
 		case 0:
-			LOGGER.log(Level.INFO, "MIDI IN");
+			LOGGER.log(Level.OFF, "MIDI IN"); // INFO
 			this.midiData = arg;
-			//superMidi.dataIn();
+			superMidi.dataIn();
 			break;
 		case 1:
-			LOGGER.log(Level.INFO, "OSC IN");
+			LOGGER.log(Level.OFF, "OSC IN");
 			this.oscData = arg;
 			superOsc.dataIn();
 			break;
 		case 2:
-			LOGGER.log(Level.INFO, "AUDIO IN");
+			LOGGER.log(Level.OFF, "AUDIO IN");
 			this.audioData = arg;
 			superAudio.dataIn();
 			break;
 		case 3:
-			LOGGER.log(Level.INFO, "CONTROL IN");
+			LOGGER.log(Level.OFF, "CONTROL IN");
 		}
-		
 	}
 	
 	public int inMidi() {
@@ -73,16 +73,32 @@ public class CimsMaxIO extends MaxObject {
 	}
 	
 	public void outMidi(int[] midi) {
-		LOGGER.log(Level.INFO, "MIDI OUT");
-		outlet(0,midi);
+		LOGGER.log(Level.OFF, "MIDI OUT");
+		int messageSize = midi.length+1;
+		Atom[] midiOutMessage = new Atom[messageSize];		
+		midiOutMessage[0] = Atom.newAtom("midievent");
+		for(int i=1;i<messageSize;i++) {
+			midiOutMessage[i] = Atom.newAtom(midi[(i-1)]);
+		}
+		outlet(0,midiOutMessage);
+	}
+	
+	public void outMidiThru(int[] midi) {
+		int messageSize = midi.length+1;
+		Atom[] midiOutMessage = new Atom[messageSize];		
+		midiOutMessage[0] = Atom.newAtom("midievent");
+		for(int i=1;i<messageSize;i++) {
+			midiOutMessage[i] = Atom.newAtom(midi[(i-1)]);
+		}
+		outlet(1,midiOutMessage);
 	}
 	public void outOsc(int osc) {
-		LOGGER.log(Level.INFO, "OSC OUT");
+		LOGGER.log(Level.OFF, "OSC OUT");
 		outlet(2,osc);
 	}
 	public void outAudio(int audio) {
-		LOGGER.log(Level.INFO, "CONTROL OUT");
-		outlet(2,audio);
+		LOGGER.log(Level.OFF, "AUDIO OUT");
+		outlet(3,audio);
 	}
 	
 	public String key() {
@@ -96,7 +112,4 @@ public class CimsMaxIO extends MaxObject {
 	public void textOut(String text) {
 		post(text);
 	}
-	
-
-
 }

@@ -1,6 +1,7 @@
 package cims.v02;
 
 import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
+import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.generators.GenerateMidi_Segment;
 import cims.supervisors.SupervisorMidi;
@@ -27,10 +28,27 @@ public class GenerateMidi_Segment_02 extends GenerateMidi_Segment {
 		int beatsInBar = 4;
 		int duration = sDefaultDuration;
 		for(int i=0;i<beatsInBar;i++) {
-			this.addNote((duration*i),supervisor.getLastMidiSegment().firstMessage().pitch, randomiser.positiveInteger(40) + 80, duration);
+			
+			this.addNote((duration*i), supervisor.getLastMidiSegment().firstMessage().pitch, randomiser.positiveInteger(40) + 80, duration);
+
+		}
+		return (duration*beatsInBar);	
+	}
+	
+	public int firstSupportSegment(MidiMessage firstMessage) {
+		this.makeEmptySegment();
+		int beatsInBar = 4;
+		int duration = sDefaultDuration;
+		for(int i=0;i<beatsInBar;i++) {
+			
+			this.addNote((duration*i), firstMessage.pitch, randomiser.positiveInteger(40) + 80, duration);
+
 		}
 		return (duration*beatsInBar);
-		
+	}
+	
+	public MidiSegment getMidiSegment() {
+		return this.midiSegment;
 	}
 	
 	public int initiateSegment() {

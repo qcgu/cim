@@ -10,7 +10,8 @@ import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
 import cims.utilities.Test;
-import cims.v01.DecideMidi_01;
+//import cims.v01.DecideMidi_01;
+import cims.v02.DecideMidi_02;
 import cims.datatypes.*;
 import cims.deciders.DecideMidi_SimpleRepeat;
 import cims.deciders.DecideMidi_UserControl;
@@ -29,11 +30,12 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Controls analyser_controls;
 	private AnalyseMidi_Stats analyser_stats;
 	private DecideMidi_UserControl decider_userControl;
-	private DecideMidi_01 decider_01;
+	private DecideMidi_02 decider;
 	@SuppressWarnings(value="unused")
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
 	private CaptureOutput outputTracker;
 	private Test tester;
+	private boolean firstMessage = true;
 	
 	private static final int MESSAGE_NOTE = 0;
 	private static final int MESSAGE_CONTROL = 1;
@@ -59,6 +61,9 @@ public class SupervisorMidi implements Supervisor {
 		this.io = ioObj;
 		sLastMidiMessage = new MidiMessage();
 		sMidiMessageList = new ArrayList<MidiMessage>();
+		sLastMidiControlMessage = new MidiControlMessage();
+		sMidiControlMessageTable = new MidiControlMessageTable();
+		
 		sMidiSegment = new MidiSegment();
 		sMidiStartTime=0;
 		sMidiStats = new MidiStatistics();
@@ -71,7 +76,7 @@ public class SupervisorMidi implements Supervisor {
 		analyser_stats = new AnalyseMidi_Stats(this);
 		//Decide what to do
 		decider_userControl = new DecideMidi_UserControl(this);
-		decider_01 = new DecideMidi_01(this);
+		decider = new DecideMidi_02(this);
 		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
 		//Test
 		tester = new Test(this);
@@ -91,10 +96,23 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void dataOut(int[] message) {
-		LOGGER.info("dataOut: "+message[0]+"|"+message[1]+"|"+message[2]);
-		this.io.outMidi(message);
+		if (message==null) {
+			LOGGER.warning("NULL MESSAGE FOR DATA OUT!");
+		} else {
+			LOGGER.info("DATA OUT: "+message[0]);
+			this.io.outMidi(message);
+		}
 		// output capture to stop stuck notes
-		outputTracker.in(message);
+		//outputTracker.in(message);
+	}
+	
+	public void dataThru(int[] message) {
+		if (message==null) {
+			LOGGER.warning("NULL MESSAGE FOR DATA THRU!");
+		} else {
+			LOGGER.info("DATA THRU: "+message[0]);
+			this.io.outMidiThru(message);
+		}
 	}
 	
 	public void addMidiMessage(MidiMessage newMessage) {
@@ -104,16 +122,26 @@ public class SupervisorMidi implements Supervisor {
 
 		if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 			LOGGER.info("addMidiMessage: NOTE");
+			if(firstMessage) {
+				//if(analyser_silence.newMidi()) analyser_silence.analyse();
+				//if(analyser_stats.newMidi()) analyser_stats.analyse();
+				decider.firstAction(newMessage);
+				firstMessage = false;
+			}
 			this.doNext(MESSAGE_NOTE);
 		} else {
 			LOGGER.info("addMidiMessage: CONTROL");
+			sLastMidiControlMessage.addMessage(sLastMidiMessage);
+			sMidiControlMessageTable.add(sLastMidiControlMessage);
 			this.doNext(MESSAGE_CONTROL);
+			//LOGGER.info("allControlsMap: " + sMidiControlMessageTable.getAllControlMessages());
 		}
 	}
 
 	public void addMidiSegment(int segmentStart, int segmentEnd) {
 		sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
 		LOGGER.info("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
+		//sMidiStats.clearPitchHistogram();
 		this.doNext(SEGMENT);	
 	}
 	
@@ -121,16 +149,17 @@ public class SupervisorMidi implements Supervisor {
 		if (sTestMode) nextType=+10;
 		switch(nextType) {
 		case MESSAGE_NOTE:
-			decider_01.messageIn(sLastMidiMessage);
+			decider.messageIn(sLastMidiMessage);
 			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			if(analyser_stats.newMidi()) analyser_stats.analyse();	
 			break;
 		case MESSAGE_CONTROL:
 			if(analyser_controls.newMidi()) analyser_controls.analyse();
+			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			break;
 		case SEGMENT:
 			System.gc(); //force garbage collection
-			decider_01.chooseNextAction();
+			decider.chooseNextAction();
 			//decider_simpleRepeat.repeatLastSegment();
 			break;
 		case TEST_MESSAGE_NOTE:
