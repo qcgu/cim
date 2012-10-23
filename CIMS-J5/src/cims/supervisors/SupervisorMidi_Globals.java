@@ -1,6 +1,7 @@
 package cims.supervisors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import cims.datatypes.MidiControlMessage;
@@ -25,6 +26,7 @@ public class SupervisorMidi_Globals {
 	public static int sDefaultDuration = 250;
 	
 	// Static properties set by external control
+	public static HashMap<String,Float> sActivityWeights;
 	public static int sSegmentGap = 3;
 	public static int sRepeatInterval = 0;
 	public static boolean sMetronome = false;

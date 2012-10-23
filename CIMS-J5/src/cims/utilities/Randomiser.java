@@ -1,6 +1,7 @@
 package cims.utilities;
 
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
+import static cims.supervisors.SupervisorMidi_Globals.sActivityWeights;
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class Randomiser {
@@ -35,7 +36,8 @@ public class Randomiser {
 	}
 	
 	public int weightedActivityChoice() {
-		double repeatWeight = 0.5;
+		Float repeatWeight = sActivityWeights.get("repeatWeight");
+		System.out.println("REPEAT WEIGHT SET: "+repeatWeight.toString());
 		double initiateWeight = 0.5;
 		double supportWeight = 0.5;
 		double mirrorWeight = 0.5;

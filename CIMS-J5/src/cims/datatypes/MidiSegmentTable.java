@@ -27,7 +27,7 @@ public class MidiSegmentTable {
 	}
 	
 	public void addBreakPoint(long timestamp,String className) {
-
+/*
 		if (breakPointSegmentsMap.containsKey(className)) {
 			this.segmentsMap.get(className).put(segment.firstMessage().timeMillis,segment);
 		} else {
@@ -35,6 +35,7 @@ public class MidiSegmentTable {
 			newSegmentMap.put(segment.firstMessage().timeMillis, segment);
 			this.segmentsMap.put(className, newSegmentMap);
 		}
+		*/
 	}
 	 
 	public HashMap<String,TreeMap<Long, MidiSegment>> getAllSegments() {
@@ -49,10 +50,6 @@ public class MidiSegmentTable {
 		return this.segmentsMap.get(className).get(timestamp);
 	}
 	
-	public HashMap<String,Long> getAllBreakPoints() {
-		return this.breakPointsMap;
-	}
-	
-	public 
+
 
 }

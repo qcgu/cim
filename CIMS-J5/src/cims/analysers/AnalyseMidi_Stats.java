@@ -60,7 +60,7 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 	
 	public void densitySegmentBreak()  {
 		LOGGER.info("DENSITY BREAK DETECTED >> segmentStart: "+segmentStart+" segmentEnd: "+segmentEnd);		
-		supervisor.addMidiSegment(this.segmentStart, this.segmentEnd);
+		//supervisor.addMidiSegment(this.segmentStart, this.segmentEnd);
 		segmentStarted = false;
 	}
 	

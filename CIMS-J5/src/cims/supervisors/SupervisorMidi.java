@@ -15,6 +15,7 @@ import cims.v02.DecideMidi_02;
 import cims.datatypes.*;
 import cims.deciders.DecideMidi_SimpleRepeat;
 import cims.deciders.DecideMidi_UserControl;
+import cims.interfaces.Interface_Controls;
 
 import static cims.supervisors.SupervisorMidi_Globals.*;
 
@@ -25,6 +26,8 @@ import static cims.supervisors.SupervisorMidi_Globals.*;
 public class SupervisorMidi implements Supervisor {
 	
 	private CimsMaxIO io;
+	private Interface_Controls controls;
+	
 	private CaptureMidi capturer;
 	private AnalyseMidi_Silence analyser_silence;
 	private AnalyseMidi_Controls analyser_controls;
@@ -57,8 +60,9 @@ public class SupervisorMidi implements Supervisor {
 	 * @see		CimsMaxIO
 	 * @see		SupervisorMidi_Globals
 	 */
-	public SupervisorMidi(CimsMaxIO ioObj) {
+	public SupervisorMidi(CimsMaxIO ioObj,Interface_Controls controls) {
 		this.io = ioObj;
+		this.controls = controls;
 		sLastMidiMessage = new MidiMessage();
 		sMidiMessageList = new ArrayList<MidiMessage>();
 		sLastMidiControlMessage = new MidiControlMessage();
@@ -71,6 +75,7 @@ public class SupervisorMidi implements Supervisor {
 		sMidiStats = new MidiStatistics();
 		//Capture input and output midi
 		capturer = new CaptureMidi(this);
+		
 		outputTracker = new CaptureOutput(this);
 		//Analyse
 		analyser_silence = new AnalyseMidi_Silence(this);
@@ -97,6 +102,14 @@ public class SupervisorMidi implements Supervisor {
 		decider_userControl.input(this.io.key(), this.io.value());	
 	}
 	
+	public void interfaceUpdated() {
+		sActivityWeights = controls.getActivityWeights();
+		Float repeatWeight = controls.getActivityWeightFor("repeatWeight");
+		LOGGER.warning("SuperMidi: Interface Updated");
+		LOGGER.warning("REPEAT WEIGHT: "+repeatWeight.toString());
+		//LOGGER.warning("OSC DATA: "+controls.getLastOscData()[0]);
+	}
+	
 	public void dataOut(int[] message) {
 		if (message==null) {
 			LOGGER.warning("NULL MESSAGE FOR DATA OUT!");
@@ -116,7 +129,7 @@ public class SupervisorMidi implements Supervisor {
 			this.io.outMidiThru(message);
 		}
 	}
-	
+		
 	public void addMidiMessage(MidiMessage newMessage) {
 		sLastMidiMessage = new MidiMessage();
 		sLastMidiMessage.copy(newMessage);
