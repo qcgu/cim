@@ -1,6 +1,5 @@
 package cims.interfaces;
 
-//import java.util.ArrayList;
 import java.util.HashMap;
 
 import cims.CimsMaxIO;
@@ -9,11 +8,24 @@ import cims.CimsMaxIO;
 public class Interface_Controls {
 	private CimsMaxIO io;
 	private String[] lastOscData;
-	private HashMap<String,Float> activityWeights;
+	private HashMap<String,Double> activityWeights;
+	private static String[] activityWeightNames = {"repeatWeight","initiateWeight","supportWeight","mirrorWeight","silenceWeight"};
+	private String oscDeviceAddress;
+	private String sysMessage;
 	
 	public Interface_Controls(CimsMaxIO io) {
 		this.io = io;
-		activityWeights = new HashMap<String,Float>();
+		activityWeights = new HashMap<String,Double>();
+		initialiseControls();
+	}
+	
+	public void initialiseControls() {
+		setOscDeviceAddress("CIMiPad1");
+		for(int i=0;i<activityWeightNames.length;i++) {
+			this.activityWeights.put(activityWeightNames[i], 0.5);
+		}
+		setSysMessage("Welcome to CIM");
+		sendSysMessageToInterface();
 	}
 	
 	public void updateInterfaceValues(String[] oscData) {
@@ -22,42 +34,65 @@ public class Interface_Controls {
 		this.io.interfaceUpdated();
 	}
 	
+	public void sendSysMessageToInterface() {
+		String address = "/"+getOscDeviceAddress()+"/sysMessage";
+		this.io.outOscSysMessage(address,getSysMessage());
+	}
+	
 	public String[] getLastOscData() {
 		return lastOscData;
 	}
 
-	public HashMap<String,Float> getActivityWeights() {
+	public String getSysMessage() {
+		return this.sysMessage;
+	}
+	
+	public void setSysMessage(String message) {
+		this.sysMessage = message;
+	}
+	
+	public HashMap<String,Double> getActivityWeights() {
 		return activityWeights;
 	}
 
-	public void setActivityWeights(HashMap<String,Float> activityWeights) {
+	public void setActivityWeights(HashMap<String,Double> activityWeights) {
 		this.activityWeights = activityWeights;
-		this.io.interfaceUpdated();
+		//this.io.interfaceUpdated();
 	}
 	
-	public Float getActivityWeightFor(String activityName) {
+	public Double getActivityWeightFor(String activityName) {
 		return this.activityWeights.get(activityName);
 	}
 	
-	public void setActivityWeightAs(String activityName,Float weight) {
+	public void setActivityWeightAs(String activityName,Double weight) {
 		this.activityWeights.put(activityName, weight);
 		this.io.interfaceUpdated();
 	}
 
 	private void parseOscData() {
-		String controller;
-		Float value;
+		String controller = "";
 		System.out.println("SPLIT: "+this.lastOscData[0]);
-		String[] oscAddress = this.lastOscData[0].split("/");
-		if(oscAddress.length==3) {
-			controller = oscAddress[2];	
-			value = Float.valueOf(this.lastOscData[1]);
-			System.out.println("CONTROL: "+controller+" VALUE: "+value);
-			if(controller.equalsIgnoreCase("slider1")) setActivityWeightAs("repeatWeight",value);
-			
+		String[] oscAddress = this.lastOscData[0].split("multifader1/");
+		if(oscAddress.length>1) {
+			controller = activityWeightNames[(Integer.valueOf(oscAddress[1])-1)];
+			setActivityWeightAs(controller,Double.valueOf(this.lastOscData[1]));
 		}
+		String weightChange = " FADER: "+controller+" VALUE: "+this.lastOscData[1];
+		setSysMessage(weightChange);
+		sendSysMessageToInterface();
+	}
+
+	public String getOscDeviceAddress() {
+		return oscDeviceAddress;
+	}
+
+	public void setOscDeviceAddress(String oscDeviceAddress) {
+		this.oscDeviceAddress = oscDeviceAddress;
 	}
 	
+	public String[] getActivityWeightNames() {
+		return activityWeightNames;
+	}
 	
 
 }

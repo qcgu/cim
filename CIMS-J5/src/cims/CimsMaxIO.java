@@ -5,6 +5,8 @@
 
 package cims;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.*;
 
 import cims.interfaces.Interface_Controls;
@@ -41,6 +43,8 @@ public class CimsMaxIO extends MaxObject {
 		superMidi = new SupervisorMidi(this,controls);
 		superOsc = new SupervisorOsc(this,controls);
 		LOGGER.setLevel(Level.OFF); //INFO
+		textOut("IO Initialized");
+		this.interfaceUpdated();
 	}
 
 	public void anything(String message, Atom[] args) {
@@ -59,6 +63,7 @@ public class CimsMaxIO extends MaxObject {
 				this.oscData[i] = args[i].toString();
 			}
 			superOsc.dataIn();
+			textOut("OSC RECEIVED");
 			break;
 		case AUDIO:
 			System.out.println("AUDIO: " + args[0]);
@@ -101,6 +106,15 @@ public class CimsMaxIO extends MaxObject {
 		superMidi.interfaceUpdated();
 	}
 	
+	public void sendInterfaceUpdate(String address,ArrayList<?> message) {
+		ArrayList<Object> outMessage = new ArrayList<Object>();
+		outMessage.add(address);
+		Iterator<?> messageIterator = message.iterator();
+		while(messageIterator.hasNext()) {
+			outMessage.add(messageIterator.next());
+		}
+	}
+	
 	public void outMidi(int[] midi) {
 		LOGGER.log(Level.OFF, "MIDI OUT");
 		int messageSize = midi.length+1;
@@ -121,12 +135,22 @@ public class CimsMaxIO extends MaxObject {
 		}
 		outlet(1,midiOutMessage);
 	}
-	public void outOsc(String[] osc) {
-		LOGGER.log(Level.INFO, osc[0]+osc[1]);
-		Atom[] oscOutMessage = new Atom[2];
-		oscOutMessage[0] = Atom.newAtom(osc[0]);
-		oscOutMessage[1] = Atom.newAtom(Float.valueOf(osc[1]));
+	public void outOsc(ArrayList<Object> osc) {
+		int messageSize = osc.size();
+		Atom[] oscOutMessage = new Atom[messageSize];
+		Iterator<Object> oscIterator = osc.iterator();
+		int i=0;
+		while (oscIterator.hasNext()) {
+			oscOutMessage[i] = Atom.newAtom(oscIterator.next().toString());
+		}
 		outlet(2,oscOutMessage);
+	}
+	
+	public void outOscSysMessage(String address, String message) {
+		Atom[] osc = new Atom[2];
+		osc[0] = Atom.newAtom(address);
+		osc[1] = Atom.newAtom(message);
+		outlet(2,osc);
 	}
 	public void outAudio(int audio) {
 		LOGGER.log(Level.OFF, "AUDIO OUT");
@@ -144,4 +168,5 @@ public class CimsMaxIO extends MaxObject {
 	public void textOut(String text) {
 		post(text);
 	}
+	
 }

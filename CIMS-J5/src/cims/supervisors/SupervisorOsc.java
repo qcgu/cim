@@ -31,7 +31,7 @@ public class SupervisorOsc  {
 	}
 	
 	public void dataOut(String[] data) {
-		this.io.outOsc(data);
+		//this.io.outOsc(data);
 	}
 	
 	public void setInterfaceControls(Interface_Controls newControls) {

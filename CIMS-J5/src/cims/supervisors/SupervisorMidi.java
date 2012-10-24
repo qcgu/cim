@@ -104,10 +104,10 @@ public class SupervisorMidi implements Supervisor {
 	
 	public void interfaceUpdated() {
 		sActivityWeights = controls.getActivityWeights();
-		Float repeatWeight = controls.getActivityWeightFor("repeatWeight");
-		LOGGER.warning("SuperMidi: Interface Updated");
-		LOGGER.warning("REPEAT WEIGHT: "+repeatWeight.toString());
-		//LOGGER.warning("OSC DATA: "+controls.getLastOscData()[0]);
+		Double repeatWeight = controls.getActivityWeightFor("repeatWeight");
+		
+		//LOGGER.warning("SuperMidi: Interface Updated");
+		//LOGGER.warning("REPEAT WEIGHT: "+repeatWeight.toString());
 	}
 	
 	public void dataOut(int[] message) {
@@ -210,5 +210,10 @@ public class SupervisorMidi implements Supervisor {
 	
 	public void txtMsg(String msg) {
 		this.io.textOut(msg);
+	}
+	
+	public void oscSysMsg(String msg) {
+		this.controls.setSysMessage(msg);
+		this.controls.sendSysMessageToInterface();
 	}
 }

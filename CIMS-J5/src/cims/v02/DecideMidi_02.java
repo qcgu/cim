@@ -65,7 +65,9 @@ public class DecideMidi_02 {
 		currentAction = nextAction;
 		nextAction = randomiser.weightedActivityChoice(); //randomiser.positiveInteger(0);
 		LOGGER.info("chooseNextAction");
-		supervisor.txtMsg(""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction));
+		String userFeedback = ""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction);
+		supervisor.txtMsg(userFeedback);
+		supervisor.oscSysMsg(userFeedback);
 		
 		//TODO Force support for testing
 		//currentAction = 2;
