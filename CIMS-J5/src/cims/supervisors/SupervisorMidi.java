@@ -15,6 +15,7 @@ import cims.v02.DecideMidi_02;
 import cims.datatypes.*;
 import cims.deciders.DecideMidi_SimpleRepeat;
 import cims.deciders.DecideMidi_UserControl;
+import cims.interfaces.Interface_Controls;
 
 import static cims.supervisors.SupervisorMidi_Globals.*;
 
@@ -25,6 +26,8 @@ import static cims.supervisors.SupervisorMidi_Globals.*;
 public class SupervisorMidi implements Supervisor {
 	
 	private CimsMaxIO io;
+	private Interface_Controls controls;
+	
 	private CaptureMidi capturer;
 	private AnalyseMidi_Silence analyser_silence;
 	private AnalyseMidi_Controls analyser_controls;
@@ -57,18 +60,22 @@ public class SupervisorMidi implements Supervisor {
 	 * @see		CimsMaxIO
 	 * @see		SupervisorMidi_Globals
 	 */
-	public SupervisorMidi(CimsMaxIO ioObj) {
+	public SupervisorMidi(CimsMaxIO ioObj,Interface_Controls controls) {
 		this.io = ioObj;
+		this.controls = controls;
 		sLastMidiMessage = new MidiMessage();
 		sMidiMessageList = new ArrayList<MidiMessage>();
 		sLastMidiControlMessage = new MidiControlMessage();
 		sMidiControlMessageTable = new MidiControlMessageTable();
 		
 		sMidiSegment = new MidiSegment();
+		sMidiSegmentTable = new MidiSegmentTable();
+		
 		sMidiStartTime=0;
 		sMidiStats = new MidiStatistics();
 		//Capture input and output midi
 		capturer = new CaptureMidi(this);
+		
 		outputTracker = new CaptureOutput(this);
 		//Analyse
 		analyser_silence = new AnalyseMidi_Silence(this);
@@ -95,6 +102,14 @@ public class SupervisorMidi implements Supervisor {
 		decider_userControl.input(this.io.key(), this.io.value());	
 	}
 	
+	public void interfaceUpdated() {
+		sActivityWeights = controls.getActivityWeights();
+		Double repeatWeight = controls.getActivityWeightFor("repeatWeight");
+		
+		//LOGGER.warning("SuperMidi: Interface Updated");
+		//LOGGER.warning("REPEAT WEIGHT: "+repeatWeight.toString());
+	}
+	
 	public void dataOut(int[] message) {
 		if (message==null) {
 			LOGGER.warning("NULL MESSAGE FOR DATA OUT!");
@@ -114,7 +129,7 @@ public class SupervisorMidi implements Supervisor {
 			this.io.outMidiThru(message);
 		}
 	}
-	
+		
 	public void addMidiMessage(MidiMessage newMessage) {
 		sLastMidiMessage = new MidiMessage();
 		sLastMidiMessage.copy(newMessage);
@@ -123,8 +138,6 @@ public class SupervisorMidi implements Supervisor {
 		if (newMessage.messageType<MidiMessage.POLY_AFTERTOUCH){
 			LOGGER.info("addMidiMessage: NOTE");
 			if(firstMessage) {
-				//if(analyser_silence.newMidi()) analyser_silence.analyse();
-				//if(analyser_stats.newMidi()) analyser_stats.analyse();
 				decider.firstAction(newMessage);
 				firstMessage = false;
 			}
@@ -138,11 +151,19 @@ public class SupervisorMidi implements Supervisor {
 		}
 	}
 
-	public void addMidiSegment(int segmentStart, int segmentEnd) {
+	public void addMidiSegment(int segmentStart, int segmentEnd, Class<?> creatorClass) {
 		sMidiSegment = new MidiSegment(segmentStart-1, segmentEnd);
+		sMidiSegment.setCreatorClass(creatorClass);
+		//add the segment to the MidiSegmentTable
+		sMidiSegmentTable.add(sMidiSegment);
 		LOGGER.info("SEGMENT ADDED: "+segmentStart+" - "+segmentEnd);
 		//sMidiStats.clearPitchHistogram();
 		this.doNext(SEGMENT);	
+	}
+	
+	//TODO Sometimes we don't know start and end of segments, but want to add a point that will define a segment later on
+	public void addSegmentBreakPoint(long breakPoint, Class<?> creatorClass) {
+		
 	}
 	
 	public void doNext(int nextType) {
@@ -175,8 +196,6 @@ public class SupervisorMidi implements Supervisor {
 		}
 	}
 	
-	
-	
 	public synchronized MidiSegment getLastMidiSegment() {
 		return sMidiSegment;
 	}
@@ -191,5 +210,10 @@ public class SupervisorMidi implements Supervisor {
 	
 	public void txtMsg(String msg) {
 		this.io.textOut(msg);
+	}
+	
+	public void oscSysMsg(String msg) {
+		this.controls.setSysMessage(msg);
+		this.controls.sendSysMessageToInterface();
 	}
 }

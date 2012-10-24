@@ -46,7 +46,7 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	
 	public void silent() {
 		LOGGER.info("SILENCE DETECTED >> segmentStart: "+segmentStart+" segmentEnd: "+segmentEnd);		
-		supervisor.addMidiSegment(this.segmentStart, this.segmentEnd);
+		supervisor.addMidiSegment(this.segmentStart, this.segmentEnd,this.getClass());
 		segmentStarted = false;
 	}
 }
