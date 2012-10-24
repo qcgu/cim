@@ -3,6 +3,7 @@ package cims.utilities;
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
 import static cims.supervisors.SupervisorMidi_Globals.sActivityWeights;
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+import java.util.Random;
 
 public class Randomiser {
 	
@@ -62,6 +63,13 @@ public class Randomiser {
 			returnVal = 4;
 		}
 		return returnVal;
+	}
+	
+	// note! This might be bodgy!!
+	public double gaussian(double mean, double sd) {
+		Random rand = new Random();
+		double val = rand.nextGaussian();
+		return val * sd + mean;
 	}
 	
 }

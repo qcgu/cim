@@ -63,7 +63,7 @@ public class DecideMidi_02 {
 		if(!(support_loop==null)) support_loop.stop();
 		if(!(initiate_loop==null)) initiate_loop.stop();
 		currentAction = nextAction;
-		nextAction = randomiser.weightedActivityChoice(); //randomiser.positiveInteger(0);
+		nextAction = randomiser.positiveInteger(0); //randomiser.weightedActivityChoice(); //randomiser.positiveInteger(0);
 		LOGGER.info("chooseNextAction");
 		String userFeedback = ""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction);
 		supervisor.txtMsg(userFeedback);

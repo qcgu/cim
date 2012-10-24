@@ -78,7 +78,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		// Play back the last segment
 		//midiSegment = supervisor.getLastMidiSegment();
 		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
-		midiSegment.setChannel(2); // channel is in the prochial range of 1-16
+		midiSegment.setChannel(2); // channel is in the parochial range of 1-16
 	}
 	
 	public void makeEmptySegment() {

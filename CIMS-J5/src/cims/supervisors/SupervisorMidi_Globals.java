@@ -35,6 +35,7 @@ public class SupervisorMidi_Globals {
 	public static int sBeatsPerMinute = 120;
 	public static int sTimeBetweenBeats = 0;
 	public static int sNextPlay = 0;
+	public static int[] sPitchClass = {0,2,4,5,7,9,11};
 	
 	public static boolean sTestMode = false;
 	
