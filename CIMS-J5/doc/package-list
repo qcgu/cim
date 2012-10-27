@@ -4,6 +4,7 @@ cims.capturers
 cims.datatypes
 cims.deciders
 cims.generators
+cims.interfaces
 cims.players
 cims.supervisors
 cims.utilities

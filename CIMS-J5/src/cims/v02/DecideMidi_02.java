@@ -1,7 +1,7 @@
 package cims.v02;
 
 import cims.datatypes.MidiMessage;
-import cims.generators.GenerateMidi_Loop;
+//import cims.generators.GenerateMidi_Loop;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.Randomiser;
 
@@ -68,6 +68,7 @@ public class DecideMidi_02 {
 		String userFeedback = ""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction);
 		supervisor.txtMsg(userFeedback);
 		supervisor.oscSysMsg(userFeedback);
+		supervisor.displayNextAction(nextAction);
 		
 		//TODO Force support for testing
 		//currentAction = 2;

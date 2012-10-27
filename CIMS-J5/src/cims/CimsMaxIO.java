@@ -109,10 +109,16 @@ public class CimsMaxIO extends MaxObject {
 	public void sendInterfaceUpdate(String address,ArrayList<?> message) {
 		ArrayList<Object> outMessage = new ArrayList<Object>();
 		outMessage.add(address);
+		System.out.println("sendInterfaceUpdate: "+address);
+		System.out.println("sendInterfaceUpdate: "+message.get(0));
 		Iterator<?> messageIterator = message.iterator();
 		while(messageIterator.hasNext()) {
 			outMessage.add(messageIterator.next());
 		}
+		System.out.println("sendInterfaceUpdate outMessage: "+outMessage.get(0));
+		System.out.println("sendInterfaceUpdate outMessage: "+outMessage.get(1));
+		this.outOsc(outMessage);
+		
 	}
 	
 	public void outMidi(int[] midi) {
@@ -142,6 +148,7 @@ public class CimsMaxIO extends MaxObject {
 		int i=0;
 		while (oscIterator.hasNext()) {
 			oscOutMessage[i] = Atom.newAtom(oscIterator.next().toString());
+			i++;
 		}
 		outlet(2,oscOutMessage);
 	}

@@ -216,4 +216,13 @@ public class SupervisorMidi implements Supervisor {
 		this.controls.setSysMessage(msg);
 		this.controls.sendSysMessageToInterface();
 	}
+	
+	public void displayNextAction(int nextAction) {
+		ArrayList<Object> params = new ArrayList<Object>();
+		params.add(1);
+		this.controls.sendControlMessageToInterface("activityNowRed", params);
+		//switch(nextAction) {
+			
+		//}
+	}
 }
