@@ -35,17 +35,18 @@ public class Randomiser {
 		return pitchClass;
 	}
 	
+	//TODO Pull these from Global: sActivityWeights
 	public int weightedActivityChoice() {
 		Double repeatWeight = sActivityWeights.get("repeatWeight");
-		System.out.println("repeatWeight SET: "+repeatWeight.toString());
+		//System.out.println("repeatWeight SET: "+repeatWeight.toString());
 		Double initiateWeight = sActivityWeights.get("initiateWeight");
-		System.out.println("initiateWeight SET: "+initiateWeight.toString());
+		//System.out.println("initiateWeight SET: "+initiateWeight.toString());
 		Double supportWeight = sActivityWeights.get("supportWeight");
-		System.out.println("supportWeight SET: "+supportWeight.toString());
+		//System.out.println("supportWeight SET: "+supportWeight.toString());
 		Double mirrorWeight = sActivityWeights.get("mirrorWeight");
-		System.out.println("mirrorWeight SET: "+mirrorWeight.toString());
+		//System.out.println("mirrorWeight SET: "+mirrorWeight.toString());
 		Double silenceWeight = sActivityWeights.get("silenceWeight");
-		System.out.println("silenceWeight SET: "+silenceWeight.toString());
+		//System.out.println("silenceWeight SET: "+silenceWeight.toString());
 		
 		double totalWeight = repeatWeight + initiateWeight + supportWeight + mirrorWeight + silenceWeight;
 		double rnd = Math.random() * totalWeight;

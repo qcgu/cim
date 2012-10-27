@@ -68,8 +68,8 @@ public class DecideMidi_02 {
 		String userFeedback = ""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction);
 		supervisor.txtMsg(userFeedback);
 		supervisor.oscSysMsg(userFeedback);
-		supervisor.displayNextAction(nextAction);
-		
+		supervisor.displayNextAction(nextAction,false);
+		supervisor.displayNextAction(currentAction,true);
 		//TODO Force support for testing
 		//currentAction = 2;
 		

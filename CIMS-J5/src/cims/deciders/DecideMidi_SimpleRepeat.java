@@ -12,13 +12,13 @@ public class DecideMidi_SimpleRepeat {
 	private GenerateMidi_Segment generator_segment;
 	
 	public DecideMidi_SimpleRepeat(SupervisorMidi supervisor) {
-		LOGGER.info("simpleRepeat");
+		//LOGGER.info("simpleRepeat");
 		this.supervisor = supervisor;
 		generator_segment = new GenerateMidi_Segment(supervisor);
 	}
 	
 	public void repeatLastSegment() {
-		supervisor.txtMsg("Simple Repeat");
+		//supervisor.txtMsg("Simple Repeat");
 		generator_segment.makeLastSegment();
 		generator_segment.generate(sNextPlay); 
 		

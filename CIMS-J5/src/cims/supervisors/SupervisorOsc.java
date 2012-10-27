@@ -25,7 +25,7 @@ public class SupervisorOsc  {
 	public void dataIn() {
 		String[] oscData = this.io.inOsc();
 		controls.updateInterfaceValues(oscData);
-		LOGGER.log(Level.OFF, "SupervisorOsc DataIN: "+oscData[0]);
+		//LOGGER.log(Level.OFF, "SupervisorOsc DataIN: "+oscData[0]);
 		//System.out.println("OSC: " + oscData[0] +" value: " + oscData[1]);
 		//this.dataOut(oscData);
 	}

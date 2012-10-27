@@ -217,12 +217,40 @@ public class SupervisorMidi implements Supervisor {
 		this.controls.sendSysMessageToInterface();
 	}
 	
-	public void displayNextAction(int nextAction) {
-		ArrayList<Object> params = new ArrayList<Object>();
-		params.add(1);
-		this.controls.sendControlMessageToInterface("activityNowRed", params);
-		//switch(nextAction) {
+	public void displayNextAction(int nextAction,boolean now) {
+		double value = 0.01;
+		String activity = "Next";
+		if(now) {
+			activity = "Now";
+		} 
+		//Turn all off -very low
+		this.controls.sendControlMessageToInterface("activity"+activity+"Red", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Orange", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Purple", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Green", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Yellow", new ArrayList<Object>(Collections.singletonList(value)));
+		if(now) {
+			value = 1;
 			
-		//}
+		} else {
+			value = 0.5;
+		}
+		switch(nextAction) {
+		case 0:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Red", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 1:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Orange", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 2:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Purple", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 3:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Green", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 4:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Yellow", new ArrayList<Object>(Collections.singletonList(value)));
+			break;		
+		}
 	}
 }

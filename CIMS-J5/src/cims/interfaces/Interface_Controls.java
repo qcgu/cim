@@ -77,15 +77,16 @@ public class Interface_Controls {
 
 	private void parseOscData() {
 		String controller = "";
-		System.out.println("SPLIT: "+this.lastOscData[0]);
+		//System.out.println("SPLIT: "+this.lastOscData[0]);
 		String[] oscAddress = this.lastOscData[0].split("multifader1/");
 		if(oscAddress.length>1) {
 			controller = activityWeightNames[(Integer.valueOf(oscAddress[1])-1)];
 			setActivityWeightAs(controller,Double.valueOf(this.lastOscData[1]));
+			String weightChange = " FADER: "+controller+" VALUE: "+this.lastOscData[1];
+			setSysMessage(weightChange);
+			sendSysMessageToInterface();
 		}
-		String weightChange = " FADER: "+controller+" VALUE: "+this.lastOscData[1];
-		setSysMessage(weightChange);
-		sendSysMessageToInterface();
+		
 	}
 
 	public String getOscDeviceAddress() {
