@@ -1,7 +1,7 @@
 package cims.v02;
 
 import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
-import static cims.supervisors.SupervisorMidi_Globals.sPitchClass;
+import static cims.supervisors.SupervisorMidi_Globals.sPitchClassSet;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.generators.GenerateMidi_Segment;
@@ -76,7 +76,7 @@ public class GenerateMidi_Segment_02 extends GenerateMidi_Segment {
 		// Play back the last segment
 		//midiSegment = supervisor.getLastMidiSegment();
 		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
-		if (Math.random() < 0.5) { // choose to modify repeat 50% of the time
+		if (Math.random() < 0.8) { // choose to modify repeat 50% of the time
 			HashMap<Integer, Integer> currentOnMod = new HashMap<Integer, Integer>();
 			List<MidiMessage> data = midiSegment.asList();
 			Iterator<MidiMessage> itr = data.iterator();
@@ -84,6 +84,7 @@ public class GenerateMidi_Segment_02 extends GenerateMidi_Segment {
 		         MidiMessage mess = itr.next();
 		         if (MidiMessage.isNoteOn(mess.messageType)) {
 		        	 int deviate = (int) (randomiser.gaussian(0, 1) * 2);
+		        	 if (mess.pitch % 12 == sPitchClassSet[0]) deviate = 0; // keep root note stable
 		        	 int newPitch = pitchQuantize(mess.pitch + deviate);
 		        	 System.out.println("Changing note on from " + mess.pitch + " to " + " " + deviate + " " + newPitch);
 		        	 currentOnMod.put(mess.pitch, newPitch);
@@ -102,7 +103,7 @@ public class GenerateMidi_Segment_02 extends GenerateMidi_Segment {
 	}
 	
 	public int pitchQuantize(int pitch) {
-		int[] pcSet = sPitchClass;
+		int[] pcSet = sPitchClassSet;
 		int pitchClass = pitch%12;
 		int adjust = 100;
 		for (int i=0; i<pcSet.length; i++ ) {
