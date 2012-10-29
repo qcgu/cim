@@ -93,6 +93,10 @@ public class MidiMessage {
 	public int messageType;
 	public int dataByteLength;
 	
+	//metronomic
+	public int transportBarNum;
+	public int transportBeatNum;
+	
 	public MidiMessage() {
 		this.clear();
 	}
