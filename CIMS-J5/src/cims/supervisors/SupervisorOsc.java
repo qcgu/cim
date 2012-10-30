@@ -25,6 +25,7 @@ public class SupervisorOsc  {
 	public void dataIn() {
 		String[] oscData = this.io.inOsc();
 		controls.updateInterfaceValues(oscData);
+
 		//LOGGER.log(Level.OFF, "SupervisorOsc DataIN: "+oscData[0]);
 		//System.out.println("OSC: " + oscData[0] +" value: " + oscData[1]);
 		//this.dataOut(oscData);
@@ -32,6 +33,11 @@ public class SupervisorOsc  {
 	
 	public void dataOut(String[] data) {
 		//this.io.outOsc(data);
+		String[] oscData = this.io.inOsc();
+		controls.updateInterfaceValues(oscData);
+		LOGGER.log(Level.OFF, "SupervisorOsc DataIN: "+oscData[0]);
+		//System.out.println("OSC: " + oscData[0] +" value: " + oscData[1]);
+		//this.dataOut(oscData);
 	}
 	
 	public void setInterfaceControls(Interface_Controls newControls) {

@@ -212,6 +212,7 @@ public class SupervisorMidi implements Supervisor {
 		this.controls.setSysMessage(msg);
 		this.controls.sendSysMessageToInterface();
 	}
+
 	
 	public void displayNextAction(int nextAction,boolean now) {
 		double value = 0.01;
@@ -249,4 +250,5 @@ public class SupervisorMidi implements Supervisor {
 			break;		
 		}
 	}
+
 }

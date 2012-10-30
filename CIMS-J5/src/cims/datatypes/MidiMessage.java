@@ -266,6 +266,7 @@ public class MidiMessage {
 		return (int[])message.clone();
 	}
 	
+	// value is a messageType, for example mess.messageType
 	public static boolean isNoteOn(int value) {
 		return MidiMessage.inTheRange(value, MidiMessage.NOTE_ON_CH01, MidiMessage.NOTE_ON_CH16);
 	}

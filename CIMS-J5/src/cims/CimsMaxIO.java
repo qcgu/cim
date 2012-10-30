@@ -63,7 +63,7 @@ public class CimsMaxIO extends MaxObject {
 				this.oscData[i] = args[i].toString();
 			}
 			superOsc.dataIn();
-			//textOut("OSC RECEIVED");
+			textOut("OSC RECEIVED");
 			break;
 		case AUDIO:
 			System.out.println("AUDIO: " + args[0]);
@@ -73,7 +73,7 @@ public class CimsMaxIO extends MaxObject {
 			controlValue=args[1].toInt();
 			LOGGER.log(Level.OFF, "KEY: "+controlKey+" VALUE: "+controlValue);
 			superMidi.controlIn();
-			break;			
+			break;					
 		}
 	}
 	
@@ -105,20 +105,14 @@ public class CimsMaxIO extends MaxObject {
 		LOGGER.log(Level.OFF, "CIMSIO: Interface Updated");
 		superMidi.interfaceUpdated();
 	}
-	
+		
 	public void sendInterfaceUpdate(String address,ArrayList<?> message) {
 		ArrayList<Object> outMessage = new ArrayList<Object>();
 		outMessage.add(address);
-		//System.out.println("sendInterfaceUpdate: "+address);
-		//System.out.println("sendInterfaceUpdate: "+message.get(0));
 		Iterator<?> messageIterator = message.iterator();
 		while(messageIterator.hasNext()) {
 			outMessage.add(messageIterator.next());
 		}
-		//System.out.println("sendInterfaceUpdate outMessage: "+outMessage.get(0));
-		//System.out.println("sendInterfaceUpdate outMessage: "+outMessage.get(1));
-		this.outOsc(outMessage);
-		
 	}
 	
 	public void outMidi(int[] midi) {
@@ -141,6 +135,7 @@ public class CimsMaxIO extends MaxObject {
 		}
 		outlet(1,midiOutMessage);
 	}
+	
 	public void outOsc(ArrayList<Object> osc) {
 		int messageSize = osc.size();
 		Atom[] oscOutMessage = new Atom[messageSize];

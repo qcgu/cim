@@ -24,6 +24,11 @@ public class MidiSegment {
 		segment = safeList.subList(start, end);
 	}
 	
+
+	public MidiSegment(List<MidiMessage> listOfMessages) {
+		segment = listOfMessages;
+	}
+
 	public Class<?> getCreatorClass() {
 		return creatorClass;
 	}
