@@ -104,10 +104,6 @@ public class SupervisorMidi implements Supervisor {
 	
 	public void interfaceUpdated() {
 		sActivityWeights = controls.getActivityWeights();
-		Double repeatWeight = controls.getActivityWeightFor("repeatWeight");
-		
-		//LOGGER.warning("SuperMidi: Interface Updated");
-		//LOGGER.warning("REPEAT WEIGHT: "+repeatWeight.toString());
 	}
 	
 	public void dataOut(int[] message) {

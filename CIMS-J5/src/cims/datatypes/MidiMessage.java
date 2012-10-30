@@ -11,6 +11,7 @@ package cims.datatypes;
 import static cims.supervisors.SupervisorMidi_Globals.ON;
 //import cims.*;
 //import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+import cims.supervisors.SupervisorMidi_Globals;
 
 public class MidiMessage {
 
@@ -182,6 +183,7 @@ public class MidiMessage {
 			break;
 		}
 		this.notesOnCount = MidiMessage.sTotalNotesOn;
+		this.transportBeatNum = SupervisorMidi_Globals.sCurrentBeat;
 	}
 	
 	public int detectMessageType(int statusByte) {
