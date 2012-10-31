@@ -8,11 +8,7 @@ package cims;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
-
-<<<<<<< HEAD
-=======
 import cims.datatypes.BeatTime;
->>>>>>> refs/heads/development
 import cims.interfaces.Interface_Controls;
 import cims.supervisors.*;
 import com.cycling74.max.*;
