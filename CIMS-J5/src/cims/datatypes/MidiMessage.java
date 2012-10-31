@@ -9,9 +9,9 @@
 package cims.datatypes;
 
 import static cims.supervisors.SupervisorMidi_Globals.ON;
-//import cims.*;
+import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeatTime;
 //import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
-import cims.supervisors.SupervisorMidi_Globals;
+
 
 public class MidiMessage {
 
@@ -95,8 +95,7 @@ public class MidiMessage {
 	public int dataByteLength;
 	
 	//metronomic
-	public int transportBarNum;
-	public int transportBeatNum;
+	public BeatTime beatTime;
 	
 	public MidiMessage() {
 		this.clear();
@@ -111,6 +110,8 @@ public class MidiMessage {
 		if (externalMidiMessage) {
 			sMessagesCount++;
 			this.timeMillis = System.currentTimeMillis();
+			//System.out.println("MidiMessage.set: "+sCurrentBeatTime);
+			this.beatTime = sCurrentBeatTime;
 		}
 		this.messageNum = MidiMessage.sMessagesCount;
 		this.status = message[0];
@@ -183,7 +184,6 @@ public class MidiMessage {
 			break;
 		}
 		this.notesOnCount = MidiMessage.sTotalNotesOn;
-		this.transportBeatNum = SupervisorMidi_Globals.sCurrentBeat;
 	}
 	
 	public int detectMessageType(int statusByte) {
@@ -243,6 +243,7 @@ public class MidiMessage {
 		this.otherData2 = newEvent.otherData2;
 		this.messageType = newEvent.messageType;
 		this.dataByteLength = newEvent.dataByteLength;
+		this.beatTime = newEvent.beatTime;
 	}
 	
 	public void clear() {
@@ -260,6 +261,7 @@ public class MidiMessage {
 		this.otherData2 = 0;
 		this.messageType =0;
 		this.dataByteLength = 0;
+		this.beatTime = new BeatTime();
 	}
 	
 	public int[] copyRaw(int[] message) {
@@ -279,6 +281,9 @@ public class MidiMessage {
 	  return((value >= min) && (value <= max));
 	}
 	
+	public String getBeatTimeAsString() {
+		return this.beatTime.toString();
+	}
 	
 }
 
