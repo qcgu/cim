@@ -27,7 +27,7 @@ public class MidiSegment {
 	public MidiSegment(List<MidiMessage> listOfMessages) {
 		segment = listOfMessages;
 	}
-	
+
 	public Class<?> getCreatorClass() {
 		return creatorClass;
 	}

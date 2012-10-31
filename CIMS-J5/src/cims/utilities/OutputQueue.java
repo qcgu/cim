@@ -3,9 +3,8 @@ package cims.utilities;
 import java.util.*;
 import cims.datatypes.*;
 import cims.generators.*;
-import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeat;
-import static cims.supervisors.SupervisorMidi_Globals.sBeatList;
-import static cims.supervisors.SupervisorMidi_Globals.sTimeBetweenBeats;
+
+import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeatTime;
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 
@@ -17,9 +16,7 @@ public class OutputQueue {
 	private ArrayList<MidiMessage> noteOnList;
 	private boolean startOnNextBeat = false;
 	private boolean startOnNextBar = false;
-	private long elapsedSinceBeat = 0;
-	private long elapsedSinceBar = 0;
-	private long pastTheBeatTolerance = sTimeBetweenBeats/64;
+	private long pastTheBeatTolerance = BeatTime.timeBetweenBeats/64;
 
 	public OutputQueue(GenerateMidi_Segment newMidiGen) {
 		this.midiGen = newMidiGen;
@@ -37,7 +34,7 @@ public class OutputQueue {
 		boolean firstEvent = true;
 		long segmentStartTime = 0;
 		long delay = 0;
-		long timeToWait = sTimeBetweenBeats;
+		long timeToWait = BeatTime.timeBetweenBeats;
 		MidiMessage midimessage = new MidiMessage();
 		
 		if(segmentToPlay==null) {
@@ -64,21 +61,22 @@ public class OutputQueue {
 				} else {
 					delay = midimessage.timeMillis - segmentStartTime;
 				}
-				this.beatCalcs();
+				
+				// SHIFTING TO SUIT NEXTPLAY - BEAT OR BAR
 				if(startOnNextBeat) {
-					if (elapsedSinceBeat<pastTheBeatTolerance) {
+					if (BeatTime.elapsedSinceBeat<pastTheBeatTolerance) {
 						timeToWait=0;
 					} else {
-						timeToWait = sTimeBetweenBeats - elapsedSinceBeat;
+						timeToWait = BeatTime.timeBetweenBeats - BeatTime.elapsedSinceBeat;
 					}
 					LOGGER.info("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
 					delay = delay + timeToWait;
 				}
 				if(startOnNextBar) {
-					if (elapsedSinceBar<pastTheBeatTolerance) {
+					if (BeatTime.elapsedSinceBar<pastTheBeatTolerance) {
 						timeToWait=0;
 					} else {
-						timeToWait = (sTimeBetweenBeats*sBeatList[0]) - elapsedSinceBar;
+						timeToWait = (BeatTime.timeBetweenBeats*sCurrentBeatTime.getValueFor("beatsPerBar")) - BeatTime.elapsedSinceBar;
 					}
 					LOGGER.info("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
 					delay = delay + timeToWait;
@@ -147,13 +145,4 @@ public class OutputQueue {
 		this.startOnNextBar = false;
 	}
 	
-	public void beatCalcs() {
-		int currentBeat = 1;
-		long currentBeatTime = 0;
-		currentBeat = sCurrentBeat;
-		currentBeatTime = sBeatList[currentBeat];
-		elapsedSinceBeat = System.currentTimeMillis() - currentBeatTime;
-		elapsedSinceBar = System.currentTimeMillis() - sBeatList[1];
-	}
-
 }

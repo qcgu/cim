@@ -18,7 +18,7 @@ public class CaptureOutput {
 	public CaptureOutput(SupervisorMidi supervisor) {
 		this.supervisor = supervisor;
 	}
-	
+	/*
 	public void in(int[] midiData) {
 		new MidiMessage();
 		
@@ -44,7 +44,7 @@ public class CaptureOutput {
 				i = size;
 			}		
 		}
-		*/
+		\*\/
 	}
 	
 	// return an array of the pitches currently turned on but not yet off
@@ -63,6 +63,6 @@ public class CaptureOutput {
 			//supervisor.txtMsg("pitch  in on pitches " + pitches[i]);
 			supervisor.dataOut(new int[] {128, onList.get(i), 0});
 		}
-	}
+	} */
 }
 

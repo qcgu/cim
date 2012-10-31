@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import cims.datatypes.BeatTime;
 import cims.datatypes.MidiControlMessage;
 import cims.datatypes.MidiControlMessageTable;
 import cims.datatypes.MidiMessage;
@@ -30,10 +31,10 @@ public class SupervisorMidi_Globals {
 	public static int sSegmentGap = 3;
 	public static int sRepeatInterval = 0;
 	public static boolean sMetronome = false;
-	public static int sCurrentBeat = 0;
-	public static long[] sBeatList={4,0,0,0,0,0,0,0,0,0,0,0,0};
-	public static int sBeatsPerMinute = 120;
-	public static int sTimeBetweenBeats = 0;
+	//public static int sCurrentBeat = 0;
+	//public static long[] sBeatList={4,0,0,0,0,0,0,0,0,0,0,0,0};
+	//public static int sBeatsPerMinute = 120;
+	// static int sTimeBetweenBeats = 0; // This is now handled by BeatTime;
 	public static int sNextPlay = 0;
 	public static int[] sPitchClassSet = {0,2,4,5,7,9,11}; // root note first in list
 	

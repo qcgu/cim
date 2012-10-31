@@ -4,6 +4,14 @@ import java.util.HashMap;
 
 import cims.CimsMaxIO;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import cims.CimsMaxIO;
+import java.util.HashMap;
+
+import cims.CimsMaxIO;
+
 
 public class Interface_Controls {
 	private CimsMaxIO io;
@@ -37,6 +45,11 @@ public class Interface_Controls {
 	public void sendSysMessageToInterface() {
 		String address = "/"+getOscDeviceAddress()+"/sysMessage";
 		this.io.outOscSysMessage(address,getSysMessage());
+	}
+	
+	public void sendControlMessageToInterface(String controller,ArrayList<Object> params) {
+		String address = "/"+getOscDeviceAddress()+"/"+controller;
+		this.io.sendInterfaceUpdate(address, params);
 	}
 	
 	public String[] getLastOscData() {
@@ -93,6 +106,5 @@ public class Interface_Controls {
 	public String[] getActivityWeightNames() {
 		return activityWeightNames;
 	}
-	
 
 }

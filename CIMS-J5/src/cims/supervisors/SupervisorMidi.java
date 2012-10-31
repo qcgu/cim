@@ -67,6 +67,7 @@ public class SupervisorMidi implements Supervisor {
 		sMidiMessageList = new ArrayList<MidiMessage>();
 		sLastMidiControlMessage = new MidiControlMessage();
 		sMidiControlMessageTable = new MidiControlMessageTable();
+		sCurrentBeatTime = new BeatTime();
 		
 		sMidiSegment = new MidiSegment();
 		sMidiSegmentTable = new MidiSegmentTable();
@@ -102,12 +103,12 @@ public class SupervisorMidi implements Supervisor {
 		decider_userControl.input(this.io.key(), this.io.value());	
 	}
 	
+	public void beatTimeIn() {
+		sCurrentBeatTime = this.io.getBeatTime();
+	}
+	
 	public void interfaceUpdated() {
 		sActivityWeights = controls.getActivityWeights();
-		Double repeatWeight = controls.getActivityWeightFor("repeatWeight");
-		
-		//LOGGER.warning("SuperMidi: Interface Updated");
-		//LOGGER.warning("REPEAT WEIGHT: "+repeatWeight.toString());
 	}
 	
 	public void dataOut(int[] message) {
@@ -149,6 +150,7 @@ public class SupervisorMidi implements Supervisor {
 			this.doNext(MESSAGE_CONTROL);
 			//LOGGER.info("allControlsMap: " + sMidiControlMessageTable.getAllControlMessages());
 		}
+		//System.out.println("MidiMessage.beatTime: "+sLastMidiMessage.getBeatTimeAsString()+" newMessage: "+newMessage.beatTime.toString());
 	}
 
 	public void addMidiSegment(int segmentStart, int segmentEnd, Class<?> creatorClass) {
@@ -205,7 +207,7 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void allNotesOff() {
-		outputTracker.allNotesOff();
+		//outputTracker.allNotesOff();
 	}
 	
 	public void txtMsg(String msg) {
@@ -216,4 +218,46 @@ public class SupervisorMidi implements Supervisor {
 		this.controls.setSysMessage(msg);
 		this.controls.sendSysMessageToInterface();
 	}
+<<<<<<< HEAD
+=======
+
+	
+	public void displayNextAction(int nextAction,boolean now) {
+		double value = 0.01;
+		String activity = "Next";
+		if(now) {
+			activity = "Now";
+		} 
+		//Turn all off -very low
+		this.controls.sendControlMessageToInterface("activity"+activity+"Red", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Orange", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Purple", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Green", new ArrayList<Object>(Collections.singletonList(value)));
+		this.controls.sendControlMessageToInterface("activity"+activity+"Yellow", new ArrayList<Object>(Collections.singletonList(value)));
+		if(now) {
+			value = 1;
+			
+		} else {
+			value = 0.5;
+		}
+		switch(nextAction) {
+		case 0:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Red", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 1:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Orange", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 2:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Purple", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 3:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Green", new ArrayList<Object>(Collections.singletonList(value)));
+			break;
+		case 4:
+			this.controls.sendControlMessageToInterface("activity"+activity+"Yellow", new ArrayList<Object>(Collections.singletonList(value)));
+			break;		
+		}
+	}
+
+>>>>>>> refs/heads/development
 }

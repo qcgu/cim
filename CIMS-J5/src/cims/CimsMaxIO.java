@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.*;
 
+<<<<<<< HEAD
+=======
+import cims.datatypes.BeatTime;
+>>>>>>> refs/heads/development
 import cims.interfaces.Interface_Controls;
 import cims.supervisors.*;
 import com.cycling74.max.*;
@@ -23,10 +27,12 @@ public class CimsMaxIO extends MaxObject {
 	
 	private int midiData = 0;
 	private String[] oscData;
-	private byte audioData;;
+	private byte audioData;
+	private BeatTime beatTime;
 	
 	private String controlKey = "";
 	private int controlValue = 0;
+	private String[] controlNames = {"metronome","nextPlay","segmentGap","repeatCue","test"};
 	
 	private static final Logger LOGGER = Logger.getLogger(CimsMaxIO.class.getName());
 	
@@ -34,6 +40,7 @@ public class CimsMaxIO extends MaxObject {
 	private static final int OSC = 1;
 	private static final int AUDIO = 2;
 	private static final int CONTROL = 3;
+	private static final int TRANSPORT = 4;
 	
 
 	public CimsMaxIO() {
@@ -69,11 +76,20 @@ public class CimsMaxIO extends MaxObject {
 			System.out.println("AUDIO: " + args[0]);
 			break;
 		case CONTROL:
-			controlKey=args[0].toString();
+			controlKey=controlNames[args[0].toInt()];
 			controlValue=args[1].toInt();
-			LOGGER.log(Level.OFF, "KEY: "+controlKey+" VALUE: "+controlValue);
+			LOGGER.log(Level.INFO, "KEY: "+controlKey+" VALUE: "+controlValue);
 			superMidi.controlIn();
+
 			break;			
+		case TRANSPORT:
+			Integer[] transport = {args[0].toInt(),args[1].toInt(),args[2].toInt(),
+					args[3].toInt(),args[4].toInt(),args[5].toInt(),
+					args[6].toInt(),args[7].toInt(),args[8].toInt()};
+			this.beatTime = new BeatTime(transport);
+			//System.out.println("BT: "+beatTime.toString());
+			superMidi.beatTimeIn();
+			break;
 		}
 	}
 	
@@ -87,6 +103,9 @@ public class CimsMaxIO extends MaxObject {
 		}
 		if(message.equalsIgnoreCase("controlParams")) {
 			returnValue =  CONTROL;
+		}
+		if(message.equalsIgnoreCase("transport")) {
+			returnValue =  TRANSPORT;
 		}
 		return returnValue;
 	}
@@ -135,6 +154,7 @@ public class CimsMaxIO extends MaxObject {
 		}
 		outlet(1,midiOutMessage);
 	}
+	
 	public void outOsc(ArrayList<Object> osc) {
 		int messageSize = osc.size();
 		Atom[] oscOutMessage = new Atom[messageSize];
@@ -142,6 +162,7 @@ public class CimsMaxIO extends MaxObject {
 		int i=0;
 		while (oscIterator.hasNext()) {
 			oscOutMessage[i] = Atom.newAtom(oscIterator.next().toString());
+			i++;
 		}
 		outlet(2,oscOutMessage);
 	}
@@ -168,5 +189,12 @@ public class CimsMaxIO extends MaxObject {
 	public void textOut(String text) {
 		post(text);
 	}
-	
+
+	public BeatTime getBeatTime() {
+		return beatTime;
+	}
+
+	public void setBeatTime(BeatTime beatTime) {
+		this.beatTime = beatTime;
+	}	
 }
