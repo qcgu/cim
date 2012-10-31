@@ -1,8 +1,8 @@
 package cims.players;
 
-public class PlayMidi {
+public class PlayMidi_BeatTime{
 
-	public PlayMidi() {
+	public PlayMidi_BeatTime() {
 		// TODO Auto-generated constructor stub
 	}
 

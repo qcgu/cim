@@ -67,6 +67,7 @@ public class SupervisorMidi implements Supervisor {
 		sMidiMessageList = new ArrayList<MidiMessage>();
 		sLastMidiControlMessage = new MidiControlMessage();
 		sMidiControlMessageTable = new MidiControlMessageTable();
+		sCurrentBeatTime = new BeatTime();
 		
 		sMidiSegment = new MidiSegment();
 		sMidiSegmentTable = new MidiSegmentTable();
@@ -100,6 +101,10 @@ public class SupervisorMidi implements Supervisor {
 	public void controlIn() {
 		LOGGER.info("ControlIN");
 		decider_userControl.input(this.io.key(), this.io.value());	
+	}
+	
+	public void beatTimeIn() {
+		sCurrentBeatTime = this.io.getBeatTime();
 	}
 	
 	public void interfaceUpdated() {
@@ -145,6 +150,7 @@ public class SupervisorMidi implements Supervisor {
 			this.doNext(MESSAGE_CONTROL);
 			//LOGGER.info("allControlsMap: " + sMidiControlMessageTable.getAllControlMessages());
 		}
+		//System.out.println("MidiMessage.beatTime: "+sLastMidiMessage.getBeatTimeAsString()+" newMessage: "+newMessage.beatTime.toString());
 	}
 
 	public void addMidiSegment(int segmentStart, int segmentEnd, Class<?> creatorClass) {
@@ -201,7 +207,7 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void allNotesOff() {
-		outputTracker.allNotesOff();
+		//outputTracker.allNotesOff();
 	}
 	
 	public void txtMsg(String msg) {
