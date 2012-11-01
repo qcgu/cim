@@ -37,7 +37,7 @@ public class SupervisorMidi_Globals {
 	// static int sTimeBetweenBeats = 0; // This is now handled by BeatTime;
 	public static int sNextPlay = 0;
 	public static int[] sPitchClassSet = {0,2,4,5,7,9,11}; // root note first in list
-	
+	public static BeatTime sCurrentBeatTime;
 	public static boolean sTestMode = false;
 	
 	public static final Logger LOGGER = Logger.getLogger(SupervisorMidi.class.getName());
