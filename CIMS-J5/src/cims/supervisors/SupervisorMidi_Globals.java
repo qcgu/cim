@@ -36,7 +36,9 @@ public class SupervisorMidi_Globals {
 	//public static int sBeatsPerMinute = 120;
 	// static int sTimeBetweenBeats = 0; // This is now handled by BeatTime;
 	public static int sNextPlay = 0;
-	public static int[] sPitchClassSet = {0,2,4,5,7,9,11}; // root note first in list
+	public static int[] sPitchClassSet = {0,2,4,5,7,9,11}; // scale, root note first in list offset by sRootPitch
+	public static int sRootPitch = 0; // offset to the scale
+	public static int[] sCurrentChord = {0, 4, 7}; // chromatic pitch class set, no offset - absolute pitch classes
 	public static BeatTime sCurrentBeatTime;
 	public static boolean sTestMode = false;
 	

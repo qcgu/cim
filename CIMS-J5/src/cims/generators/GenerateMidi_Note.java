@@ -12,10 +12,11 @@ package cims.generators;
 
 import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
-
+import static cims.supervisors.SupervisorMidi_Globals.sCurrentChord;
 public class GenerateMidi_Note extends GenerateMidi {
 	
 	public static final int PITCH_SHIFT = 0;
+	public static final int LOWER_TRIADIC = 1;
 	
 	private volatile MidiMessage currentMessage;
 	
@@ -45,6 +46,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 		this.supervisor.dataOut(message);
 	}
 	
+	// this method should likely be moved to GenerateMidi_Note_02 class
 	public synchronized void transform(int transformType, int transformValue) {
 		switch(transformType) {
 		case PITCH_SHIFT:
@@ -54,12 +56,27 @@ public class GenerateMidi_Note extends GenerateMidi {
 			if (pitch<0) pitch = 0;
 			this.currentMessage.pitch = pitch;
 			break;
+		case LOWER_TRIADIC: //transform type argument is ignored
+			pitch = this.currentMessage.pitch;
+			int newPitch = pitch - 1;
+			while (!isInCurrentChord(newPitch)) {
+				newPitch--;
+			}
+			System.out.println("lower triadic method " + pitch + " " + newPitch);
+			this.currentMessage.pitch = newPitch;
 		default:
 			// do nothing
 			break;
 		}		
 	}
 	
-	
+	// this method probably should go into a new utilities class call PitchClassUtil
+	public boolean isInCurrentChord(int p) {
+		boolean result = false;
+		for (int i=0; i < sCurrentChord.length; i++) {
+			if (p%12 == sCurrentChord[i]) result = true;
+		}
+		return result;
+	}
 }
 	

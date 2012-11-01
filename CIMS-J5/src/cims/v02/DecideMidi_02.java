@@ -38,7 +38,11 @@ public class DecideMidi_02 {
 	public void messageIn(MidiMessage newMessage) {
 		if(mirroring) {
 			generator_mirror.setMessage(newMessage);
-			generator_mirror.transform(GenerateMidi_Note_02.PITCH_SHIFT, 12);
+			if (Math.random() < 0.5) { // select one of two mirroring processes at random
+				generator_mirror.transform(GenerateMidi_Note_02.PITCH_SHIFT, 12);
+			} else {
+				generator_mirror.transform(GenerateMidi_Note_02.LOWER_TRIADIC, 0);
+			}
 			generator_mirror.output();
 		}
 
@@ -63,7 +67,7 @@ public class DecideMidi_02 {
 		if(!(support_loop==null)) support_loop.stop();
 		if(!(initiate_loop==null)) initiate_loop.stop();
 		currentAction = nextAction;
-		nextAction = randomiser.positiveInteger(0); //randomiser.weightedActivityChoice(); //randomiser.positiveInteger(0);
+		nextAction = randomiser.weightedActivityChoice(); //randomiser.positiveInteger(0);
 		LOGGER.info("chooseNextAction");
 		String userFeedback = ""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction);
 		supervisor.txtMsg(userFeedback);

@@ -2,6 +2,7 @@ package cims.v02;
 
 import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
 import static cims.supervisors.SupervisorMidi_Globals.sPitchClassSet;
+import static cims.supervisors.SupervisorMidi_Globals.sRootPitch;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.generators.GenerateMidi_Segment;
@@ -84,9 +85,9 @@ public class GenerateMidi_Segment_02 extends GenerateMidi_Segment {
 		         MidiMessage mess = itr.next();
 		         if (MidiMessage.isNoteOn(mess.messageType)) {
 		        	 int deviate = (int) (randomiser.gaussian(0, 1) * 2);
-		        	 if (mess.pitch % 12 == sPitchClassSet[0]) deviate = 0; // keep root note stable
+		        	 if (mess.pitch % 12 == sPitchClassSet[0] + sRootPitch) deviate = 0; // keep root note stable
 		        	 int newPitch = pitchQuantize(mess.pitch + deviate);
-		        	 System.out.println("Changing note on from " + mess.pitch + " to " + " " + deviate + " " + newPitch);
+		        	 //System.out.println("Changing note on from " + mess.pitch + " to " + " " + deviate + " " + newPitch);
 		        	 currentOnMod.put(mess.pitch, newPitch);
 		        	 mess.rawMessage[1] = newPitch; // data to be played
 		        	 mess.pitch = newPitch; // meta data
