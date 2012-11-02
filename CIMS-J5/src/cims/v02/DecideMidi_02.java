@@ -22,6 +22,7 @@ public class DecideMidi_02 {
 	private int currentAction = -1;
 	private int nextAction = 2;
 	private boolean mirroring = false;
+	private double mirroringType = 0;
 	
 	private boolean firstAction = true;
 	private MidiMessage firstMessage;
@@ -38,10 +39,9 @@ public class DecideMidi_02 {
 	public void messageIn(MidiMessage newMessage) {
 		if(mirroring) {
 			generator_mirror.setMessage(newMessage);
-			double rnd = Math.random();
-			if (rnd < 0.0){ // select one of two mirroring processes at random
+			if (mirroringType < 0.3){ // select one of two mirroring processes at random
 				generator_mirror.transform(GenerateMidi_Note_02.PITCH_SHIFT, 12);
-			} else if (rnd < 0.0) {
+			} else if (mirroringType < 0.7) {
 				generator_mirror.transform(GenerateMidi_Note_02.LOWER_TRIADIC, 0);
 			} else {
 				generator_mirror.transform(GenerateMidi_Note_02.PARALLEL_INTERVAL, 3);
@@ -104,6 +104,7 @@ public class DecideMidi_02 {
 				support_loop.setInterval(segmentLength);
 				break;
 			case 3: // mirror
+				mirroringType = Math.random();
 				mirroring = true;
 				break;
 			case 4: // silence

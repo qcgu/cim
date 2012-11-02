@@ -14,6 +14,7 @@ import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
 import static cims.supervisors.SupervisorMidi_Globals.sCurrentChord;
 import static cims.supervisors.SupervisorMidi_Globals.sPitchClassSet;
+import static cims.supervisors.SupervisorMidi_Globals.sRootPitch;
 public class GenerateMidi_Note extends GenerateMidi {
 	
 	public static final int PITCH_SHIFT = 0;
@@ -64,7 +65,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 			while (!isInCurrentChord(newPitch)) {
 				newPitch--;
 			}
-			//System.out.println("lower triadic method " + pitch + " " + newPitch);
+			System.out.println("Tintinabuli (sp?) mirroring " + pitch + " " + newPitch);
 			this.currentMessage.pitch = newPitch;
 			break;
 		//play in 3rds 6ths etc above the performed note, transform value is number of scale degree steps (i.e., 3 = 3rd)
@@ -72,7 +73,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 			pitch = this.currentMessage.pitch;
 			int currScaleDegree = getScaleDegree(pitch);
 			this.currentMessage.pitch = pitchAboveFromScaleDegree(pitch, (currScaleDegree + transformValue - 1)%sPitchClassSet.length);
-			System.out.println("Parallel " + currScaleDegree + " " + pitch +  " " + this.currentMessage.pitch);
+			System.out.println("Parallel 3rd mirroring " + currScaleDegree + " " + pitch +  " " + this.currentMessage.pitch);
 			break;
 		default:
 			// do nothing
@@ -80,7 +81,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 		}		
 	}
 	
-	// this method probably should go into a new utilities class call PitchClassUtil
+	// these methods probably should go into a new utilities class call PitchClassUtil
 	public boolean isInCurrentChord(int p) {
 		boolean result = false;
 		for (int i=0; i < sCurrentChord.length; i++) {
@@ -92,13 +93,13 @@ public class GenerateMidi_Note extends GenerateMidi {
 	public int getScaleDegree(int p) {
 		int result = 0;
 		for (int i=0; i < sPitchClassSet.length; i++) {
-			if (p%12 == sPitchClassSet[i]) result = i;
+			if (p%12 - sRootPitch == sPitchClassSet[i]) result = i;
 		}
 		return result;
 	}
 	
 	public int pitchAboveFromScaleDegree(int p, int degree) {
-		int newPitch = sPitchClassSet[degree];
+		int newPitch = sPitchClassSet[degree] + sRootPitch;
 		while (newPitch < p) {
 			newPitch +=12;
 		}
