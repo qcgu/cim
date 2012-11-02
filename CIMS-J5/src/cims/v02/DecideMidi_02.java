@@ -38,10 +38,13 @@ public class DecideMidi_02 {
 	public void messageIn(MidiMessage newMessage) {
 		if(mirroring) {
 			generator_mirror.setMessage(newMessage);
-			if (Math.random() < 0.5) { // select one of two mirroring processes at random
+			double rnd = Math.random();
+			if (rnd < 0.0){ // select one of two mirroring processes at random
 				generator_mirror.transform(GenerateMidi_Note_02.PITCH_SHIFT, 12);
-			} else {
+			} else if (rnd < 0.0) {
 				generator_mirror.transform(GenerateMidi_Note_02.LOWER_TRIADIC, 0);
+			} else {
+				generator_mirror.transform(GenerateMidi_Note_02.PARALLEL_INTERVAL, 3);
 			}
 			generator_mirror.output();
 		}
