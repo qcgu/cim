@@ -87,6 +87,7 @@ public class CimsMaxIO extends MaxObject {
 			superMidi.beatTimeIn();
 			break;
 		}
+		//this.gc();
 	}
 	
 	private int messageCheck(String message) {
