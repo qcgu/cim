@@ -11,6 +11,7 @@ public class BeatTime {
 	private TreeMap<String,Integer> transport;
 	private String[] transportNames = {"bar","beat","unit","ppq","tempo","beatsPerBar","beatType","state","ticks"};
 	private Long timestamp;
+	private Double beatstamp;
 	
 	private boolean onTheBeat;
 	private boolean onTheBar;

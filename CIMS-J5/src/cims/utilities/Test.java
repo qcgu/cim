@@ -17,6 +17,7 @@ public class Test {
 	
 	public static final int SEGMENT_TESTS = 0;
 	public static final int MESSAGE_TESTS = 1;
+	public static final int BEATTIME_TESTS = 2;
 
 	public Test(SupervisorMidi supervisor) {
 		sm = supervisor;
@@ -31,6 +32,9 @@ public class Test {
 			LOGGER.warning("Segment Active Threads: "+this.activeThreadCount());
 			break;
 		case MESSAGE_TESTS:
+			LOGGER.warning("Message Active Threads: "+this.activeThreadCount());
+			break;
+		case BEATTIME_TESTS:
 			LOGGER.warning("Message Active Threads: "+this.activeThreadCount());
 			break;
 		}

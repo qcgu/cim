@@ -3,6 +3,7 @@ package cims.utilities;
 import java.util.*;
 import cims.datatypes.*;
 import cims.generators.*;
+import cims.players.PlayMidi_BeatTime;
 
 import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeatTime;
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
@@ -10,6 +11,8 @@ import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class OutputQueue {
 	private GenerateMidi_Segment midiGen;
+	private PlayMidi_BeatTime beatPlayer;
+	private boolean isPlayer = false;
 	private volatile MidiSegment segmentToPlay;
 	private Timer segmentTimer;
 	private ArrayList<Timer> timerList;
@@ -20,6 +23,13 @@ public class OutputQueue {
 
 	public OutputQueue(GenerateMidi_Segment newMidiGen) {
 		this.midiGen = newMidiGen;
+		this.timerList = new ArrayList<Timer>();
+		this.noteOnList = new ArrayList<MidiMessage>();
+	}
+	
+	public OutputQueue(PlayMidi_BeatTime player) {
+		this.beatPlayer = player;
+		this.isPlayer = true;
 		this.timerList = new ArrayList<Timer>();
 		this.noteOnList = new ArrayList<MidiMessage>();
 	}
@@ -46,6 +56,8 @@ public class OutputQueue {
 			while (segmentIterator.hasNext()) {
 				midimessage = new MidiMessage();
 				midimessage.copy(segmentIterator.next());
+				segmentTimer = new Timer();
+				timerList.add(segmentTimer);
 				if(midimessage.noteOnOff==MidiMessage.NOTE_ON) {
 					noteOnList.add(midimessage);
 				}
@@ -61,34 +73,35 @@ public class OutputQueue {
 				} else {
 					delay = midimessage.timeMillis - segmentStartTime;
 				}
-				
-				// SHIFTING TO SUIT NEXTPLAY - BEAT OR BAR
-				if(startOnNextBeat) {
-					if (BeatTime.elapsedSinceBeat<pastTheBeatTolerance) {
-						timeToWait=0;
-					} else {
-						timeToWait = BeatTime.timeBetweenBeats - BeatTime.elapsedSinceBeat;
+				if (this.isPlayer) {
+					segmentTimer.schedule(new BeatPlayer(this.beatPlayer,midimessage), 0);
+				} else {
+					// SHIFTING TO SUIT NEXTPLAY - BEAT OR BAR
+					if(startOnNextBeat) {
+						if (BeatTime.elapsedSinceBeat<pastTheBeatTolerance) {
+							timeToWait=0;
+						} else {
+							timeToWait = BeatTime.timeBetweenBeats - BeatTime.elapsedSinceBeat;
+						}
+						LOGGER.info("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
+						delay = delay + timeToWait;
 					}
-					LOGGER.info("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
-					delay = delay + timeToWait;
-				}
-				if(startOnNextBar) {
-					if (BeatTime.elapsedSinceBar<pastTheBeatTolerance) {
-						timeToWait=0;
-					} else {
-						timeToWait = (BeatTime.timeBetweenBeats*sCurrentBeatTime.getValueFor("beatsPerBar")) - BeatTime.elapsedSinceBar;
+					if(startOnNextBar) {
+						if (BeatTime.elapsedSinceBar<pastTheBeatTolerance) {
+							timeToWait=0;
+						} else {
+							timeToWait = (BeatTime.timeBetweenBeats*sCurrentBeatTime.getValueFor("beatsPerBar")) - BeatTime.elapsedSinceBar;
+						}
+						LOGGER.info("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
+						delay = delay + timeToWait;
 					}
-					LOGGER.info("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
-					delay = delay + timeToWait;
+					if(delay<0) {
+						LOGGER.warning("NEGATIVE DELAY - SET TO 0");
+						delay=0;
+					}
+					//LOGGER.info("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
+					segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
 				}
-				if(delay<0) {
-					LOGGER.warning("NEGATIVE DELAY - SET TO 0");
-					delay=0;
-				}
-				//LOGGER.info("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
-				segmentTimer = new Timer();
-				timerList.add(segmentTimer);
-				segmentTimer.schedule(new Player(this.midiGen,midimessage), delay);
 			}
 		} else {
 			LOGGER.warning("NO SEGMENT TO PLAY!! ");
@@ -126,6 +139,23 @@ public class OutputQueue {
 		public void run() {
 			//System.out.println("RUN called "+outputMessage.status);
 			this.gm.output(this.outputMessage);
+		}
+		
+	}
+	
+	private class BeatPlayer extends TimerTask {
+		private PlayMidi_BeatTime pm;
+		private MidiMessage outputMessage;
+		public BeatPlayer(PlayMidi_BeatTime pm, MidiMessage midimessage) {
+			//System.out.println("New Player");
+			this.pm = pm;
+			this.outputMessage = midimessage;
+		}
+
+		@Override
+		public void run() {
+			//System.out.println("RUN called "+outputMessage.status);
+			this.pm.output(this.outputMessage);
 		}
 		
 	}
