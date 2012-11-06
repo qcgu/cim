@@ -1,6 +1,9 @@
 package cims.players;
 
 import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+
+import java.util.TreeMap;
+
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.supervisors.SupervisorMidi;
@@ -8,6 +11,7 @@ import cims.utilities.OutputQueue;
 
 public class PlayMidi_BeatTime {
 	private SupervisorMidi supervisor;
+	private TreeMap<Double,MidiMessage> beatMessages;
 	private volatile MidiMessage currentMessage;
 	protected volatile MidiSegment midiSegment;
 	protected volatile OutputQueue midiQueue;
@@ -18,10 +22,17 @@ public class PlayMidi_BeatTime {
 	}
 	
 	public void beatTimeIn() {
+		//Check bar/beat
+		//See what messages are in the queue to be played
+		//Send them to the output queue
 		
 	}
 	
 	public void add(MidiMessage message) {
+		//Create a key for this midi message
+		// KEY = 1000,000 + (BarNumber x 100) + Beat + (SubBeat x 0.001)
+		//Double key = m
+		//Add the message to the treemap of upcoming midimessages (can come in any order, will always be sorted by bar/beat
 		
 	}
 	
