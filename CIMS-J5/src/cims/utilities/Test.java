@@ -2,10 +2,12 @@ package cims.utilities;
 
 import java.util.logging.Level;
 
+import cims.datatypes.BeatTime;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_Segment;
+import cims.players.PlayMidi_BeatTime;
 import cims.supervisors.SupervisorMidi;
 
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
@@ -35,9 +37,29 @@ public class Test {
 			LOGGER.warning("Message Active Threads: "+this.activeThreadCount());
 			break;
 		case BEATTIME_TESTS:
+			PlayMidi_BeatTime pm = this.playMidi_beatTime();
 			LOGGER.warning("Message Active Threads: "+this.activeThreadCount());
 			break;
 		}
+	}
+	
+	public PlayMidi_BeatTime playMidi_beatTime() {
+		LOGGER.warning("TST: playMidi_beatTime");
+		PlayMidi_BeatTime pm = sm.currentPlayer();
+		MidiMessage noteOn = this.midiMessage(1);
+		//Set BeatTime info
+		//private String[] transportNames = {"bar","beat","unit","ppq","tempo","beatsPerBar","beatType","state","ticks"};
+		Integer[] transportOn = {2,1,0,0,0,0,0,0,0};
+		BeatTime btOn = new BeatTime(transportOn);
+		noteOn.beatTime = btOn;
+		pm.add(noteOn);
+		MidiMessage noteOff = this.midiMessage(0);
+		//Set BeatTime info
+		Integer[] transportOff = {3,4,0,0,0,0,0,0,0};
+		BeatTime btOff = new BeatTime(transportOff);
+		noteOff.beatTime = btOff;
+		pm.add(noteOff);
+		return pm;
 	}
 	
 	public GenerateMidi_Loop generateMidi_Loop() {

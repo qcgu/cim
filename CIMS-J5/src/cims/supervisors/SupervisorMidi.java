@@ -9,6 +9,7 @@ import cims.capturers.CaptureOutput;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
+import cims.players.PlayMidi_BeatTime;
 import cims.utilities.Test;
 //import cims.v01.DecideMidi_01;
 import cims.v02.DecideMidi_02;
@@ -36,6 +37,7 @@ public class SupervisorMidi implements Supervisor {
 	private DecideMidi_02 decider;
 	@SuppressWarnings(value="unused")
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
+	private PlayMidi_BeatTime player_beatTime;
 	private CaptureOutput outputTracker;
 	private Test tester;
 	private boolean firstMessage = true;
@@ -86,6 +88,7 @@ public class SupervisorMidi implements Supervisor {
 		decider_userControl = new DecideMidi_UserControl(this);
 		decider = new DecideMidi_02(this);
 		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
+		player_beatTime = new PlayMidi_BeatTime(this);
 		//Test
 		tester = new Test(this);
 		//Set Log Level for SupervisorMidi Global Logger
@@ -105,6 +108,7 @@ public class SupervisorMidi implements Supervisor {
 	
 	public void beatTimeIn() {
 		sCurrentBeatTime = this.io.getBeatTime();
+		this.player_beatTime.beatTimeIn();
 	}
 	
 	public void interfaceUpdated() {
@@ -220,6 +224,7 @@ public class SupervisorMidi implements Supervisor {
 	}
 	
 	public void displayNextAction(int nextAction,boolean now) {
+		//System.out.println("DISPLAY NEXT ACTION");
 		double value = 0.01;
 		String activity = "Next";
 		if(now) {
@@ -254,6 +259,10 @@ public class SupervisorMidi implements Supervisor {
 			this.controls.sendControlMessageToInterface("activity"+activity+"Yellow", new ArrayList<Object>(Collections.singletonList(value)));
 			break;		
 		}
+	}
+	
+	public PlayMidi_BeatTime currentPlayer() {
+		return this.player_beatTime;
 	}
 
 }

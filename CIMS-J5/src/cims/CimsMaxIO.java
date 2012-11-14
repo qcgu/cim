@@ -129,6 +129,7 @@ public class CimsMaxIO extends MaxObject {
 		while(messageIterator.hasNext()) {
 			outMessage.add(messageIterator.next());
 		}
+		this.outOsc(outMessage);
 	}
 	
 	public void outMidi(int[] midi) {
