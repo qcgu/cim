@@ -50,6 +50,13 @@ public class CimsMaxIO extends MaxObject {
 		this.interfaceUpdated();
 	}
 
+/**
+ * 
+ * All message from Max come in via the anything method
+ * Messages are checked for their type and then depending on type, the appropriate supervisor method
+ * is advised of data availability.
+ * 
+ */
 	public void anything(String message, Atom[] args) {
 		LOGGER.log(Level.OFF,"Message: "+message+" args: "+args.toString());
 		switch(messageCheck(message)) {
@@ -90,6 +97,11 @@ public class CimsMaxIO extends MaxObject {
 		//this.gc();
 	}
 	
+	/***
+	 * Determines message type and returns an int based on static declared types
+	 * @param message
+	 * @return
+	 */
 	private int messageCheck(String message) {
 		int returnValue = -1;
 		if(message.equalsIgnoreCase("int")) {
