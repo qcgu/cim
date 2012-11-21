@@ -1,10 +1,17 @@
 package cims.datatypes;
 
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
-
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 
+/*****************************************************************************************
+ * A datatype for holding current statistical information
+ * 
+ * @author Andrew Gibson a.gibson@griffith.edu.au
+ * @author Andrew Brown
+ *
+ */
 public class MidiStatistics {
 	
 	private int current_pitch;
@@ -31,6 +38,7 @@ public class MidiStatistics {
 	private DescriptiveStatistics midiStats_Duration;
 	private DescriptiveStatistics midiStats_OnsetInterval;
 	
+	public static Logger LOGGER = Logger.getLogger(MidiStatistics.class);
 	
 	public MidiStatistics() {
 		this.midiStats_Pitch = new SynchronizedDescriptiveStatistics();
@@ -41,6 +49,7 @@ public class MidiStatistics {
 		// initialise pitch class histogram
 		this.pitchClassHistogram = new int[12];
 		this.clearPitchHistogram();
+		LOGGER.setLevel(Level.INFO);
 	}
 
 	public void addPitch(int newPitch) {
@@ -183,7 +192,7 @@ public class MidiStatistics {
 	}	
 	
 	public void addOnset(long onsetTime) {
-		LOGGER.info("MIDI_STATSITICS: addOnset " + onsetTime + " mean: " + meanOnsetInterval);
+		LOGGER.debug("MIDI_STATSITICS: addOnset " + onsetTime + " mean: " + meanOnsetInterval);
 		// check for first time exception
 		if (previousOnsetTime != 0) {
 			int prevOnsetMean = meanOnsetInterval;

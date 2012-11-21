@@ -3,6 +3,7 @@ package cims.v02;
 import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
 import static cims.supervisors.SupervisorMidi_Globals.sPitchClassSet;
 import static cims.supervisors.SupervisorMidi_Globals.sRootPitch;
+import cims.datatypes.BeatTime;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.generators.GenerateMidi_Segment;
@@ -40,6 +41,9 @@ public class GenerateMidi_Segment_02 extends GenerateMidi_Segment {
 	}
 	
 	public int firstSupportSegment(MidiMessage firstMessage) {
+		if (sDefaultDuration == 0) {
+			this.supervisor.txtMsg("0 DEFAULT DURATION");
+		}
 		this.makeEmptySegment();
 		int beatsInBar = 4;
 		int duration = sDefaultDuration;

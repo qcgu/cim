@@ -1,11 +1,14 @@
 package cims.analysers;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import cims.supervisors.SupervisorMidi;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiStatistics;
 
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 //import static cims.supervisors.SupervisorMidi_Globals.sSegmentGapDuration;
 
 public class AnalyseMidi_Stats extends AnalyseMidi {
@@ -15,11 +18,14 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 	private int segmentStart;
 	private int segmentEnd;
 	public boolean segmentStarted; 
+	
+	public static final Logger LOGGER = Logger.getLogger(AnalyseMidi.class);
 
 	public AnalyseMidi_Stats(SupervisorMidi supervisor) {
 		super(supervisor);
 		midiStats = new MidiStatistics();
 		density = 0;
+		LOGGER.setLevel(Level.INFO);
 	}
 
 	@Override
@@ -31,9 +37,9 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 			density = midiStats.getOnsetIntervalTrend();
 		}
 
-		LOGGER.info("P_CUR: " + midiStats.getCurrent_pitch());
-		LOGGER.info("P_MEAN: "+ midiStats.getMeanPitch());
-		LOGGER.info("P_SD: "+ midiStats.getDeviationPitch());
+		LOGGER.debug("P_CUR: " + midiStats.getCurrent_pitch());
+		LOGGER.debug("P_MEAN: "+ midiStats.getMeanPitch());
+		LOGGER.debug("P_SD: "+ midiStats.getDeviationPitch());
 		
 		//Update static version of midiStats
 		sMidiStats = midiStats;
@@ -41,7 +47,7 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 		if(this.current_message.canBeSegmentStart()) {
 
 			if(!segmentStarted) { // START OF DENSITY SEGMENT
-				LOGGER.info("START DENSITY SEGMENT");
+				LOGGER.debug("START DENSITY SEGMENT");
 				this.segmentStart = this.current_message.messageNum;
 				segmentStarted = true;
 			}
@@ -49,7 +55,7 @@ public class AnalyseMidi_Stats extends AnalyseMidi {
 			if(segmentStarted) {
 				//This is the first all notes off event - Do we want this here??
 				if (density > 1 && density < 5) {
-					System.out.println("ANALYSE MIDI STATS: density break detected.");
+					LOGGER.debug("ANALYSE MIDI STATS: density break detected.");
 					this.segmentEnd = this.current_message.messageNum;
 					this.densitySegmentBreak();
 				}

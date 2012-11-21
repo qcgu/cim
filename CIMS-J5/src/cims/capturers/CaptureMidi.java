@@ -3,17 +3,18 @@
  * 
  */
 
-/**
- * @author Andrew Gibson andrew@gibsons.id.au
- *
- */
 package cims.capturers;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 import cims.datatypes.MidiMessage;
 import cims.supervisors.SupervisorMidi;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
-
+/*****************************************************************************************
+ * Provides a mechanism to capture raw incoming midi data and form it into MidiMessage
+ * objects
+ */
 public class CaptureMidi {
 
 	private SupervisorMidi supervisor;
@@ -22,16 +23,20 @@ public class CaptureMidi {
 	private int midiByte;
 	private MidiMessage midiMessage;
 	
+	public static Logger LOGGER = Logger.getLogger(CaptureMidi.class);
+	
 	public CaptureMidi(SupervisorMidi supervisor) {
 		this.supervisor = supervisor;
 		this.midiData = new int[3];
 		this.midiByte = 0;
 		this.midiMessage = new MidiMessage();
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public void in(int arg) {
+		LOGGER.debug("CaptureMidi - Data In");
 		if(arg>=MidiMessage.NOTE_OFF) {
-			//LOGGER.info("STATUS: "+arg);
+			LOGGER.debug("STATUS: "+arg);
 			midiMessage.detectMessageType(arg);
 			midiData[0] = arg;
 			if(midiMessage.dataByteLength>0) {
@@ -42,7 +47,7 @@ public class CaptureMidi {
 				this.finalMessage();
 			}
 		} else {
-			//LOGGER.info("DATA: "+arg);
+			LOGGER.debug("DATA: "+arg);
 			switch(midiByte) {
 			case 1:
 				midiData[1] = arg;
@@ -58,7 +63,7 @@ public class CaptureMidi {
 				this.finalMessage();
 				break;
 			default:
-				LOGGER.severe("Bad number of data bytes");
+				LOGGER.error("Bad number of data bytes");
 				midiByte=0;
 					
 			}
@@ -68,9 +73,9 @@ public class CaptureMidi {
 
 	public void finalMessage() {
 		midiMessage.set(midiData);
+		LOGGER.debug("CAPTURE TYPE: "+midiMessage.messageType+" DATA: "+midiData[1]+","+midiData[2]);
 		this.supervisor.addMidiMessage(midiMessage);
-		this.supervisor.dataThru(midiData); //Send Midi message back out thru port (in Max)
-		LOGGER.info("CAPTURE TYPE: "+midiMessage.messageType+" DATA: "+midiData[1]+","+midiData[2]);
+		this.supervisor.midiThru(midiData); //Send raw Midi data back out thru port (in Max via supervisor and CimsMaxIO)
 		midiByte = 0;
 	}
 }

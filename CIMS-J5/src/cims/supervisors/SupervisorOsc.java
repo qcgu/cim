@@ -1,16 +1,20 @@
 package cims.supervisors;
 
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cims.CimsMaxIO;
+import cims.generators.GenerateMidi;
 //import cims.interfaces.Interface_Controls;
 import cims.interfaces.Interface_Controls;
 
 public class SupervisorOsc  {
 	private CimsMaxIO io;
 	private Interface_Controls controls;
+	
+	public static final Logger LOGGER = Logger.getLogger(SupervisorOsc.class.getName());
 	
 	public SupervisorOsc(CimsMaxIO io) {
 		this.io = io;

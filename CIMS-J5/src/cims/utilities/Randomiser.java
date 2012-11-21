@@ -2,11 +2,14 @@ package cims.utilities;
 
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
 import static cims.supervisors.SupervisorMidi_Globals.sActivityWeights;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 import java.util.Random;
+import java.util.logging.Logger;
+
+import cims.generators.GenerateMidi;
 
 public class Randomiser {
-	
+	public static final Logger LOGGER = Logger.getLogger(Randomiser.class.getName());
 	public Randomiser() {
 		
 	}

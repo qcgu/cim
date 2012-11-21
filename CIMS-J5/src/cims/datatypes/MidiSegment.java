@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
+
+//import cims.analysers.AnalyseMidi;
 
 
 import static cims.supervisors.SupervisorMidi_Globals.sMidiMessageList;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class MidiSegment {
 	private List<MidiMessage> segment;
 	private int segmentDuration;
 	private Class<?> creatorClass;
+	
+	public static final Logger LOGGER = Logger.getLogger(MidiSegment.class.getName());
 
 	public MidiSegment() { //Empty Segment
 		segment = new ArrayList<MidiMessage>();

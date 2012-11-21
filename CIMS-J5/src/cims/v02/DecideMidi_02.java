@@ -1,13 +1,17 @@
 package cims.v02;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
 import cims.datatypes.MidiMessage;
+import cims.datatypes.MidiSegment;
+import cims.generators.GenerateMidi;
 //import cims.generators.GenerateMidi_Loop;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.Randomiser;
 
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class DecideMidi_02 {
 	private SupervisorMidi supervisor;
@@ -27,6 +31,8 @@ public class DecideMidi_02 {
 	private boolean firstAction = true;
 	private MidiMessage firstMessage;
 	
+	public static Logger LOGGER = Logger.getLogger(DecideMidi_02.class);
+	
 	public DecideMidi_02(SupervisorMidi supervisor) {
 		this.supervisor=supervisor;
 		generator_repeatSegment = new GenerateMidi_Segment_02(supervisor);
@@ -34,9 +40,12 @@ public class DecideMidi_02 {
 		generator_initiateSegment = new GenerateMidi_Segment_02(supervisor);
 		generator_mirror = new GenerateMidi_Note_02(supervisor);
 		randomiser = new Randomiser();
+		
+		LOGGER.setLevel(Level.INFO);
 	}
 
 	public void messageIn(MidiMessage newMessage) {
+		/*
 		if(mirroring) {
 			generator_mirror.setMessage(newMessage);
 			if (mirroringType < 0.3){ // select one of two mirroring processes at random
@@ -52,7 +61,12 @@ public class DecideMidi_02 {
 		if (currentAction==2 && !support_loop.hasStarted) { //Wait for midi in before supporting
 			support_loop.start();
 		}
+		*/
 
+	}
+	
+	public void segmentCreated(MidiSegment newSegment) {
+		this.chooseNextAction();
 	}
 	
 	public void firstAction(MidiMessage firstMessage) {
@@ -65,6 +79,7 @@ public class DecideMidi_02 {
 	}
 	
 	public void chooseNextAction() {
+		/*
 		int segmentLength = 0;
 		mirroring = false;
 		if(!(support_loop==null)) support_loop.stop();
@@ -111,8 +126,14 @@ public class DecideMidi_02 {
 				// do nothing
 				break;
 		}
+		*/
 	}
 	
+	/*****************************************************************************************
+	 * Utility method to provide text version of an action
+	 * @param action
+	 * @return a string with the text version of the supplied action
+	 */
 	public String actionName(int action) {
 		String returnString = "";
 		switch(action) {

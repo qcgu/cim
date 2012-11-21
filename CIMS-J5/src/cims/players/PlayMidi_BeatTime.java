@@ -1,13 +1,15 @@
 package cims.players;
 
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeatTime;
 
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import cims.datatypes.BeatTime;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
+//import cims.generators.GenerateMidi;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.OutputQueue;
 
@@ -17,6 +19,8 @@ public class PlayMidi_BeatTime {
 	private volatile MidiMessage currentMessage;
 	protected volatile MidiSegment midiSegment;
 	protected volatile OutputQueue midiQueue;
+	
+	public static final Logger LOGGER = Logger.getLogger(PlayMidi_BeatTime.class.getName());
 	
 	public PlayMidi_BeatTime(SupervisorMidi supervisor) {
 		this.supervisor = supervisor;
@@ -80,7 +84,7 @@ public class PlayMidi_BeatTime {
 	}
 	
 	public void output(MidiMessage midimessage) {
-		this.supervisor.dataOut(midimessage.rawMessage);
+		this.supervisor.midiOut(midimessage.rawMessage);
 	}
 	
 

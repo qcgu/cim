@@ -1,140 +1,197 @@
-/*
- * Main IO Class that is embedded in Max as an MXJ Object
- * 		All other objects talk to Max through CimsMaxIO
- */
-
 package cims;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.*;
-import cims.datatypes.BeatTime;
-import cims.interfaces.Interface_Controls;
-import cims.supervisors.*;
+
 import com.cycling74.max.*;
 
-//comment
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+
+import cims.supervisors.*;
+import cims.datatypes.BeatTime;
+import cims.interfaces.Interface_Controls;
+
+/****
+ * Provides the initialisation of CIMS and handles all I/O between CIMS and Max.
+ * @author Andrew Gibson a.gibson@griffith.edu.au
+ *
+ */
 public class CimsMaxIO extends MaxObject {
+	
+	//Primary Handler Classes for various I/O data
 	private SupervisorMidi superMidi;
 	private SupervisorOsc superOsc;
 	//private SupervisorAudio superAudio;
-	
 	private Interface_Controls controls;
 	
+	//Temporary storage of incoming data
 	private int midiData = 0;
 	private String[] oscData;
 	private byte audioData;
-	private BeatTime beatTime;
-	
+	private BeatTime beatTime;	
 	private String controlKey = "";
 	private int controlValue = 0;
-	private String[] controlNames = {"metronome","nextPlay","segmentGap","repeatCue","test"};
+	private double dataCounter = 0;
 	
-	private static final Logger LOGGER = Logger.getLogger(CimsMaxIO.class.getName());
-	
+	//Names used by this class
+	private static String[] controlNames = {"metronome","nextPlay","segmentGap","repeatCue","test"};
 	private static final int MIDI = 0;
 	private static final int OSC = 1;
 	private static final int AUDIO = 2;
 	private static final int CONTROL = 3;
 	private static final int TRANSPORT = 4;
 	
-
+	//Logging localised to this class
+	private static Logger LOGGER = Logger.getLogger(CimsMaxIO.class);
+	
+	
+	/*******************************************************************************************
+	 * 
+	 */
+	
 	public CimsMaxIO() {
-		declareIO(1,3); 
+		declareIO(1,1); //Inlets and Outlets available to Max
 		createInfoOutlet(false); // Right most outlet not required	
+		
+		//Init objects and set initial values
 		controls = new Interface_Controls(this);
 		superMidi = new SupervisorMidi(this,controls);
 		superOsc = new SupervisorOsc(this,controls);
-		LOGGER.setLevel(Level.OFF); //INFO
-		textOut("IO Initialized");
+		beatTime = new BeatTime();
+		beatTime.recalcDefaultTimings();
 		this.interfaceUpdated();
+		
+		BasicConfigurator.configure();
+		LOGGER.setLevel(Level.INFO);
+		LOGGER.info("IO Initialized");		
 	}
 
-/**
- * 
- * All message from Max come in via the anything method
- * Messages are checked for their type and then depending on type, the appropriate supervisor method
- * is advised of data availability.
- * 
- */
+	/*******************************************************************************************
+	 * Anything captures all input coming from the Max environment. It processes this input by
+	 * data type based on the first argument in the list. The remainder of the arguments are
+	 * then processed according to type.
+	 * @param message - A string containing the message type from Max (always a list for this app)
+	 * @param args  - A List from Max (Atom allows for mixed types)
+	 */
+	
 	public void anything(String message, Atom[] args) {
-		LOGGER.log(Level.OFF,"Message: "+message+" args: "+args.toString());
-		switch(messageCheck(message)) {
+		
+		switch(args[0].toInt()) {
+		
 		case MIDI:
-			this.midiData = args[0].toInt();
-			LOGGER.log(Level.OFF,"MIDI: " + midiData);
-			superMidi.dataIn();
+			this.midiData = args[1].toInt();
+			LOGGER.debug("MIDI: " + midiData);
+			superMidi.midiIn();
 			break;
+			
 		case OSC:
-			LOGGER.log(Level.OFF,"OSC: " + args[0].toString());
+			LOGGER.debug("OSC: " + args[1].toString());
 			int numArgs = args.length;
 			oscData = new String[numArgs];
-			for(int i=0;i<numArgs;i++) {
+			for(int i=1;i<numArgs;i++) {
 				this.oscData[i] = args[i].toString();
 			}
 			superOsc.dataIn();
-			textOut("OSC RECEIVED");
 			break;
+			
 		case AUDIO:
-			System.out.println("AUDIO: " + args[0]);
+			LOGGER.debug("AUDIO: " + args[1]);
 			break;
+			
 		case CONTROL:
-			controlKey=controlNames[args[0].toInt()];
-			controlValue=args[1].toInt();
-			LOGGER.log(Level.INFO, "KEY: "+controlKey+" VALUE: "+controlValue);
+			controlKey=controlNames[args[1].toInt()];
+			controlValue=args[2].toInt();
+			LOGGER.debug("KEY: "+controlKey+" VALUE: "+controlValue);
 			superMidi.controlIn();
-
-			break;			
+			break;
+			
 		case TRANSPORT:
-			Integer[] transport = {args[0].toInt(),args[1].toInt(),args[2].toInt(),
-					args[3].toInt(),args[4].toInt(),args[5].toInt(),
-					args[6].toInt(),args[7].toInt(),args[8].toInt()};
+			Integer[] transport = {args[1].toInt(),args[2].toInt(),args[3].toInt(),
+					args[4].toInt(),args[5].toInt(),args[6].toInt(),
+					args[7].toInt(),args[8].toInt(),args[9].toInt()};
 			this.beatTime = new BeatTime(transport);
-			//System.out.println("BT: "+beatTime.toString());
+			LOGGER.debug("BT: "+beatTime.toString());
 			superMidi.beatTimeIn();
 			break;
 		}
-		//this.gc();
+		//Force garbage collection regularly
+		dataCounter++;
+		if (dataCounter>1000) {
+			LOGGER.info("GARBAGE COLLECTION");
+			this.gc();
+			dataCounter = 0;
+		}
 	}
 	
-	/***
-	 * Determines message type and returns an int based on static declared types
-	 * @param message
-	 * @return
+	/*******************************************************************************************
+	 * Handle MIDI I/O
 	 */
-	private int messageCheck(String message) {
-		int returnValue = -1;
-		if(message.equalsIgnoreCase("int")) {
-			returnValue =  MIDI;
-		}
-		if(message.equalsIgnoreCase("osc")) {
-			returnValue =  OSC;
-		}
-		if(message.equalsIgnoreCase("controlParams")) {
-			returnValue =  CONTROL;
-		}
-		if(message.equalsIgnoreCase("transport")) {
-			returnValue =  TRANSPORT;
-		}
-		return returnValue;
-	}
 	
 	public int inMidi() {
+		LOGGER.debug("MIDI IN");
 		return this.midiData;
 	}
-	public String[] inOsc() {
-		return this.oscData;
-	}
-	public int inAudio() {
-		return this.audioData;
+	
+	public void outMidi(int[] midi) {
+		LOGGER.debug("MIDI OUT");
+		int messageSize = midi.length+2;
+		Atom[] midiOutMessage = new Atom[messageSize];		
+		midiOutMessage[0] = Atom.newAtom(0);
+		midiOutMessage[1] = Atom.newAtom("midievent");
+		for(int i=2;i<messageSize;i++) {
+			midiOutMessage[i] = Atom.newAtom(midi[(i-2)]);
+		}
+		outlet(0,midiOutMessage);
 	}
 	
-	public void interfaceUpdated() {
-		LOGGER.log(Level.OFF, "CIMSIO: Interface Updated");
-		superMidi.interfaceUpdated();
+	public void outMidiThru(int[] midi) {
+		LOGGER.debug("MIDI THRU");
+		int messageSize = midi.length+2;
+		Atom[] midiOutMessage = new Atom[messageSize];		
+		midiOutMessage[0] = Atom.newAtom(1);
+		midiOutMessage[1] = Atom.newAtom("midievent");
+		for(int i=2;i<messageSize;i++) {
+			midiOutMessage[i] = Atom.newAtom(midi[(i-2)]);
+		}
+		outlet(0,midiOutMessage);
+	}
+	
+	/*******************************************************************************************
+	 *  HANDLE OSC I/O
+	 */
+	
+	public String[] inOsc() {
+		LOGGER.debug("OSC IN");
+		return this.oscData;
+	}
+	
+	public void outOsc(ArrayList<Object> osc) {
+		LOGGER.debug("OSC OUT");
+		int messageSize = osc.size()+1;
+		Atom[] oscOutMessage = new Atom[messageSize];
+		oscOutMessage[0] = Atom.newAtom(2);
+		Iterator<Object> oscIterator = osc.iterator();
+		int i=1;
+		while (oscIterator.hasNext()) {
+			oscOutMessage[i] = Atom.newAtom(oscIterator.next().toString());
+			i++;
+		}
+		outlet(0,oscOutMessage);
+	}
+	
+	public void outOscSysMessage(String address, String message) {
+		LOGGER.debug("OSC SYS MESSAGE");
+		ArrayList<Object> outMessage = new ArrayList<Object>();
+		outMessage.add(address);
+		outMessage.add(message);
+		this.outOsc(outMessage);
 	}
 	
 	public void sendInterfaceUpdate(String address,ArrayList<?> message) {
+		LOGGER.debug("OSC INTERFACE UPDATE");
 		ArrayList<Object> outMessage = new ArrayList<Object>();
 		outMessage.add(address);
 		Iterator<?> messageIterator = message.iterator();
@@ -144,62 +201,44 @@ public class CimsMaxIO extends MaxObject {
 		this.outOsc(outMessage);
 	}
 	
-	public void outMidi(int[] midi) {
-		LOGGER.log(Level.OFF, "MIDI OUT");
-		int messageSize = midi.length+1;
-		Atom[] midiOutMessage = new Atom[messageSize];		
-		midiOutMessage[0] = Atom.newAtom("midievent");
-		for(int i=1;i<messageSize;i++) {
-			midiOutMessage[i] = Atom.newAtom(midi[(i-1)]);
-		}
-		outlet(0,midiOutMessage);
+	/*******************************************************************************************
+	 * HANDLE AUDIO I/O
+	 */
+	public int inAudio() {
+		LOGGER.debug("AUDIO IN");
+		return this.audioData;
 	}
 	
-	public void outMidiThru(int[] midi) {
-		int messageSize = midi.length+1;
-		Atom[] midiOutMessage = new Atom[messageSize];		
-		midiOutMessage[0] = Atom.newAtom("midievent");
-		for(int i=1;i<messageSize;i++) {
-			midiOutMessage[i] = Atom.newAtom(midi[(i-1)]);
-		}
-		outlet(1,midiOutMessage);
-	}
-	
-	public void outOsc(ArrayList<Object> osc) {
-		int messageSize = osc.size();
-		Atom[] oscOutMessage = new Atom[messageSize];
-		Iterator<Object> oscIterator = osc.iterator();
-		int i=0;
-		while (oscIterator.hasNext()) {
-			oscOutMessage[i] = Atom.newAtom(oscIterator.next().toString());
-			i++;
-		}
-		outlet(2,oscOutMessage);
-	}
-	
-	public void outOscSysMessage(String address, String message) {
-		Atom[] osc = new Atom[2];
-		osc[0] = Atom.newAtom(address);
-		osc[1] = Atom.newAtom(message);
-		outlet(2,osc);
-	}
 	public void outAudio(int audio) {
-		LOGGER.log(Level.OFF, "AUDIO OUT");
-		outlet(3,audio);
+		LOGGER.debug("AUDIO OUT");
 	}
 	
-	public String key() {
-		return this.controlKey;
-	}
+	/*******************************************************************************************
+	 * GENERAL UTILITY METHODS
+	 */
 	
-	public int value() {
-		return this.controlValue;
+	public void interfaceUpdated() {
+		LOGGER.debug("Interface Updated");
+		superMidi.interfaceUpdated();
 	}
 	
 	public void textOut(String text) {
 		post(text);
 	}
-
+	
+	
+	/*******************************************************************************************
+	 * GENERAL GETTERS AND SETTERS
+	 */
+	
+	public String getControlkey() {
+		return this.controlKey;
+	}
+	
+	public int getControlValue() {
+		return this.controlValue;
+	}
+	
 	public BeatTime getBeatTime() {
 		return beatTime;
 	}

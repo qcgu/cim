@@ -1,32 +1,36 @@
-/**
- * CIMS - GenerateMIDI - Make decisions based on Analysis and raw data and generate MIDI for playing.
- * 
- */
-
-/**
- * @author Andrew Gibson andrew@gibsons.id.au
- * @version 120725
- */
-
 package cims.generators;
 
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.OutputQueue;
 
+
+/*****************************************************************************************
+ * The main generator for generating MIDI segments. Usually instantiated and called by
+ * a decider.
+ * 
+ * @author Andrew Gibson a.gibson@griffith.edu.au
+ * @author Andrew Brown
+ *
+ */
 public class GenerateMidi_Segment extends GenerateMidi {
 
 	protected volatile MidiSegment midiSegment;
 	protected volatile OutputQueue midiQueue;
 	private SupervisorMidi supervisor;
 	
+	public static Logger LOGGER = Logger.getLogger(GenerateMidi.class);
+	
 	public GenerateMidi_Segment(SupervisorMidi supervisor) {
 		super(supervisor);
 		this.supervisor = supervisor;
 		midiQueue = new OutputQueue(this);
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor, MidiSegment segment) {
@@ -34,10 +38,11 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		this.supervisor = supervisor;
 		midiQueue = new OutputQueue(this);
 		this.midiSegment = segment;
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public void generate() {
-		LOGGER.info("generate()");
+		LOGGER.debug("generate() called. Creating OutputQueue, adding segment, then play");
 		midiQueue = new OutputQueue(this);
 		midiQueue.addSegment(midiSegment);
 		midiQueue.play();
@@ -48,6 +53,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	}
 	
 	public void generate(int start) {
+		LOGGER.debug("generate(int start) called. Creating OutputQueue, adding segment, then play according to start");
 		midiQueue = new OutputQueue(this);
 		switch(start) {
 		case 0:
@@ -67,18 +73,15 @@ public class GenerateMidi_Segment extends GenerateMidi {
 		return this.midiSegment;
 	}
 	public void output(MidiMessage midimessage) {
-		//int[] message = {midimessage.status,midimessage.pitch,midimessage.velocity};
-		//LOGGER.warning("OUTPUT STATUS: "+ midimessage.status);
-		//LOGGER.warning("OUTPUT RAW MESSAGE: "+ midimessage.rawMessage[0]);
-		this.supervisor.dataOut(midimessage.rawMessage);
-		//supervisor.txtMsg("TC: "+Thread.activeCount());
+		LOGGER.debug("OUTPUT MidiMessage Status: "+ midimessage.status);
+		this.supervisor.midiOut(midimessage.rawMessage);
+		LOGGER.debug("Thread Count: "+Thread.activeCount());
 	}
 		
 	public synchronized void makeLastSegment () {
-		// Play back the last segment
-		//midiSegment = supervisor.getLastMidiSegment();
+		LOGGER.debug("Playing back last segement");
 		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
-		midiSegment.setChannel(2); // channel is in the parochial range of 1-16
+		midiSegment.setChannel(2); // channel is midi channel 1-16
 	}
 	
 	public void makeEmptySegment() {

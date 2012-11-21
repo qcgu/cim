@@ -7,7 +7,7 @@ import cims.utilities.Randomiser;
 
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class DecideMidi_01 {
 	private SupervisorMidi supervisor;
@@ -57,7 +57,7 @@ public class DecideMidi_01 {
 			currentAction = nextAction;
 		}
 		nextAction = randomiser.positiveInteger(3);
-		LOGGER.info("chooseNextAction");
+		//LOGGER.info("chooseNextAction");
 		supervisor.txtMsg(""+ this.actionName(currentAction) +" >> "+ this.actionName(nextAction));
 		switch (currentAction) {
 			case 0: // repeat

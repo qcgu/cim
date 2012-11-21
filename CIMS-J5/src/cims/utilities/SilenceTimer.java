@@ -1,22 +1,22 @@
-/**
- * SilenceTimer - A Gibson
- */
 package cims.utilities;
-import java.util.*;
 
-import cims.analysers.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
-/**
- * @author andrew
+import cims.analysers.AnalyseMidi_Silence;
+
+/*****************************************************************************************
+ * Provides a general Java Timer for detecting silence. When timer expires, the run
+ * method of the inner TimerTask class calls the silent method of AnalyseMidi_Silence.
+ * 
+ * @author Andrew Gibson a.gibson@griffith.edu.au
  *
  */
 public class SilenceTimer {
 	private AnalyseMidi_Silence analyser;
 	private Timer silenceTimer;
 	private long delay;
-	/**
-	 * 
-	 */
+
 	public SilenceTimer(AnalyseMidi_Silence newAnalyser) {
 		analyser = newAnalyser;
 		this.silenceTimer = new Timer(); // initial timer
@@ -43,7 +43,6 @@ public class SilenceTimer {
 
 		@Override
 		public void run() {
-			//if(this.am.segmentStarted) {
 			am.silent();
 		}
 		

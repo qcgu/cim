@@ -1,17 +1,21 @@
 package cims.generators;
 
 //import cims.supervisors.SupervisorMidi;
+import java.util.logging.Logger;
+
 import cims.utilities.RepeatTimer;
 
 import static cims.supervisors.SupervisorMidi_Globals.sRepeatInterval;
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class GenerateMidi_Loop {
 	private RepeatTimer repeatTimer;
 	private int interval;
 	private GenerateMidi_Segment gm_segment;
 	public boolean hasStarted = false;
+	
+	public static final Logger LOGGER = Logger.getLogger(GenerateMidi.class.getName());
 	
 	public GenerateMidi_Loop(GenerateMidi_Segment segment) {
 

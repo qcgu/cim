@@ -46,7 +46,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 	
 	public void output() {
 		int[] message = {this.currentMessage.status,this.currentMessage.pitch,this.currentMessage.velocity};
-		this.supervisor.dataOut(message);
+		this.supervisor.midiOut(message);
 	}
 	
 	// this method should likely be moved to GenerateMidi_Note_02 class

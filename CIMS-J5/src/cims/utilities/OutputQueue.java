@@ -1,14 +1,25 @@
 package cims.utilities;
 
 import java.util.*;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
 import cims.datatypes.*;
 import cims.generators.*;
 import cims.players.PlayMidi_BeatTime;
 
 import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeatTime;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
-
+/*****************************************************************************************
+ * Manages a Timer and TimerTask for the playback of MIDI messages in time according to
+ * the timemillis in those messages. It can queue a segment for playback immediately, or on
+ * the next beat or next bar (as determined by the current BeatTime information).
+ * OutputQueue does NOT change the timing of segments to match changes in BeatTime that
+ * may occur during the playback of MIDI messages. For this task, use an appropriate Player.
+ * 
+ * @author Andrew Gibson a.gibson@griffith.edu.au
+ *
+ */
 public class OutputQueue {
 	private GenerateMidi_Segment midiGen;
 	private PlayMidi_BeatTime beatPlayer;
@@ -20,11 +31,14 @@ public class OutputQueue {
 	private boolean startOnNextBeat = false;
 	private boolean startOnNextBar = false;
 	private long pastTheBeatTolerance = BeatTime.timeBetweenBeats/64;
+	
+	public static Logger LOGGER = Logger.getLogger(OutputQueue.class);
 
 	public OutputQueue(GenerateMidi_Segment newMidiGen) {
 		this.midiGen = newMidiGen;
 		this.timerList = new ArrayList<Timer>();
 		this.noteOnList = new ArrayList<MidiMessage>();
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public OutputQueue(PlayMidi_BeatTime player) {
@@ -32,6 +46,7 @@ public class OutputQueue {
 		this.isPlayer = true;
 		this.timerList = new ArrayList<Timer>();
 		this.noteOnList = new ArrayList<MidiMessage>();
+		LOGGER.setLevel(Level.DEBUG);
 	}
 	
 	public synchronized void addSegment(MidiSegment segment) {
@@ -39,7 +54,7 @@ public class OutputQueue {
 	}
 	
 	public void play() {
-		LOGGER.info("OutputQueue:play()");
+		LOGGER.debug("OutputQueue:play()");
 		Iterator<MidiMessage> segmentIterator;
 		boolean firstEvent = true;
 		long segmentStartTime = 0;
@@ -48,7 +63,7 @@ public class OutputQueue {
 		MidiMessage midimessage = new MidiMessage();
 		
 		if(segmentToPlay==null) {
-			LOGGER.warning("segmentToPlay is NULL");
+			LOGGER.error("segmentToPlay is NULL");
 			segmentToPlay = new MidiSegment();
 		}
 		if(!segmentToPlay.isEmpty()) {
@@ -62,11 +77,11 @@ public class OutputQueue {
 					noteOnList.add(midimessage);
 				}
 				if(midimessage.timeMillis<0) {
-					LOGGER.warning("midimessage.timeMillis is less than 0: "+midimessage.timeMillis+ " >> now set to 0");
+					LOGGER.warn("midimessage.timeMillis is less than 0: "+midimessage.timeMillis+ " >> now set to 0");
 					midimessage.timeMillis = 0;
 				}
 				if(firstEvent) {
-					LOGGER.info("First MidiMessage in queue");
+					LOGGER.debug("First MidiMessage in queue");
 					segmentStartTime = midimessage.timeMillis;
 					delay = 0; //Play first message straight away
 					firstEvent = false;
@@ -83,7 +98,7 @@ public class OutputQueue {
 						} else {
 							timeToWait = BeatTime.timeBetweenBeats - BeatTime.elapsedSinceBeat;
 						}
-						LOGGER.info("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
+						LOGGER.debug("BEAT >> DELAY: "+delay+" WAIT: "+timeToWait);
 						delay = delay + timeToWait;
 					}
 					if(startOnNextBar) {
@@ -92,11 +107,11 @@ public class OutputQueue {
 						} else {
 							timeToWait = (BeatTime.timeBetweenBeats*sCurrentBeatTime.getValueFor("beatsPerBar")) - BeatTime.elapsedSinceBar;
 						}
-						LOGGER.info("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
+						LOGGER.debug("BAR >> DELAY: "+delay+" WAIT: "+timeToWait);
 						delay = delay + timeToWait;
 					}
 					if(delay<0) {
-						LOGGER.warning("NEGATIVE DELAY - SET TO 0");
+						LOGGER.warn("NEGATIVE DELAY - SET TO 0");
 						delay=0;
 					}
 					//LOGGER.info("OutputQueue: pitch = " + midimessage.messageType + " " + midimessage.pitch + " " + midimessage.velocity + " " + midimessage.timeMillis);
@@ -104,13 +119,13 @@ public class OutputQueue {
 				}
 			}
 		} else {
-			LOGGER.warning("NO SEGMENT TO PLAY!! ");
+			LOGGER.error("NO SEGMENT TO PLAY!! ");
 		}
 		
 	}
 		
 	public void cancel() {
-		//System.out.println("Events to Cancel: "+timerList.size());
+		LOGGER.debug("Events to Cancel: "+timerList.size());
 		Iterator<Timer> timerIterator = timerList.iterator();
 		while(timerIterator.hasNext()) {
 			Timer killTimer = timerIterator.next();
@@ -130,14 +145,13 @@ public class OutputQueue {
 		private GenerateMidi_Segment gm;
 		private MidiMessage outputMessage;
 		public Player(GenerateMidi_Segment gm, MidiMessage midimessage) {
-			//System.out.println("New Player");
 			this.gm = gm;
 			this.outputMessage = midimessage;
 		}
 
 		@Override
 		public void run() {
-			//System.out.println("RUN called "+outputMessage.status);
+			LOGGER.debug("run() in OutputQueue.Player outputting midi: "+outputMessage.status);
 			this.gm.output(this.outputMessage);
 		}
 		
@@ -146,15 +160,14 @@ public class OutputQueue {
 	private class BeatPlayer extends TimerTask {
 		private PlayMidi_BeatTime pm;
 		private MidiMessage outputMessage;
-		public BeatPlayer(PlayMidi_BeatTime pm, MidiMessage midimessage) {
-			//System.out.println("New Player");
+		public BeatPlayer(PlayMidi_BeatTime pm, MidiMessage midimessage) {;
 			this.pm = pm;
 			this.outputMessage = midimessage;
 		}
 
 		@Override
 		public void run() {
-			//System.out.println("RUN called "+outputMessage.status);
+			LOGGER.debug("run() in OutputQueue.BeatPlayer outputting midi: "+outputMessage.status);
 			this.pm.output(this.outputMessage);
 		}
 		

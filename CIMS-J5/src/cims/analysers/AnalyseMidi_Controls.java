@@ -1,13 +1,15 @@
 package cims.analysers;
 
 //import java.util.*;
+import java.util.logging.Logger;
+
 import cims.analysers.AnalyseMidi;
 import cims.supervisors.SupervisorMidi;
 
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class AnalyseMidi_Controls extends AnalyseMidi {
-	
+	public static final Logger LOGGER = Logger.getLogger(AnalyseMidi.class.getName());
 	public AnalyseMidi_Controls(SupervisorMidi supervisor) {
 		super(supervisor);
 	}

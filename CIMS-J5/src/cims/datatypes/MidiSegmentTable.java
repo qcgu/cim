@@ -1,14 +1,14 @@
 package cims.datatypes;
 
 import java.util.HashMap;
-import java.util.SortedSet;
+//import java.util.SortedSet;
 import java.util.TreeMap;
 //import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class MidiSegmentTable {
 	
 	private HashMap<String,TreeMap<Long, MidiSegment>> segmentsMap;
-	private HashMap<String,TreeMap<Long, MidiSegment>> breakPointSegmentsMap;
+	//private HashMap<String,TreeMap<Long, MidiSegment>> breakPointSegmentsMap;
 	
 	public MidiSegmentTable() {
 		segmentsMap = new HashMap<String,TreeMap<Long, MidiSegment>>();

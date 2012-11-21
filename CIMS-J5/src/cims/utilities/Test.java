@@ -1,17 +1,19 @@
 package cims.utilities;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cims.datatypes.BeatTime;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
+import cims.generators.GenerateMidi;
 import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_Segment;
 import cims.players.PlayMidi_BeatTime;
 import cims.supervisors.SupervisorMidi;
 
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
-import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class Test {
 	
@@ -20,6 +22,8 @@ public class Test {
 	public static final int SEGMENT_TESTS = 0;
 	public static final int MESSAGE_TESTS = 1;
 	public static final int BEATTIME_TESTS = 2;
+	
+	public static final Logger LOGGER = Logger.getLogger(Test.class.getName());
 
 	public Test(SupervisorMidi supervisor) {
 		sm = supervisor;
@@ -37,12 +41,12 @@ public class Test {
 			LOGGER.warning("Message Active Threads: "+this.activeThreadCount());
 			break;
 		case BEATTIME_TESTS:
-			PlayMidi_BeatTime pm = this.playMidi_beatTime();
+			//PlayMidi_BeatTime pm = this.playMidi_beatTime();
 			LOGGER.warning("Message Active Threads: "+this.activeThreadCount());
 			break;
 		}
 	}
-	
+	/*
 	public PlayMidi_BeatTime playMidi_beatTime() {
 		LOGGER.warning("TST: playMidi_beatTime");
 		PlayMidi_BeatTime pm = sm.currentPlayer();
@@ -61,7 +65,7 @@ public class Test {
 		pm.add(noteOff);
 		return pm;
 	}
-	
+	*/
 	public GenerateMidi_Loop generateMidi_Loop() {
 		LOGGER.warning("TST: generateMidi_Loop");
 		GenerateMidi_Segment gm_segment = this.generateMidi_Segment(false);
