@@ -11,7 +11,7 @@ import cims.capturers.CaptureMidi;
 import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
-import cims.v02.DecideMidi_02;
+import cims.v03.DecideMidi_03;
 import cims.deciders.DecideMidi_SimpleRepeat;
 import cims.players.PlayMidi_BeatTime;
 import cims.utilities.*;
@@ -40,7 +40,7 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Stats analyser_stats;
 	
 	// Primary decision making
-	private DecideMidi_02 decider;
+	private DecideMidi_03 decider;
 	@SuppressWarnings("unused")
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
 	private Test tester;
@@ -91,7 +91,7 @@ public class SupervisorMidi implements Supervisor {
 		analyser_silence = new AnalyseMidi_Silence(this);
 		analyser_controls = new AnalyseMidi_Controls(this);
 		analyser_stats = new AnalyseMidi_Stats(this);
-		decider = new DecideMidi_02(this);
+		decider = new DecideMidi_03(this);
 		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
 		tester = new Test(this);
 

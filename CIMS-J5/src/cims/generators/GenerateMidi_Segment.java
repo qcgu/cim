@@ -24,7 +24,7 @@ public class GenerateMidi_Segment extends GenerateMidi {
 	protected volatile OutputQueue midiQueue;
 	private SupervisorMidi supervisor;
 	
-	public static Logger LOGGER = Logger.getLogger(GenerateMidi.class);
+	public static Logger LOGGER = Logger.getLogger(GenerateMidi_Segment.class);
 	
 	public GenerateMidi_Segment(SupervisorMidi supervisor) {
 		super(supervisor);

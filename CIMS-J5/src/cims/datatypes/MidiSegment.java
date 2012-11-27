@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 //import cims.analysers.AnalyseMidi;
 
@@ -17,11 +19,12 @@ public class MidiSegment {
 	private int segmentDuration;
 	private Class<?> creatorClass;
 	
-	public static final Logger LOGGER = Logger.getLogger(MidiSegment.class.getName());
+	public static Logger LOGGER = Logger.getLogger(MidiSegment.class);
 
 	public MidiSegment() { //Empty Segment
 		segment = new ArrayList<MidiMessage>();
 		segmentDuration = 0;
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public MidiSegment(int start, int end) { //Segment as subset of MessageList
@@ -47,7 +50,12 @@ public class MidiSegment {
 		mess.pitch = message.pitch;
 		segment.add(mess);
 		segmentDuration = (int) (message.timeMillis - segment.get(0).timeMillis);
-		LOGGER.info("SEGMENT DURATION: "+segmentDuration+"ms");
+		if (segmentDuration<1) {
+			LOGGER.error("Segment Duration too short: "+segmentDuration+"ms");
+			segmentDuration = 0;
+		} else {
+			LOGGER.debug("SEGMENT DURATION: "+segmentDuration+"ms");
+		}
 	}
 	
 	public int duration() {

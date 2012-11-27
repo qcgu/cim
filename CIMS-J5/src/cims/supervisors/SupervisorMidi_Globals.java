@@ -2,7 +2,7 @@ package cims.supervisors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
 import cims.datatypes.BeatTime;
 import cims.datatypes.MidiControlMessage;
@@ -24,7 +24,7 @@ public class SupervisorMidi_Globals {
 	public static MidiStatistics sMidiStats;
 	public static long sMidiStartTime=0;
 	public static int sSegmentGapDuration = 390;
-	public static int sDefaultDuration = 250;
+	//public static int sDefaultDuration = 250;
 	
 	// Static properties set by external control
 	public static HashMap<String,Double> sActivityWeights;
