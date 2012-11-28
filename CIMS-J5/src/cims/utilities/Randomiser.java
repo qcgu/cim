@@ -14,7 +14,7 @@ public class Randomiser {
 	public static final Logger LOGGER = Logger.getLogger(Randomiser.class.getName());
 	
 	public Randomiser() {
-		LOGGER.setLevel(Level.DEBUG);
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public int positiveInteger(int maxValue) {
@@ -24,6 +24,8 @@ public class Randomiser {
 	
 	public int getRandomPitchClass() {
 		int pchLength = sMidiStats.getPitchClassHistogram().length; //Fixed at 12
+		LOGGER.debug("pitchClassHistogram.length: "+pchLength);
+		LOGGER.debug("pitchHistogram: "+sMidiStats.getPitchHistogramAsString());
 		int maxCnt = 0;
 		for (int i=0; i<pchLength; i++) {
 			LOGGER.debug("pitchClass " + i + " = " + sMidiStats.getPitchClass(i));

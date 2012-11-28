@@ -3,13 +3,13 @@ package cims.utilities;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import cims.datatypes.BeatTime;
+//import cims.datatypes.BeatTime;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
-import cims.generators.GenerateMidi;
+//import cims.generators.GenerateMidi;
 import cims.generators.GenerateMidi_Loop;
 import cims.generators.GenerateMidi_Segment;
-import cims.players.PlayMidi_BeatTime;
+//import cims.players.PlayMidi_BeatTime;
 import cims.supervisors.SupervisorMidi;
 
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;

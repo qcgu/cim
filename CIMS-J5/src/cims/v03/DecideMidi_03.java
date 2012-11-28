@@ -39,7 +39,7 @@ public class DecideMidi_03 {
 		generator_mirror = new GenerateMidi_Note_03(supervisor);
 		randomiser = new Randomiser();
 		
-		LOGGER.setLevel(Level.DEBUG);
+		LOGGER.setLevel(Level.INFO);
 	}
 
 	public void messageIn(MidiMessage newMessage) {

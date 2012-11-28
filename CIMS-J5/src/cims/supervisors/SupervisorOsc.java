@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cims.CimsMaxIO;
-import cims.generators.GenerateMidi;
+//import cims.generators.GenerateMidi;
 //import cims.interfaces.Interface_Controls;
 import cims.interfaces.Interface_Controls;
 

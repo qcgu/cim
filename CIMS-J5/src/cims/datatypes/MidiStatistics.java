@@ -48,7 +48,7 @@ public class MidiStatistics {
 		this.previousOnsetTime = 0;
 		// initialise pitch class histogram
 		this.pitchClassHistogram = new int[12];
-		this.clearPitchHistogram();
+		//this.clearPitchHistogram();
 		LOGGER.setLevel(Level.INFO);
 	}
 
@@ -73,6 +73,16 @@ public class MidiStatistics {
 		for (int i=0; i<12; i++) {
 			pitchClassHistogram[i] = 0;
 		}
+	}
+	
+	public String getPitchHistogramAsString() {
+		String ph = "[";
+		for (int i=0; i<12; i++) {
+			ph = ph+ pitchClassHistogram[i];
+			if (i<11) ph = ph+",";
+		}
+		ph = ph+ "]";
+		return ph;
 	}
 	
 	public void addVelocity(int newVelocity) {

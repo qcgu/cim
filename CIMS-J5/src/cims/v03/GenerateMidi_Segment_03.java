@@ -25,14 +25,14 @@ public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 		super(supervisor);
 		this.supervisor = supervisor;
 		this.randomiser = new Randomiser();
-		LOGGER.setLevel(Level.DEBUG);
+		LOGGER.setLevel(Level.INFO);
 	}
 
 	public GenerateMidi_Segment_03(SupervisorMidi supervisor, MidiSegment segment) {
 		super(supervisor, segment);
 		this.supervisor = supervisor;
 		this.randomiser = new Randomiser();
-		LOGGER.setLevel(Level.DEBUG);
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public int supportSegment() {

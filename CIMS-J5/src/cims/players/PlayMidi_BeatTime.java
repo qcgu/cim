@@ -16,6 +16,7 @@ import cims.utilities.OutputQueue;
 public class PlayMidi_BeatTime {
 	private SupervisorMidi supervisor;
 	private TreeMap<Double,MidiMessage> beatMessages;
+	@SuppressWarnings("unused")
 	private volatile MidiMessage currentMessage;
 	protected volatile MidiSegment midiSegment;
 	protected volatile OutputQueue midiQueue;
@@ -29,6 +30,7 @@ public class PlayMidi_BeatTime {
 	
 	public void beatTimeIn() {
 		//Check bar/beat
+		@SuppressWarnings("unused")
 		BeatTime currentBT = sCurrentBeatTime;
 		//See what messages are in the queue to be played
 		//Send them to the output queue

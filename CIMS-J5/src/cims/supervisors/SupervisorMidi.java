@@ -140,7 +140,7 @@ public class SupervisorMidi implements Supervisor {
 			break;
 		case SEGMENT:
 			LOGGER.debug("MIDI SEGMENT");
-			sMidiStats.clearPitchHistogram();
+			//sMidiStats.clearPitchHistogram();
 			decider.segmentCreated(sMidiSegment);   // THIS IS THE MAIN CALL TO THE DECIDER WHEN A SEGMENT IS CREATED
 			//decider_simpleRepeat.segmentCreated();
 			break;
