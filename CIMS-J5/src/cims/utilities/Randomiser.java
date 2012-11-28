@@ -2,16 +2,19 @@ package cims.utilities;
 
 import static cims.supervisors.SupervisorMidi_Globals.sMidiStats;
 import static cims.supervisors.SupervisorMidi_Globals.sActivityWeights;
-//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
-import java.util.Random;
-import java.util.logging.Logger;
 
-import cims.generators.GenerateMidi;
+import java.util.Random;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
+//import cims.generators.GenerateMidi;
 
 public class Randomiser {
 	public static final Logger LOGGER = Logger.getLogger(Randomiser.class.getName());
+	
 	public Randomiser() {
-		
+		LOGGER.setLevel(Level.DEBUG);
 	}
 	
 	public int positiveInteger(int maxValue) {
@@ -23,11 +26,11 @@ public class Randomiser {
 		int pchLength = sMidiStats.getPitchClassHistogram().length; //Fixed at 12
 		int maxCnt = 0;
 		for (int i=0; i<pchLength; i++) {
-			//System.out.println("pitchClass " + i + " = " + sMidiStats.getPitchClass(i));
+			LOGGER.debug("pitchClass " + i + " = " + sMidiStats.getPitchClass(i));
 			maxCnt += sMidiStats.getPitchClass(i);
 		}
 		int rnd = (int)(Math.random() * maxCnt);
-		LOGGER.info("mxCnt = " + maxCnt + " rnd = " + rnd);
+		LOGGER.debug("mxCnt = " + maxCnt + " rnd = " + rnd);
 		
 		int pitchClass = 0;
 		int val = sMidiStats.getPitchClass(pitchClass);
@@ -35,11 +38,11 @@ public class Randomiser {
 			pitchClass++;
 			val += sMidiStats.getPitchClass(pitchClass);
 		}
-		//System.out.println("pitchClass returned is " + (pitchClass));
+		LOGGER.debug("pitchClass returned is " + (pitchClass));
 		return pitchClass;
 	}
 	
-	//TODO Pull these from Global: sActivityWeights
+
 	public int weightedActivityChoice() {
 		Double repeatWeight = sActivityWeights.get("repeatWeight");
 		//System.out.println("repeatWeight SET: "+repeatWeight.toString());

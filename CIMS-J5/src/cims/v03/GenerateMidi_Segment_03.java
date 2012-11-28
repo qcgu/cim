@@ -2,19 +2,15 @@ package cims.v03;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
 
-//import cims.datatypes.BeatTime;
-//import cims.datatypes.BeatTime;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
-//import cims.generators.GenerateMidi;
 import cims.generators.GenerateMidi_Segment;
 import cims.supervisors.SupervisorMidi;
-//import cims.utilities.OutputQueue;
 import cims.utilities.Randomiser;
 
-//import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
 import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeatTime;
 import static cims.supervisors.SupervisorMidi_Globals.sPitchClassSet;
 import static cims.supervisors.SupervisorMidi_Globals.sRootPitch;
@@ -22,6 +18,8 @@ import static cims.supervisors.SupervisorMidi_Globals.sRootPitch;
 public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 	private SupervisorMidi supervisor;
 	private Randomiser randomiser;
+	
+	public static Logger LOGGER = Logger.getLogger(GenerateMidi_Segment_03.class);
 	
 	public GenerateMidi_Segment_03(SupervisorMidi supervisor) {
 		super(supervisor);
@@ -42,9 +40,7 @@ public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 		int beatsInBar = sCurrentBeatTime.getBeatsPerBar();
 		int duration = sCurrentBeatTime.getDefaultDuration();
 		for(int i=0;i<beatsInBar;i++) {
-			
 			this.addNote((duration*i), supervisor.getLastMidiSegment().firstMessage().pitch, randomiser.positiveInteger(40) + 80, duration);
-
 		}
 		return (duration*beatsInBar);	
 	}
@@ -57,7 +53,6 @@ public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 			LOGGER.debug("duration: "+duration);
 			LOGGER.debug("firstMessage.pitch: "+firstMessage.pitch);
 			this.addNote((duration*i), firstMessage.pitch, randomiser.positiveInteger(40) + 80, duration);
-
 		}
 		return (duration*beatsInBar);
 	}
@@ -85,8 +80,6 @@ public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 	}
 	
 	public synchronized void makeLastSegment () {
-		// Play back the last segment
-		//midiSegment = supervisor.getLastMidiSegment();
 		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
 		if (Math.random() < 0.8) { // choose to modify repeat 50% of the time
 			HashMap<Integer, Integer> currentOnMod = new HashMap<Integer, Integer>();

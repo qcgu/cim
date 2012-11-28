@@ -2,7 +2,6 @@ package cims.supervisors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-//import java.util.logging.Logger;
 
 import cims.datatypes.BeatTime;
 import cims.datatypes.MidiControlMessage;
@@ -18,35 +17,30 @@ public class SupervisorMidi_Globals {
 	public static ArrayList<MidiMessage> sMidiMessageList;
 	public static MidiControlMessage sLastMidiControlMessage;
 	public static MidiControlMessageTable sMidiControlMessageTable;
-	
 	public static MidiSegment sMidiSegment;
 	public static MidiSegmentTable sMidiSegmentTable;
 	public static MidiStatistics sMidiStats;
-	public static long sMidiStartTime=0;
-	public static int sSegmentGapDuration = 390;
-	//public static int sDefaultDuration = 250;
-	
-	// Static properties set by external control
 	public static HashMap<String,Double> sActivityWeights;
-	public static int sSegmentGap = 3;
-	public static int sRepeatInterval = 0;
-	public static boolean sMetronome = false;
-	//public static int sCurrentBeat = 0;
-	//public static long[] sBeatList={4,0,0,0,0,0,0,0,0,0,0,0,0};
-	//public static int sBeatsPerMinute = 120;
-	// static int sTimeBetweenBeats = 0; // This is now handled by BeatTime;
-	public static int sNextPlay = 0;
-	public static int[] sPitchClassSet = {0,2,4,5,7,9,11}; // scale, root note first in list offset by sRootPitch
-	public static int sRootPitch = 0; // offset to the scale
-	public static int[] sCurrentChord = {0, 4, 7}; // chromatic pitch class set, no offset - absolute pitch classes
 	public static BeatTime sCurrentBeatTime;
-	public static boolean sTestMode = false;
 	
 	public static final int ON = 1;
 	public static final int OFF = 0;
 	
-	public SupervisorMidi_Globals() {
-		// TODO Auto-generated constructor stub
-	}
+	
+	/****
+	 *  The following properties should be returned by methods, as their implementation may change over time
+	 *  They should be considered temporary!!
+	 */
+	public static long sMidiStartTime=0;
+	public static int sSegmentGapDuration = 390;
+	public static int sSegmentGap = 3;
+	public static int sRepeatInterval = 0;
+	public static int sNextPlay = 0;
+	public static int[] sPitchClassSet = {0,2,4,5,7,9,11}; // scale, root note first in list offset by sRootPitch
+	public static int sRootPitch = 0; // offset to the scale
+	public static int[] sCurrentChord = {0, 4, 7}; // chromatic pitch class set, no offset - absolute pitch classes
 
+	public static boolean sMetronome = false;
+	public static boolean sTestMode = false;
+	
 }

@@ -1,13 +1,13 @@
 package cims.generators;
 
-//import cims.supervisors.SupervisorMidi;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 import cims.utilities.RepeatTimer;
 
 import static cims.supervisors.SupervisorMidi_Globals.sRepeatInterval;
 import static cims.supervisors.SupervisorMidi_Globals.sNextPlay;
-//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
 
 public class GenerateMidi_Loop {
 	private RepeatTimer repeatTimer;
@@ -15,13 +15,14 @@ public class GenerateMidi_Loop {
 	private GenerateMidi_Segment gm_segment;
 	public boolean hasStarted = false;
 	
-	public static final Logger LOGGER = Logger.getLogger(GenerateMidi.class.getName());
+	public static final Logger LOGGER = Logger.getLogger(GenerateMidi_Loop.class);
 	
 	public GenerateMidi_Loop(GenerateMidi_Segment segment) {
 
 		this.repeatTimer = new RepeatTimer(this);
 		this.gm_segment = segment;
 		this.interval = sRepeatInterval;
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public void setInterval(int interval) {
@@ -29,18 +30,13 @@ public class GenerateMidi_Loop {
 	}
 	
 	public void start(){
-		LOGGER.info("start loop");
+		LOGGER.debug("start loop");
 		this.play();
-		if (interval==0) {
-			//Calculate the length of the segement
-			//interval = segmentLength;
-		}
 		this.repeatTimer.start(interval);
 		this.hasStarted = true;
 	}
 	
 	public void stop() {
-		//System.out.println("GenerateMidi_Loop.stop() has been called");
 		this.repeatTimer.cancel();
 		this.hasStarted = false;
 	}

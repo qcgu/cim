@@ -54,6 +54,7 @@ public class MidiStatistics {
 
 	public void addPitch(int newPitch) {
 		current_pitch = newPitch;
+		LOGGER.debug("newPitch: "+newPitch);
 		midiStats_Pitch.addValue(newPitch);
 		meanPitch = (int) midiStats_Pitch.getMean();
 		deviationPitch = (int) midiStats_Pitch.getStandardDeviation();
@@ -64,6 +65,7 @@ public class MidiStatistics {
 	
 	public int getPitchClass(int pitch) {
 		//pitch -= 1; //Allow for 1-12
+		LOGGER.debug("pitchClassHistogram for pitch: "+pitch+" pch: "+pitchClassHistogram[pitch]);
 		return pitchClassHistogram[pitch];
 	}
 	

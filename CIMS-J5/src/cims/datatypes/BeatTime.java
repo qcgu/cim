@@ -1,6 +1,5 @@
 package cims.datatypes;
 
-//import static cims.supervisors.SupervisorMidi_Globals.sDefaultDuration;
 import static cims.supervisors.SupervisorMidi_Globals.sSegmentGap;
 import static cims.supervisors.SupervisorMidi_Globals.sSegmentGapDuration;
 
@@ -11,7 +10,6 @@ public class BeatTime {
 	private TreeMap<String,Integer> transport;
 	private String[] transportNames = {"bar","beat","unit","ppq","tempo","beatsPerBar","beatType","state","ticks"};
 	private Long timestamp;
-	//private Double beatstamp;
 	
 	private boolean onTheBeat;
 	private boolean onTheBar;
@@ -65,18 +63,13 @@ public class BeatTime {
 		}
 		this.onTheBeat = false;
 		this.onTheBar = false;
-		timeBetweenBeats = 60000/120;
+		timeBetweenBeats = 60000/120; //Default value if transport not running
+		this.timestamp = System.currentTimeMillis();
 	}
 	
 	public void recalcDefaultTimings() {
 		Float beatLength = 1000/((float)transport.get("tempo")/60);
 		sSegmentGapDuration = (sSegmentGap*(beatLength.intValue()/4))-10;
-		//sDefaultDuration = (beatLength.intValue()/2);
-		/* supervisor.txtMsg("Segment Gap Duration: "+sSegmentGapDuration+"ms");
-		supervisor.txtMsg("Default Duration: "+sDefaultDuration+"ms");
-		supervisor.txtMsg("Segment Gap: "+sSegmentGap+"semiquavers");
-		supervisor.txtMsg("Beat Length: "+beatLength+"ms"); */
-		
 	}
 	
 	public int getBeatsPerBar() {
