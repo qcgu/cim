@@ -3,6 +3,9 @@ package cims.interfaces;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import cims.CimsMaxIO;
 
 
@@ -14,10 +17,13 @@ public class Interface_Controls {
 	private String oscDeviceAddress;
 	private String sysMessage;
 	
+	private static Logger LOGGER = Logger.getLogger(Interface_Controls.class);
+	
 	public Interface_Controls(CimsMaxIO io) {
 		this.io = io;
 		activityWeights = new HashMap<String,Double>();
 		initialiseControls();
+		LOGGER.setLevel(Level.INFO);
 	}
 	
 	public void initialiseControls() {
@@ -77,7 +83,7 @@ public class Interface_Controls {
 
 	private void parseOscData() {
 		String controller = "";
-		System.out.println("SPLIT: "+this.lastOscData[0]);
+		LOGGER.debug("SPLIT: "+this.lastOscData[0]);
 		String[] oscAddress = this.lastOscData[0].split("multifader1/");
 		if(oscAddress.length>1) {
 			controller = activityWeightNames[(Integer.valueOf(oscAddress[1])-1)];

@@ -23,7 +23,7 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	public boolean segmentStarted;
 	private SilenceTimer silenceTimer;
 	
-	public static final Logger LOGGER = Logger.getLogger(AnalyseMidi.class);
+	public static final Logger LOGGER = Logger.getLogger(AnalyseMidi_Silence.class);
 	
 	public AnalyseMidi_Silence(SupervisorMidi supervisor) {
 		super(supervisor);
@@ -67,8 +67,10 @@ public class AnalyseMidi_Silence extends AnalyseMidi {
 	 * Called by the silence timer when the preset time expires indicating a gap between notes.
 	 */
 	public void silent() {
+		this.silenceTimer.cancel();
 		LOGGER.debug("SILENCE DETECTED >> segmentStart: "+segmentStart+" segmentEnd: "+segmentEnd);		
 		supervisor.addMidiSegment(this.segmentStart, this.segmentEnd,this.getClass());
 		segmentStarted = false;
+		
 	}
 }

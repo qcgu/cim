@@ -95,7 +95,7 @@ public class SupervisorMidi implements Supervisor {
 		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
 		tester = new Test(this);
 
-		LOGGER.setLevel(Level.INFO);
+		LOGGER.setLevel(Level.WARN);
 	}
 	
 	/*****************************************************************************************

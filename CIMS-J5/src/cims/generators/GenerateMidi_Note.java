@@ -65,7 +65,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 			while (!isInCurrentChord(newPitch)) {
 				newPitch--;
 			}
-			System.out.println("Tintinabuli (sp?) mirroring " + pitch + " " + newPitch);
+			//System.out.println("Tintinabuli (sp?) mirroring " + pitch + " " + newPitch);
 			this.currentMessage.pitch = newPitch;
 			break;
 		//play in 3rds 6ths etc above the performed note, transform value is number of scale degree steps (i.e., 3 = 3rd)
@@ -73,7 +73,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 			pitch = this.currentMessage.pitch;
 			int currScaleDegree = getScaleDegree(pitch);
 			this.currentMessage.pitch = pitchAboveFromScaleDegree(pitch, (currScaleDegree + transformValue - 1)%sPitchClassSet.length);
-			System.out.println("Parallel 3rd mirroring " + currScaleDegree + " " + pitch +  " " + this.currentMessage.pitch);
+			//System.out.println("Parallel 3rd mirroring " + currScaleDegree + " " + pitch +  " " + this.currentMessage.pitch);
 			break;
 		default:
 			// do nothing

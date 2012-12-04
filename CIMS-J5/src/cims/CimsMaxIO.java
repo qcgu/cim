@@ -65,7 +65,7 @@ public class CimsMaxIO extends MaxObject {
 		this.interfaceUpdated();
 		
 		BasicConfigurator.configure();
-		LOGGER.setLevel(Level.INFO);
+		LOGGER.setLevel(Level.WARN);
 		LOGGER.info("IO Initialized");		
 	}
 
@@ -88,11 +88,11 @@ public class CimsMaxIO extends MaxObject {
 			break;
 			
 		case OSC:
-			LOGGER.debug("OSC: " + args[1].toString());
+			LOGGER.debug("anything OSC: " + args[1].toString());
 			int numArgs = args.length;
-			oscData = new String[numArgs];
+			this.oscData = new String[numArgs];
 			for(int i=1;i<numArgs;i++) {
-				this.oscData[i] = args[i].toString();
+				this.oscData[i-1] = args[i].toString();
 			}
 			superOsc.dataIn();
 			break;
@@ -164,7 +164,6 @@ public class CimsMaxIO extends MaxObject {
 	 */
 	
 	public String[] inOsc() {
-		LOGGER.debug("OSC IN");
 		return this.oscData;
 	}
 	

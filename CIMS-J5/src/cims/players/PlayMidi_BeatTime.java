@@ -45,7 +45,7 @@ public class PlayMidi_BeatTime {
 		int subBeat = messageBeatTime.getValueFor("unit");
 		//Create a key for this midi message
 		key = this.makeKey(barNum, beat, subBeat);
-		System.out.println("New BeatTime Message: "+key+"> "+barNum+"|"+beat+"|"+subBeat);
+		//System.out.println("New BeatTime Message: "+key+"> "+barNum+"|"+beat+"|"+subBeat);
 		//Add the message to the treemap of upcoming midimessages (can come in any order, will always be sorted by bar/beat
 		beatMessages.put(key, message);
 		return key;

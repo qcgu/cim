@@ -81,9 +81,11 @@ public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 	
 	public synchronized void makeLastSegment () {
 		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
+		if(midiSegment==null) midiSegment = new MidiSegment();
 		if (Math.random() < 0.8) { // choose to modify repeat 50% of the time
 			HashMap<Integer, Integer> currentOnMod = new HashMap<Integer, Integer>();
 			List<MidiMessage> data = midiSegment.asList();
+			if(!(data.isEmpty())) {
 			Iterator<MidiMessage> itr = data.iterator();
 			while(itr.hasNext()) {
 		         MidiMessage mess = itr.next();
@@ -103,8 +105,10 @@ public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 		         }
 		    }
 			midiSegment = new MidiSegment(data);
+			midiSegment.setChannel(2); // channel is in the parochial range of 1-16
+			}
 		}
-		midiSegment.setChannel(2); // channel is in the parochial range of 1-16
+		
 	}
 	
 	public int pitchQuantize(int pitch) {

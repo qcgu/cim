@@ -1,6 +1,7 @@
 package cims.analysers;
 
-//import java.util.*;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import cims.supervisors.SupervisorMidi;
 import cims.datatypes.MidiMessage;
@@ -11,7 +12,11 @@ public abstract class AnalyseMidi {
 
 	protected SupervisorMidi supervisor;
 	protected MidiMessage current_message;
+	public static final Logger LOGGER = Logger.getLogger(AnalyseMidi.class);
 	
+	public AnalyseMidi() {
+		LOGGER.setLevel(Level.INFO);
+	}
 	
 	public AnalyseMidi(SupervisorMidi supervisor) {
 		this.supervisor = supervisor;

@@ -51,7 +51,7 @@ public class MidiSegment {
 		segment.add(mess);
 		segmentDuration = (int) (message.timeMillis - segment.get(0).timeMillis);
 		if (segmentDuration<1) {
-			LOGGER.error("Segment Duration too short: "+segmentDuration+"ms");
+			LOGGER.debug("Segment Duration too short: "+segmentDuration+"ms");
 			segmentDuration = 0;
 		} else {
 			LOGGER.debug("SEGMENT DURATION: "+segmentDuration+"ms");
