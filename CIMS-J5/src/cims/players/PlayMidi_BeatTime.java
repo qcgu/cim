@@ -1,17 +1,18 @@
 package cims.players;
 
-//import static cims.supervisors.SupervisorMidi_Globals.LOGGER;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import static cims.supervisors.SupervisorMidi_Globals.sCurrentBeatTime;
 
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
 import cims.datatypes.BeatTime;
 import cims.datatypes.MidiMessage;
 import cims.datatypes.MidiSegment;
-//import cims.generators.GenerateMidi;
 import cims.supervisors.SupervisorMidi;
 import cims.utilities.OutputQueue;
+
 
 public class PlayMidi_BeatTime {
 	private SupervisorMidi supervisor;
@@ -21,39 +22,78 @@ public class PlayMidi_BeatTime {
 	protected volatile MidiSegment midiSegment;
 	protected volatile OutputQueue midiQueue;
 	
-	public static final Logger LOGGER = Logger.getLogger(PlayMidi_BeatTime.class.getName());
+	public static final Logger LOGGER = Logger.getLogger(PlayMidi_BeatTime.class);
 	
 	public PlayMidi_BeatTime(SupervisorMidi supervisor) {
 		this.supervisor = supervisor;
+		this.beatMessages = new TreeMap<Double,MidiMessage>();
 		this.currentMessage = new MidiMessage();
+		this.midiSegment = new MidiSegment();
+		LOGGER.setLevel(Level.INFO);
+		//this.makeTest();
 	}
 	
+	
+	
 	public void beatTimeIn() {
+		boolean somethingToPlay = true;
+		MidiMessage messageToPlay = new MidiMessage();
 		//Check bar/beat
-		@SuppressWarnings("unused")
+		//@SuppressWarnings("unused")
 		BeatTime currentBT = sCurrentBeatTime;
+		//Create a key range to look for
+		Double currentKey = currentBT.getKey();
+		Double startKey = currentKey - Double.valueOf(0.15); // (1/32 of a beat)
+		Double endKey = currentKey + Double.valueOf(0.15);	
+		LOGGER.debug("key: "+currentKey+" s: "+startKey+" e: "+endKey);
 		//See what messages are in the queue to be played
-		//Send them to the output queue
-		
+		if(!(this.beatMessages==null)) {
+		while(somethingToPlay) {
+			if(this.beatMessages.firstEntry()==null) {
+				LOGGER.debug("No first entry");
+				somethingToPlay = false;
+			} else {
+				currentKey = this.beatMessages.firstKey();
+				if(currentKey < startKey) { //Time has gone, remove it
+					LOGGER.debug("Time has passed - remove it");
+					this.beatMessages.remove(this.beatMessages.firstKey());
+				} else if (currentKey <= endKey) {
+					//play this one
+					LOGGER.debug("Message to play");
+					messageToPlay = this.beatMessages.get(currentKey);
+					this.midiSegment.add(messageToPlay);
+					this.play();
+					//then remove it
+					this.beatMessages.remove(this.beatMessages.firstKey());
+				} else {
+					somethingToPlay = false;
+				}
+			}
+			
+		}
+		}
 	}
 	
 	public Double add(MidiMessage message) {
 		Double key = (double) 0;
-		BeatTime messageBeatTime = message.beatTime;
+		if(message==null) {
+			LOGGER.error("No message!");
+		} else {
+		BeatTime messageBeatTime = new BeatTime();
+		messageBeatTime = message.beatTime;
 		int barNum = messageBeatTime.getValueFor("bar");
 		int beat = messageBeatTime.getValueFor("beat");
 		int subBeat = messageBeatTime.getValueFor("unit");
 		//Create a key for this midi message
-		key = this.makeKey(barNum, beat, subBeat);
-		//System.out.println("New BeatTime Message: "+key+"> "+barNum+"|"+beat+"|"+subBeat);
+		key = messageBeatTime.getKey();
+		LOGGER.debug("New BeatTime Message: "+key+"> "+barNum+"|"+beat+"|"+subBeat);
 		//Add the message to the treemap of upcoming midimessages (can come in any order, will always be sorted by bar/beat
 		beatMessages.put(key, message);
+		}
 		return key;
 	}
 	
-	private Double makeKey(int barNum, int beat, int subBeat) {
-		return 1000000 + (barNum * 100) + beat + (subBeat * 0.001);
-	}
+	
 	
 	public Double schedule(MidiMessage message, Integer bar, Integer beat, Integer unit) {
 		Double key = (double) 0;
@@ -77,7 +117,7 @@ public class PlayMidi_BeatTime {
 	public void play() {
 		LOGGER.info("generate()");
 		midiQueue = new OutputQueue(this);
-		midiQueue.addSegment(midiSegment);
+		midiQueue.addSegment(this.midiSegment);
 		midiQueue.play();
 	}
 	
@@ -89,5 +129,19 @@ public class PlayMidi_BeatTime {
 		this.supervisor.midiOut(midimessage.rawMessage);
 	}
 	
+	public void makeTest() {
+		MidiMessage m1 = new MidiMessage();
+		int[] d1 = {144,60,120};
+		m1.set(d1,false);
+		Integer[] b1 = {3,1,0,0,120,4,4,0,0}; // {"bar","beat","unit","ppq","tempo","beatsPerBar","beatType","state","ticks"};
+		m1.beatTime = new BeatTime(b1);
+		this.add(m1);
+		MidiMessage m2 = new MidiMessage();
+		int[] d2 = {128,60,120};
+		m2.set(d2,false);
+		Integer[] b2 = {3,4,460,0,120,4,4,0,0};
+		m2.beatTime = new BeatTime(b2);
+		this.add(m2);
+	}
 
 }

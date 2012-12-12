@@ -12,7 +12,9 @@ import cims.analysers.AnalyseMidi_Silence;
 import cims.analysers.AnalyseMidi_Controls;
 import cims.analysers.AnalyseMidi_Stats;
 import cims.v03.DecideMidi_03;
+import cims.v03.Decider03;
 import cims.deciders.DecideMidi_SimpleRepeat;
+import cims.deciders.DeciderMidi;
 import cims.players.PlayMidi_BeatTime;
 import cims.utilities.*;
 import cims.datatypes.*;
@@ -40,7 +42,9 @@ public class SupervisorMidi implements Supervisor {
 	private AnalyseMidi_Stats analyser_stats;
 	
 	// Primary decision making
-	private DecideMidi_03 decider;
+	private DeciderMidi decider;
+	//private DecideMidi_03 decideMidi;
+	
 	@SuppressWarnings("unused")
 	private DecideMidi_SimpleRepeat decider_simpleRepeat;
 	private Test tester;
@@ -91,7 +95,8 @@ public class SupervisorMidi implements Supervisor {
 		analyser_silence = new AnalyseMidi_Silence(this);
 		analyser_controls = new AnalyseMidi_Controls(this);
 		analyser_stats = new AnalyseMidi_Stats(this);
-		decider = new DecideMidi_03(this);
+		//decideMidi = new DecideMidi_03(this);
+		decider = new Decider03(this);
 		decider_simpleRepeat = new DecideMidi_SimpleRepeat(this);
 		tester = new Test(this);
 
@@ -110,8 +115,9 @@ public class SupervisorMidi implements Supervisor {
 	 * 
 	 * @param newMessage
 	 */
-	private void firstMessageIn(MidiMessage newMessage) {
-		decider.firstAction(newMessage);
+	private void firstMessageIn(MidiMessage message) {
+		//decideMidi.firstAction(newMessage);
+		decider.firstMidiMessage(message);
 		firstMessage = false;
 	}
 	
@@ -129,19 +135,22 @@ public class SupervisorMidi implements Supervisor {
 		switch(nextType) {
 		case MESSAGE_NOTE:
 			LOGGER.debug("MIDI MESSAGE - NOTE");
-			decider.messageIn(sLastMidiMessage);	// THIS IS THE MAIN CALL TO THE DECIDER WHEN A MESSAGE IS CREATED
+			decider.newMidiMessage(sLastMidiMessage);
+			//decideMidi.messageIn(sLastMidiMessage);	// THIS IS THE MAIN CALL TO THE DECIDER WHEN A MESSAGE IS CREATED
 			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			if(analyser_stats.newMidi()) analyser_stats.analyse();	
 			break;
 		case MESSAGE_CONTROL:
 			LOGGER.debug("MIDI MESSAGE - CONTROL");
+			decider.newMidiControlMessage(sLastMidiControlMessage);
 			if(analyser_controls.newMidi()) analyser_controls.analyse();
 			if(analyser_silence.newMidi()) analyser_silence.analyse();
 			break;
 		case SEGMENT:
 			LOGGER.debug("MIDI SEGMENT");
+			decider.newMidiSegment(sMidiSegment);
 			//sMidiStats.clearPitchHistogram();
-			decider.segmentCreated(sMidiSegment);   // THIS IS THE MAIN CALL TO THE DECIDER WHEN A SEGMENT IS CREATED
+			//decideMidi.segmentCreated(sMidiSegment);   // THIS IS THE MAIN CALL TO THE DECIDER WHEN A SEGMENT IS CREATED
 			//decider_simpleRepeat.segmentCreated();
 			break;
 		case TEST_MESSAGE_NOTE:
@@ -343,11 +352,13 @@ public class SupervisorMidi implements Supervisor {
 	
 	public void beatTimeIn() {
 		sCurrentBeatTime = this.io.getBeatTime();
+		this.decider.newBeatTime(sCurrentBeatTime);
 		this.player_beatTime.beatTimeIn();
 	}
 	
 	public void interfaceUpdated() {
 		sActivityWeights = controls.getActivityWeights();
+		this.decider.newInterfaceUpdate(this.controls);
 	}
 	
 	public void txtMsg(String msg) {

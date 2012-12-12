@@ -16,9 +16,9 @@ public class DecideMidi_03 {
 	private GenerateMidi_Segment_03 generator_repeatSegment;
 	private GenerateMidi_Segment_03 generator_supportSegment;
 	private GenerateMidi_Segment_03 generator_initiateSegment;
-	private GenerateMidi_Note_03 generator_mirror;
-	private GenerateMidi_Loop_03 support_loop;
-	private GenerateMidi_Loop_03 initiate_loop;
+	//private GenerateMidi_Note_03 generator_mirror;
+	//private GenerateMidi_Loop_03 support_loop;
+	//private GenerateMidi_Loop_03 initiate_loop;
 	private Randomiser randomiser;
 	
 	private int currentAction = -1;
@@ -36,12 +36,12 @@ public class DecideMidi_03 {
 		generator_repeatSegment = new GenerateMidi_Segment_03(supervisor);
 		generator_supportSegment = new GenerateMidi_Segment_03(supervisor);
 		generator_initiateSegment = new GenerateMidi_Segment_03(supervisor);
-		generator_mirror = new GenerateMidi_Note_03(supervisor);
+		//generator_mirror = new GenerateMidi_Note_03(supervisor);
 		randomiser = new Randomiser();
 		
 		LOGGER.setLevel(Level.INFO);
 	}
-
+/*
 	public void messageIn(MidiMessage newMessage) {
 		
 		if(mirroring) {
@@ -62,11 +62,13 @@ public class DecideMidi_03 {
 		
 
 	}
-	
+	*/
+	/*
 	public void segmentCreated(MidiSegment newSegment) {
 		this.chooseNextAction();
 	}
-	
+	*/
+	/*
 	public void firstAction(MidiMessage firstMessage) {
 		LOGGER.debug("firsMessage Status: "+firstMessage.status);
 		this.firstMessage = firstMessage;
@@ -75,8 +77,8 @@ public class DecideMidi_03 {
 		this.chooseNextAction();
 		this. firstAction = false;
 		this.support_loop.start();
-	}
-	
+	} */
+	/*
 	public void chooseNextAction() {
 		
 		int segmentLength = 0;
@@ -127,6 +129,7 @@ public class DecideMidi_03 {
 		}
 		
 	}
+	*/
 	
 	/*****************************************************************************************
 	 * Utility method to provide text version of an action

@@ -89,6 +89,7 @@ public class OutputQueue {
 					delay = midimessage.timeMillis - segmentStartTime;
 				}
 				if (this.isPlayer) {
+					LOGGER.debug("BeatPlayer - scheduling midi message");
 					segmentTimer.schedule(new BeatPlayer(this.beatPlayer,midimessage), 0);
 				} else {
 					// SHIFTING TO SUIT NEXTPLAY - BEAT OR BAR

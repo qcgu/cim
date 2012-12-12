@@ -144,6 +144,7 @@ public class CimsMaxIO extends MaxObject {
 		for(int i=2;i<messageSize;i++) {
 			midiOutMessage[i] = Atom.newAtom(midi[(i-2)]);
 		}
+		LOGGER.debug("OUT: "+midiOutMessage[2]+" "+midiOutMessage[3]);
 		outlet(0,midiOutMessage);
 	}
 	

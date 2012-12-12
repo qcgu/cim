@@ -10,6 +10,7 @@ public class BeatTime {
 	private TreeMap<String,Integer> transport;
 	private String[] transportNames = {"bar","beat","unit","ppq","tempo","beatsPerBar","beatType","state","ticks"};
 	private Long timestamp;
+	private Double key;
 	
 	private boolean onTheBeat;
 	private boolean onTheBar;
@@ -53,6 +54,7 @@ public class BeatTime {
 			onTheBar = false;
 			elapsedSinceBar = this.timestamp - lastBarTimestamp;
 		}
+		this.key = this.makeKey();
 	}
 	
 	public void reset() {
@@ -65,6 +67,14 @@ public class BeatTime {
 		this.onTheBar = false;
 		timeBetweenBeats = 60000/120; //Default value if transport not running
 		this.timestamp = System.currentTimeMillis();
+	}
+	
+	private Double makeKey() {
+		return 1000000 + (this.transport.get("bar") * 100) + this.transport.get("beat") + (this.transport.get("unit") * 0.001);
+	}
+	public Double makeKey(int barNum, int beat, int subBeat) {
+		this.key = 1000000 + (barNum * 100) + beat + (subBeat * 0.001);
+		return this.key;
 	}
 	
 	public void recalcDefaultTimings() {
@@ -121,6 +131,14 @@ public class BeatTime {
 
 	public void setOnTheBar(boolean onTheBar) {
 		this.onTheBar = onTheBar;
+	}
+
+	public Double getKey() {
+		return key;
+	}
+
+	public void setKey(Double key) {
+		this.key = key;
 	}
 
 }

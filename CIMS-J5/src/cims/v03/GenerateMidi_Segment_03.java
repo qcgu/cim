@@ -80,32 +80,39 @@ public class GenerateMidi_Segment_03 extends GenerateMidi_Segment {
 	}
 	
 	public synchronized void makeLastSegment () {
-		midiSegment = supervisor.getLastMidiSegment().zeroTiming();
-		if(midiSegment==null) midiSegment = new MidiSegment();
+
+		midiSegment = supervisor.getLastMidiSegment();
+		midiSegment.zeroTiming();
+		if(midiSegment==null) midiSegment = new MidiSegment();	
 		if (Math.random() < 0.8) { // choose to modify repeat 50% of the time
 			HashMap<Integer, Integer> currentOnMod = new HashMap<Integer, Integer>();
 			List<MidiMessage> data = midiSegment.asList();
 			if(!(data.isEmpty())) {
-			Iterator<MidiMessage> itr = data.iterator();
-			while(itr.hasNext()) {
-		         MidiMessage mess = itr.next();
-		         if (MidiMessage.isNoteOn(mess.messageType)) {
-		        	 int deviate = (int) (randomiser.gaussian(0, 1) * 2);
-		        	 if (mess.pitch % 12 == sPitchClassSet[0] + sRootPitch) deviate = 0; // keep root note stable
-		        	 int newPitch = pitchQuantize(mess.pitch + deviate);
-		        	 //System.out.println("Changing note on from " + mess.pitch + " to " + " " + deviate + " " + newPitch);
-		        	 currentOnMod.put(mess.pitch, newPitch);
-		        	 mess.rawMessage[1] = newPitch; // data to be played
-		        	 mess.pitch = newPitch; // meta data
-		         } else if (MidiMessage.isNoteOff(mess.messageType)) {
-		        	 int currPitch = mess.pitch;
-		        	 mess.rawMessage[1] = currentOnMod.get(currPitch); // data to be played
-		        	 mess.pitch = currentOnMod.get(currPitch); // meta data
-		        	 currentOnMod.remove(currPitch);
-		         }
-		    }
-			midiSegment = new MidiSegment(data);
-			midiSegment.setChannel(2); // channel is in the parochial range of 1-16
+				Iterator<MidiMessage> itr = data.iterator();
+				while(itr.hasNext()) {
+			         MidiMessage mess = itr.next();
+			         if (MidiMessage.isNoteOn(mess.messageType)) {
+			        	 int deviate = (int) (randomiser.gaussian(0, 1) * 2);
+			        	 if (mess.pitch % 12 == sPitchClassSet[0] + sRootPitch) deviate = 0; // keep root note stable
+			        	 int newPitch = pitchQuantize(mess.pitch + deviate);
+			        	 //System.out.println("Changing note on from " + mess.pitch + " to " + " " + deviate + " " + newPitch);
+			        	 currentOnMod.put(mess.pitch, newPitch);
+			        	 mess.rawMessage[1] = newPitch; // data to be played
+			        	 mess.pitch = newPitch; // meta data
+			         } else if (MidiMessage.isNoteOff(mess.messageType)) {
+			        	 int currPitch = mess.pitch;
+				     		if(currentOnMod.containsKey(currPitch)) {
+				     			mess.rawMessage[1] = currentOnMod.get(currPitch); // data to be played
+				     			mess.pitch = currentOnMod.get(currPitch); // meta data
+				     			currentOnMod.remove(currPitch);
+				     		} else {
+				     			LOGGER.error("No currPitch found in currentOnMod: "+currPitch);
+				     		}
+			         }
+			    }
+				midiSegment = new MidiSegment(data);
+				midiSegment.setChannel(2); // channel is in the parochial range of 1-16
+
 			}
 		}
 		

@@ -45,6 +45,7 @@ public class GenerateMidi_Note extends GenerateMidi {
 	}
 	
 	public void output() {
+		this.currentMessage.status = this.currentMessage.status+1; //Hack the channel to 2
 		int[] message = {this.currentMessage.status,this.currentMessage.pitch,this.currentMessage.velocity};
 		this.supervisor.midiOut(message);
 	}
