@@ -49,7 +49,7 @@ public class PlayMidi_BeatTime {
 		//See what messages are in the queue to be played
 		if(!(this.beatMessages==null)) {
 		while(somethingToPlay) {
-			if(this.beatMessages.firstEntry()==null) {
+			if(this.beatMessages.size() == 0) { //firstEntry()==null) {
 				LOGGER.debug("No first entry");
 				somethingToPlay = false;
 			} else {
